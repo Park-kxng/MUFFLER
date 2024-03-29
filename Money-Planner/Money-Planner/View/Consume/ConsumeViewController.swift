@@ -942,32 +942,38 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
             onSuccess: { response in
                 print(response)
                 if let expenseResponse = response.result {
+                    print(expenseResponse)
                     if let alarms = expenseResponse.alarms {
-                        print(alarms)
-                        for alarm in alarms {
-                            if let alarmTitle = alarm.alarmTitle, let budget = alarm.budget, let excessAmount = alarm.excessAmount {
-                                print(alarmTitle)
-                                print(budget)
-                                print(excessAmount)
-                                // 여기서 알람을 보여주는 작업을 수행합니다.
-                                let alert = ExpensePopupModalView()
-                                if alarmTitle == "하루"{
-                                    alert.changeTitle(title: "하루 목표금액을 초과했어요")
-                                    alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
-                                    
-                                }else if alarmTitle == "카테고리"{
-                                    let category = String(self.cateogoryTextField.text ?? "카테고리 없음")
-                                    alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
-                                    alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
+                        if alarms.count == 0 {
+                            print("알람이 없음")
+                            self.dismiss()
+                        }else{
+                            for alarm in alarms {
+                                if let alarmTitle = alarm.alarmTitle, let budget = alarm.budget, let excessAmount = alarm.excessAmount {
+                                    print(alarmTitle)
+                                    print(budget)
+                                    print(excessAmount)
+                                    // 여기서 알람을 보여주는 작업을 수행합니다.
+                                    let alert = ExpensePopupModalView()
+                                    if alarmTitle == "하루"{
+                                        alert.changeTitle(title: "하루 목표금액을 초과했어요")
+                                        alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
+                                        
+                                    }else if alarmTitle == "카테고리"{
+                                        let category = String(self.cateogoryTextField.text ?? "카테고리 없음")
+                                        alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
+                                        alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
 
-                                } else if alarmTitle == "전체"{
-                                    alert.changeTitle(title: "전체 목표금액을 초과했어요")
-                                    alert.changeContents(content: "목표한 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
+                                    } else if alarmTitle == "전체"{
+                                        alert.changeTitle(title: "전체 목표금액을 초과했어요")
+                                        alert.changeContents(content: "목표한 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
 
+                                    }
+                                    self.present(alert, animated: true, completion: nil)
                                 }
-                                self.present(alert, animated: true, completion: nil)
                             }
                         }
+                        
                      
                     }
                 }
@@ -976,7 +982,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                 print(error)
             }).disposed(by: disposeBag)
         
-        dismiss()
+        
     }
     private func dismiss (){
         // 알람이 없는 경우

@@ -119,7 +119,12 @@ class MufflerViewModel {
             .map(ConnectModel.self).asObservable()
     }
     
-
+    // Mail controller
+    // 소비내역 등록 : [POST] /api/expense
+    func postEmail(emailRequest: EmailPostRequest) -> Single<ConnectModel> {
+        return provider.request(.postMail(emailRequest: emailRequest))
+                .map(ConnectModel.self)
+    }
 }
 
 

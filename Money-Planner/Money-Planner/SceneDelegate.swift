@@ -23,9 +23,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          let defaults = UserDefaults.standard
          let viewModel = LoginViewModel()
          print("엑세스 초기 세팅 완")
-         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI0NjEzNzk1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTAzMzUxNzF9.JItaIW7T6zZytxAt1BumHJ-FiiVJjWw9WHPRogwJ36Q", forKey: "accessToken")
+         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI0NjEzNzk1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTE3OTU2NTV9.cDW4Vqz4MfVw4p9igDiEuVmiVlQXgL3FwfATayr-7Os", forKey: "accessToken")
          print("리프레쉬 초기 세팅 완")
-         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTI4NDA3NzF9.qtPQBdgkOKou1aTepPhJAT7p2izfSir2rfAGmono_u4", forKey: "refreshToken")
+         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTQzMDEyNTV9.GD0ElP59FubabdJZVT98qwjgiIl64T88p3wh029PSK0", forKey: "refreshToken")
 //         // 임시 토큰 초기 세팅
 //         if let accessToken = defaults.string(forKey: "accessToken"){
 //             

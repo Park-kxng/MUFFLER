@@ -305,6 +305,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     
     override func viewDidLoad() {
         setupUI()
+        self.hideKeyboardWhenTappedAround() // 키보드 내리기
     }
     
     private func setupUI() {
@@ -994,6 +995,19 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     
     private func sendNotificationEvent() {
         NotificationCenter.default.post(name: Notification.Name("addConsume"), object: nil)
+    }
+    
+}
+// 키보드 숨기기
+extension ConsumeViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(ConsumeViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }
 

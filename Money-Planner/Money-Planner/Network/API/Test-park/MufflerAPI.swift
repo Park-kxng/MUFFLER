@@ -47,6 +47,9 @@ enum MufflerAPI {
     case getGoalByYearMonth(goalId: String, yearMonth: String)
     case getGoalByCategory(goalId: String, categoryId: String)
     case getBasicHomeInfo
+    
+    // Mail Controller
+    case postMail(emailRequest: EmailPostRequest)
 }
 
 extension MufflerAPI: TargetType {
@@ -132,14 +135,20 @@ extension MufflerAPI: TargetType {
             return "/api/home/goal/\(goalId)/category/\(categoryId)"
         case .getBasicHomeInfo:
             return "/api/home/basic"
+            
+        // Email Controller
+        case .postMail:
+            return "/api/member/mail/inquiry"
         }
+        
+        
     }
 
     var method: Moya.Method {
         switch self {
         // Define HTTP methods for each API endpoint
         case .refreshToken, .loginKakao, .loginApple,
-                .createGoal, .createExpense, .updateRate, .updateZeroDay, .createCategory:
+                .createGoal, .createExpense, .updateRate, .updateZeroDay, .createCategory, .postMail:
             return .post
         case .connect, .getPreviousGoals, .getExpense, .getWeeklyExpense, .searchExpense, .fetchAvailableExpenseDates,
              .getMonthlyExpense, .getDailyExpense, .getRates, .getNow, .getGoal,
@@ -168,6 +177,8 @@ extension MufflerAPI: TargetType {
             return .requestJSONEncodable(request)
         case .createExpense(let expenseRequest):
                 return .requestJSONEncodable(expenseRequest)
+        case .postMail(let emailRequest):
+                return .requestJSONEncodable(emailRequest)
         case .updateExpense(let expenseRequest):
             return .requestJSONEncodable(expenseRequest)
         case .updateCategory(let request):
@@ -186,7 +197,7 @@ extension MufflerAPI: TargetType {
     var headers: [String: String]? {
         let defaults = UserDefaults.standard
         if let token = defaults.string(forKey: "accessToken") {
-            print("토큰 불러오기 성공")
+            print("현재 저장된 토큰 불러오기 성공")
             return ["Authorization": "Bearer \(token)"]
         } else {
             return nil

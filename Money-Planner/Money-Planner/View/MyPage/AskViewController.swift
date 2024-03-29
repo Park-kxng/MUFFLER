@@ -7,6 +7,8 @@
 
 import Foundation
 import UIKit
+import RxSwift
+import RxCocoa
 
 //protocol ProfileViewDelegate : AnyObject{
 //    func profileNameChanged(_ userName : String)
@@ -17,6 +19,9 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
         // 확인 누르면 문의하기 화면도 없어짐
         dismiss(animated: true)
     }
+    
+    let disposeBag = DisposeBag()
+    let viewModel = MufflerViewModel()
     
     private var UserName: String?
     //weak var delegate: ProfileViewDelegate?
@@ -151,6 +156,7 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
     }()
     override func viewDidLoad() {
         setupUI()
+        self.hideKeyboardWhenTappedAround()
     }
     private func setupUI() {
         // 배경색상 추가
@@ -423,6 +429,29 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
     private func completeButtonTapped(){
         print("문의하기가 완료되었습니다..")
       // api 연결
+        let emailRequest = EmailPostRequest(email: emailTextField.text ?? "", content: contentsTextField.text)
+    
+        print(emailRequest)
+        do {
+                let encoder = JSONEncoder()
+                encoder.outputFormatting = .prettyPrinted // JSON을 읽기 쉽게 출력하기 위해 prettyPrinted를 사용합니다.
+                let jsonData = try encoder.encode(emailRequest)
+                if let jsonString = String(data: jsonData, encoding: .utf8) {
+                    print(jsonString)
+                }
+            } catch {
+                print("Error encoding JSON: \(error)")
+            }
+
+        
+        viewModel.postEmail(emailRequest: emailRequest)
+            .subscribe(
+            onSuccess: { response in
+               print(response)
+            }, onFailure: {error in
+                print(error)
+            }).disposed(by: disposeBag)
+        
         let completeVC = PopupViewController() // 로그아웃 완료 팝업 띄우기
         completeVC.titleLabel.text = "문의하기가 완료되었습니다."
         completeVC.contentLabel.text = "1:1 문의에 대한 답변은 이메일로 보내드려요"
@@ -452,4 +481,16 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
 
             completeButton.isEnabled = isButtonEnabled
         }
+}
+// 키보드 숨기기
+extension AskViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(AskViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
+    }
 }

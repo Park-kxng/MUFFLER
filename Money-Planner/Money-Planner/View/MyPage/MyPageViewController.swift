@@ -68,12 +68,6 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
         let item = myPageData[indexPath.section].items[indexPath.row]
         var text = item
  
-        if item == "알림 설정" {
-            // 알림 설정인 경우 on or off 버튼 추가
-            text = "ON"
-            cell.optionalLabel.text = text
-            
-        }
         if item == "프로필"{
             text = "프로필 설정"
             cell.optionalLabel.text = text
@@ -127,6 +121,10 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
         case "알림 설정":
             // 알림 설정 뷰로 이동
             print("알림 설정 선택됨")
+            let alarmVC = NotificationSettingViewController()
+            alarmVC.hidesBottomBarWhenPushed = true
+            self.navigationController?.pushViewController(alarmVC, animated: true)
+
         case "앱 버전":
             // 앱 버전 뷰로 이동
             print("앱 버전 선택됨")

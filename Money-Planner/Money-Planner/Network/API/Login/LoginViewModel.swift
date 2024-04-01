@@ -67,4 +67,25 @@ class LoginViewModel {
         let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
         sceneDelegate?.setupMainInterface()
     }
+    
+    func login(socialType:LoginRequest.SocialType, idToken:String){
+        print(socialType, idToken)
+        //print("로그인 api 연결")
+        let request = LoginRequest(socialType: socialType, idToken: idToken)
+        //print(request)
+        loginRepository.login(request: request)
+            .subscribe(onNext: { response in
+                if response.isSuccess == true {
+                    print("로그인 성공 > 홈 화면으로 이동합니다")
+                    // 홈 화면으로 이동합니다.
+                    let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+                    sceneDelegate?.setupMainInterface()
+                }
+            }, onError: { error in
+                // 오류가 발생한 경우에 대한 처리를 수행합니다.
+                print(error)
+                print("Error refreshing access token: \(error.localizedDescription)")
+            })
+            .disposed(by: disposeBag)
+    }
 }

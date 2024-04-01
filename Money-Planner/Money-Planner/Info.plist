@@ -6,6 +6,14 @@
 	<string>${BASE_SERVER_URL}</string>
 	<key>CFBundleURLTypes</key>
 	<array>
+        <dict>
+            <key>CFBundleTypeRole</key>
+            <string>Editor</string>
+            <key>CFBundleURLSchemes</key>
+            <array>
+                <string>kakao150fd3f3b9b656ef2c160bf37d9ecb70</string>
+            </array>
+        </dict>
 		<dict>
 			<key>CFBundleTypeRole</key>
 			<string>Editor</string>
@@ -14,14 +22,8 @@
 				<string>efbfa8ca659700dbb149f6fe6a88deca</string>
 			</array>
 		</dict>
-		<dict>
-			<key>CFBundleTypeRole</key>
-			<string>Editor</string>
-			<key>CFBundleURLSchemes</key>
-			<array>
-				<string>kakao1023536</string>
-			</array>
-		</dict>
+		
+       
 	</array>
 	<key>LSApplicationQueriesSchemes</key>
 	<array>

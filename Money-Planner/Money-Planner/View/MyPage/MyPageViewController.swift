@@ -123,6 +123,7 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
             print("알림 설정 선택됨")
             let alarmVC = NotificationSettingViewController()
             alarmVC.hidesBottomBarWhenPushed = true
+            self.navigationController?.isNavigationBarHidden = false // 네비게이션 바 숨김
             self.navigationController?.pushViewController(alarmVC, animated: true)
 
         case "앱 버전":
@@ -205,4 +206,18 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
         present(unregisterVC, animated: true)
         
     }
+    // 네비게이션 바 숨김 설정 - 라이프 사이클 이용
+    override func viewWillAppear(_ animated: Bool) {
+            super.viewWillAppear(animated)
+            
+            // 네비게이션 바 숨김 설정
+            self.navigationController?.setNavigationBarHidden(true, animated: animated)
+        }
+        
+        override func viewWillDisappear(_ animated: Bool) {
+            super.viewWillDisappear(animated)
+            
+            // 다른 뷰로 이동할 때 네비게이션 바 보이도록 설정
+            self.navigationController?.setNavigationBarHidden(false, animated: animated)
+        }
 }

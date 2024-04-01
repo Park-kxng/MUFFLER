@@ -23,7 +23,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          let defaults = UserDefaults.standard
          let viewModel = LoginViewModel()
          print("엑세스 초기 세팅 완")
-         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI0NjEzNzk1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTE3OTU2NTV9.cDW4Vqz4MfVw4p9igDiEuVmiVlQXgL3FwfATayr-7Os", forKey: "accessToken")
+         UserDefaults.standard.set("", forKey: "accessToken")
          print("리프레쉬 초기 세팅 완")
          UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTQzMDEyNTV9.GD0ElP59FubabdJZVT98qwjgiIl64T88p3wh029PSK0", forKey: "refreshToken")
 //         // 임시 토큰 초기 세팅
@@ -62,25 +62,25 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             window?.rootViewController = LoginViewController()
          }
     
-//         // UserDefaults를 사용하여 이전 로그인 여부 확인 및 자동 로그인 처리
-//         // 예시 코드로, 실제 앱에서는 로그인 상태를 관리하는 더 안전한 방법을 사용해야 합니다.
-//         let isLoggedIn = defaults.bool(forKey: "isLoggedIn")
-//         if isLoggedIn {
-//             print("로그인 상태입니다")
-//             if let refreshToken = defaults.string(forKey: "refreshToken"){
-//                 //리프레쉬 토큰이 있는 경우
-//                 let viewModel = LoginViewModel()
-//                 viewModel.refreshAccessTokenIfNeeded()
-//
-//             }
-//
-//             // 로그인 상태이면 메인 화면으로 이동
-//             setupMainInterface()
-//         } else {
-//             // 로그인 상태가 아니면 로그인 화면으로 이동
-//             print("로그인 상태가 아닙니다.")
-//             window?.rootViewController = LoginViewController()
-//         }
+         // UserDefaults를 사용하여 이전 로그인 여부 확인 및 자동 로그인 처리
+         // 예시 코드로, 실제 앱에서는 로그인 상태를 관리하는 더 안전한 방법을 사용해야 합니다.
+         let isLoggedIn = defaults.bool(forKey: "isLoggedIn")
+         if isLoggedIn {
+             print("로그인 상태입니다")
+             if let refreshToken = defaults.string(forKey: "refreshToken"){
+                 //리프레쉬 토큰이 있는 경우
+                 let viewModel = LoginViewModel()
+                 viewModel.refreshAccessTokenIfNeeded()
+
+             }
+
+             // 로그인 상태이면 메인 화면으로 이동
+             setupMainInterface()
+         } else {
+             // 로그인 상태가 아니면 로그인 화면으로 이동
+             print("로그인 상태가 아닙니다.")
+             window?.rootViewController = LoginViewController()
+         }
          window?.makeKeyAndVisible()
      }
      
@@ -159,7 +159,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
-    
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+            if let url = URLContexts.first?.url {
+                if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                    _ = AuthController.handleOpenUrl(url: url)
+                }
+            }
+        }
     
 }
 

@@ -16,7 +16,11 @@ protocol BaseAPI: TargetType {
 extension BaseAPI {
     var baseURL: URL {
         let url = Bundle.main.object(forInfoDictionaryKey: "BaseURL") as? String ?? ""
-        let serverURL = "http://muffler.world"
+//        let url = Bundle.main.object(forInfoDictionaryKey: "BaseURL") as? String ?? ""
+        let serverURL = "https://muffler.world"// + url
+//        print(url)
+        print("serverURL : ")
+        print(serverURL)
         return URL(string: serverURL)!
     }
     

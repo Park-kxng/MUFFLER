@@ -198,6 +198,7 @@
 		D2D0B73A2B6BAB02003B6B5E /* Goal.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D0B7392B6BAB02003B6B5E /* Goal.swift */; };
 		D2D0B73D2B6BAB7A003B6B5E /* CalendarDaily.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D0B73C2B6BAB7A003B6B5E /* CalendarDaily.swift */; };
 		D2D0B7412B6BACAB003B6B5E /* HomeNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D0B7402B6BACAB003B6B5E /* HomeNow.swift */; };
+		D2D5934C2BBC4BA00010D29D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D2D5934B2BBC4BA00010D29D /* Settings.bundle */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -396,6 +397,7 @@
 		D2D0B7392B6BAB02003B6B5E /* Goal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
 		D2D0B73C2B6BAB7A003B6B5E /* CalendarDaily.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDaily.swift; sourceTree = "<group>"; };
 		D2D0B7402B6BACAB003B6B5E /* HomeNow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNow.swift; sourceTree = "<group>"; };
+		D2D5934B2BBC4BA00010D29D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -726,6 +728,7 @@
 		7A610AAB2B47FA8E00D3096F = {
 			isa = PBXGroup;
 			children = (
+				D2D5934B2BBC4BA00010D29D /* Settings.bundle */,
 				7A610AB62B47FA8E00D3096F /* Money-Planner */,
 				7A610AB52B47FA8E00D3096F /* Products */,
 				D2B61F132B6CBFE800332998 /* Frameworks */,
@@ -1186,6 +1189,7 @@
 				D20D701E2B668800006D6762 /* Home.json in Resources */,
 				7A3069882B8C5A0900CD331D /* muffler_delete.json in Resources */,
 				7A8F3EF12B85059D00480902 /* consumeDummy.json in Resources */,
+				D2D5934C2BBC4BA00010D29D /* Settings.bundle in Resources */,
 				7A30698E2B8C5C9700CD331D /* muffler_surprised.json in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -1532,7 +1536,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.umc.Money-Planner";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MoneyPlanner Development";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = MoneyPlanner;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1568,7 +1572,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.umc.Money-Planner";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MoneyPlanner Development";
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = MoneyPlanner;
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";

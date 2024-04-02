@@ -14,7 +14,7 @@ class WhichAddModalViewController : UIViewController, UITableViewDataSource, UIT
         "소비내역 추가하기",
         "하루평가 추가하기"
     ]
-        
+    
     private let modalBar : UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
@@ -34,8 +34,6 @@ class WhichAddModalViewController : UIViewController, UITableViewDataSource, UIT
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.tableFooterView = UIView()
-        tableView.separatorStyle = .none // Set separator style to none
-        
         return tableView
     }()
     
@@ -52,21 +50,21 @@ class WhichAddModalViewController : UIViewController, UITableViewDataSource, UIT
     private var iconViewList : [UIImageView] = []
     
     let addIconView : UIImageView = {
-           let v = UIImageView()
-           v.image = UIImage(named: "home_add")
-           v.tintColor = .mpDarkGray
-           v.translatesAutoresizingMaskIntoConstraints = false
-           v.isUserInteractionEnabled = true
-           return v
+        let v = UIImageView()
+        v.image = UIImage(named: "home_add")
+        v.tintColor = .mpDarkGray
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.isUserInteractionEnabled = true
+        return v
     }()
     
     let smileIconView : UIImageView = {
-           let v = UIImageView()
-           v.image = UIImage(named: "home_today")
-           v.tintColor = .mpDarkGray
-           v.translatesAutoresizingMaskIntoConstraints = false
-           v.isUserInteractionEnabled = true
-           return v
+        let v = UIImageView()
+        v.image = UIImage(named: "home_today")
+        v.tintColor = .mpDarkGray
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.isUserInteractionEnabled = true
+        return v
     }()
     
     
@@ -79,7 +77,7 @@ class WhichAddModalViewController : UIViewController, UITableViewDataSource, UIT
         ]
         
         tableView.register(IconTableViewCell.self, forCellReuseIdentifier: "WhichIconCell")
-                
+        
         view.addSubview(customModal)
         customModal.addSubview(modalBar)
         customModal.addSubview(titleLabel)
@@ -125,12 +123,20 @@ class WhichAddModalViewController : UIViewController, UITableViewDataSource, UIT
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "WhichIconCell", for: indexPath) as! IconTableViewCell
-          
-          // 아이콘 및 텍스트 설정
+        
+        // 아이콘 및 텍스트 설정
         cell.iconImageView.image = iconViewList[indexPath.row].image
         cell.titleLabel.text = todo[indexPath.row]
         cell.selectionStyle = .none
-          
+        
+        
+        // 마지막 행인 경우 밑줄을 제거
+        if indexPath.row == todo.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 24) // 다른 행들의 밑줄 설정
+        }
+        
         
         return cell
     }

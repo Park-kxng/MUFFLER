@@ -977,7 +977,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                      
                     }
                 }
-                self.sendNotificationEvent()
+                self.sendNotificationEvent(cost: self.expenseRequest.expenseCost)
             }, onFailure: {error in
                 print(error)
             }).disposed(by: disposeBag)
@@ -999,8 +999,9 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
         }
     }
     
-    private func sendNotificationEvent() {
-        NotificationCenter.default.post(name: Notification.Name("addConsume"), object: nil)
+    private func sendNotificationEvent(cost : Int64) {
+        NotificationCenter.default.post(name: Notification.Name("addConsume"), object: nil, userInfo: [
+            "cost" : cost ])
     }
     
 }

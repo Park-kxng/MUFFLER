@@ -1003,24 +1003,19 @@ extension HomeViewController {
     
     @objc func getNotificationDeleteConsumeList(_ notification: Notification){
         if(collectionView.currentPage == 1){
-            //            if let userInfo = notification.userInfo {
-            //                print(userInfo)
-            //                let expenseId = userInfo["expenseId"] as? Int
-            //                print(expenseId)
-            //                for (consumeIndex, consumeDetail) in consumeList.enumerated(){
-            //                    for (expenseIndex, expense) in consumeDetail.expenseDetailList!.enumerated() {
-            //                        if(expense.expenseId == expenseId){
-            //                            print("여기")
-            //                            consumeList[consumeIndex].expenseDetailList?.remove(at: expenseIndex)
-            //                            consumeView.tableView.reloadData()
-            //                            break
-            //                        }
-            //                    }
-            //                }
-            //
-            //            }
-            print("여기!")
-            fetchConsumeData(lastDate: nil, lastExpenseId: nil)
+            if let userInfo = notification.userInfo {
+                let expenseId = userInfo["expenseId"] as? Int
+                for (consumeIndex, consumeDetail) in consumeList.enumerated(){
+                    for (expenseIndex, expense) in consumeDetail.expenseDetailList!.enumerated() {
+                        if(expense.expenseId == expenseId){
+                            consumeList[consumeIndex].expenseDetailList?.remove(at: expenseIndex)
+                            consumeView.data = consumeList
+                            consumeView.tableView.reloadData()
+                            break
+                        }
+                    }
+                }
+            }
             reloadUI()
         }
     }

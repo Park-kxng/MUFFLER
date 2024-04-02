@@ -417,6 +417,10 @@ class ConsumeDetailViewController: UIViewController, UITextFieldDelegate, Catego
                 // 네트워크 응답에 대한 처리
                 print("소비 내역 삭제하기 성공!")
                 print(repos)
+                
+                NotificationCenter.default.post(name: Notification.Name("deleteExpense"), object: nil, userInfo: [
+                    "expenseId" : Int(self.expenseId)])
+                
             }, onError: { error in
                 // 에러 처리
                 print("Error: \(error)")

@@ -57,6 +57,8 @@
 		20AFDD912B656034008F8AB9 /* OneDayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD902B656034008F8AB9 /* OneDayButton.swift */; };
 		20AFDD932B659779008F8AB9 /* RepeatIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD922B659779008F8AB9 /* RepeatIntervalViewController.swift */; };
 		20AFDD952B65B882008F8AB9 /* ChooseDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD942B65B882008F8AB9 /* ChooseDateView.swift */; };
+		20C040FC2BBD397200D715F8 /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C040FB2BBD397200D715F8 /* TokenManager.swift */; };
+		20C040FF2BBD96E300D715F8 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 20C040FE2BBD96E300D715F8 /* KeychainAccess */; };
 		20E63BD82BB6DDF600A71DBA /* EmailPostRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BD72BB6DDF600A71DBA /* EmailPostRequest.swift */; };
 		20E63BDB2BBAF90900A71DBA /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BDA2BBAF90900A71DBA /* LoginRequest.swift */; };
 		20E63BDD2BBAF9A400A71DBA /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */; };
@@ -265,6 +267,7 @@
 		20AFDD902B656034008F8AB9 /* OneDayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneDayButton.swift; sourceTree = "<group>"; };
 		20AFDD922B659779008F8AB9 /* RepeatIntervalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatIntervalViewController.swift; sourceTree = "<group>"; };
 		20AFDD942B65B882008F8AB9 /* ChooseDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseDateView.swift; sourceTree = "<group>"; };
+		20C040FB2BBD397200D715F8 /* TokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenManager.swift; sourceTree = "<group>"; };
 		20E63BD72BB6DDF600A71DBA /* EmailPostRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPostRequest.swift; sourceTree = "<group>"; };
 		20E63BDA2BBAF90900A71DBA /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
 		20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
@@ -423,6 +426,7 @@
 				208C90962B6ABBC500C67960 /* RxBlocking in Frameworks */,
 				7A0D33222B7DFE22007B2736 /* FSCalendar in Frameworks */,
 				7A0D33172B7DFE0B007B2736 /* RxKakaoSDK in Frameworks */,
+				20C040FF2BBD96E300D715F8 /* KeychainAccess in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -762,6 +766,7 @@
 				7A3069862B8C5A0900CD331D /* PopupJson */,
 				205E232D2B83524A00E55412 /* Money-PlannerRelease.entitlements */,
 				D29536EF2B4C091400EEA81F /* Money-Planner.entitlements */,
+				20C040FB2BBD397200D715F8 /* TokenManager.swift */,
 				7A610AB72B47FA8E00D3096F /* AppDelegate.swift */,
 				7A610AB92B47FA8E00D3096F /* SceneDelegate.swift */,
 				7A4C67322B5A47BD008BCAC9 /* CustomView */,
@@ -1144,6 +1149,7 @@
 				7A0D331E2B7DFE0B007B2736 /* RxKakaoSDKShare */,
 				7A0D33212B7DFE22007B2736 /* FSCalendar */,
 				7A30697D2B8C4FEA00CD331D /* Lottie */,
+				20C040FE2BBD96E300D715F8 /* KeychainAccess */,
 			);
 			productName = "Money-Planner";
 			productReference = 7A610AB42B47FA8E00D3096F /* Money-Planner.app */;
@@ -1179,6 +1185,7 @@
 				7A0D33152B7DFE0B007B2736 /* XCRemoteSwiftPackageReference "kakao-ios-sdk-rx" */,
 				7A0D33202B7DFE22007B2736 /* XCRemoteSwiftPackageReference "FSCalendar" */,
 				7A30697C2B8C4FE900CD331D /* XCRemoteSwiftPackageReference "lottie-ios" */,
+				20C040FD2BBD96E300D715F8 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 			);
 			productRefGroup = 7A610AB52B47FA8E00D3096F /* Products */;
 			projectDirPath = "";
@@ -1279,6 +1286,7 @@
 				7A8F3F192B85259400480902 /* GoalConnectionTestVC.swift in Sources */,
 				202754242B7FBF860084A757 /* ExpenseTapController.swift in Sources */,
 				20E63BDD2BBAF9A400A71DBA /* LoginResponse.swift in Sources */,
+				20C040FC2BBD397200D715F8 /* TokenManager.swift in Sources */,
 				D25D765D2B80D9330044A74D /* RoutineRepository.swift in Sources */,
 				208C90BE2B710F4800C67960 /* TextFieldContainerView.swift in Sources */,
 				D2D0B72B2B6A704B003B6B5E /* BaseResponse.swift in Sources */,
@@ -1552,7 +1560,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.umc.Money-Planner";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = MoneyPlanner;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MoneyPlanner Development";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1588,7 +1596,7 @@
 				PRODUCT_BUNDLE_IDENTIFIER = "com.umc.Money-Planner";
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				PROVISIONING_PROFILE_SPECIFIER = "";
-				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = MoneyPlanner;
+				"PROVISIONING_PROFILE_SPECIFIER[sdk=iphoneos*]" = "MoneyPlanner Development";
 				SWIFT_EMIT_LOC_STRINGS = YES;
 				SWIFT_VERSION = 5.0;
 				TARGETED_DEVICE_FAMILY = "1,2";
@@ -1625,6 +1633,14 @@
 			requirement = {
 				kind = upToNextMajorVersion;
 				minimumVersion = 6.6.0;
+			};
+		};
+		20C040FD2BBD96E300D715F8 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess";
+			requirement = {
+				branch = master;
+				kind = branch;
 			};
 		};
 		7A0D33152B7DFE0B007B2736 /* XCRemoteSwiftPackageReference "kakao-ios-sdk-rx" */ = {
@@ -1676,6 +1692,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 208C90942B6ABBC500C67960 /* XCRemoteSwiftPackageReference "RxSwift" */;
 			productName = RxRelay;
+		};
+		20C040FE2BBD96E300D715F8 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20C040FD2BBD96E300D715F8 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
 		};
 		7A0D33162B7DFE0B007B2736 /* RxKakaoSDK */ = {
 			isa = XCSwiftPackageProductDependency;

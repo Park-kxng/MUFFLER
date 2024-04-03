@@ -27,6 +27,11 @@ class LoginRepository {
             .map(RefreshTokenResponse.self)
             .asObservable()
     }
+    func login(request : LoginRequest)-> Observable<LoginResponse> {
+        return provider.request(.login(request: request))
+            .map(LoginResponse.self)
+            .asObservable()
+    }
 
 }
 

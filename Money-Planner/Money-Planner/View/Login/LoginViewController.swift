@@ -18,7 +18,7 @@ import Moya
 class LoginViewController: UIViewController {
 
     
-    
+    private let viewModel = LoginViewModel()
     private let logoImageView = UIImageView()
     private let sloganLabel = MPLabel()
     private let subLabel = MPLabel()
@@ -105,6 +105,10 @@ class LoginViewController: UIViewController {
     private func setupButtons() {
         setupKakaoButton(kakaoLoginButton)
         setupAppleButton(appleLoginButton)
+        
+        kakaoLoginButton.isUserInteractionEnabled = true
+        appleLoginButton.isUserInteractionEnabled = true
+
 
         // Apple 로그인 버튼 설정
         NSLayoutConstraint.activate([
@@ -127,7 +131,7 @@ class LoginViewController: UIViewController {
     private func setupKakaoButton(_ button: UIButton) {
         button.setImage(UIImage(named: "btn_login_kakao"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(loginToKakao), for: .touchUpInside)
+        //button.addTarget(self, action: #selector(loginToKakao), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(button)
     }
@@ -135,7 +139,7 @@ class LoginViewController: UIViewController {
     private func setupAppleButton(_ button: UIButton /*ASAuthorizationAppleIDButton*/) {
         button.setImage(UIImage(named: "btn_login_apple"), for: .normal)
         button.imageView?.contentMode = .scaleAspectFit
-        button.addTarget(self, action: #selector(loginToApple), for: .touchUpInside)
+        //button.addTarget(self, action: #selector(loginToApple), for: .touchUpInside)
         button.translatesAutoresizingMaskIntoConstraints = false
         view.addSubview(button)
     }
@@ -149,9 +153,9 @@ class LoginViewController: UIViewController {
             .disposed(by: disposeBag)
         
         // 애플 로그인 버튼 이벤트 바인딩=> 수정해야 됨.
-        //        secondButton.rx.tap
-        //            .bind { [weak self] in self?.loginToApple() }
-        //            .disposed(by: disposeBag)
+        appleLoginButton.rx.tap
+            .bind { [weak self] in self?.loginToApple() }
+            .disposed(by: disposeBag)
     }
     
     
@@ -165,19 +169,24 @@ class LoginViewController: UIViewController {
 //            UIApplication.shared.open(url, options: [:], completionHandler: nil)
 
         if UserApi.isKakaoTalkLoginAvailable() {
+            print("카카오톡 사용 가능 -----------------------")
             UserApi.shared.rx_loginWithKakaoTalk()
                 .subscribe(onNext: { [weak self] oauthToken in
-                    self?.handleLoginResult(oauthToken: oauthToken, error: nil)
-                }, onError: { [weak self] error in
-                    self?.handleLoginResult(oauthToken: nil, error: error)
+                    print("로그인 성공", oauthToken)
+                    self?.handleLoginResult(socialType: .kakao,oauthToken: oauthToken, error: nil)
+                }, onError: { error in
+                    print("로그인 실패", error)
+      
                 })
                 .disposed(by: disposeBag)
         } else {
             UserApi.shared.rx_loginWithKakaoAccount()
                 .subscribe(onNext: { [weak self] oauthToken in
-                    self?.handleLoginResult(oauthToken: oauthToken, error: nil)
-                }, onError: { [weak self] error in
-                    self?.handleLoginResult(oauthToken: nil, error: error)
+                    print("로그인 성공", oauthToken)
+                    self?.handleLoginResult(socialType: .kakao,oauthToken: oauthToken, error: nil)
+
+                }, onError: { error in
+                    print(error)
                 })
                 .disposed(by: disposeBag)
         }
@@ -197,18 +206,22 @@ class LoginViewController: UIViewController {
     }
     
     
-    private func handleLoginResult(oauthToken: OAuthToken?, error: Error?) {
+    private func handleLoginResult(socialType:LoginRequest.SocialType, oauthToken: OAuthToken?, error: Error?) {
         if let error = error {
             print("로그인 실패: \(error.localizedDescription)")
         } else if let oauthToken = oauthToken {
             print("로그인 성공")
             // 로그인 성공 후에 토큰을 저장합니다.
             print(oauthToken)
-            saveTokenToUserDefaults(token: oauthToken.accessToken)
+            if let idToken = oauthToken.idToken{
+                print("idToken",idToken)
+                viewModel.login(socialType: .kakao, idToken: idToken)
+            }
+            //saveTokenToUserDefaults(token: oauthToken.accessToken)
             // 홈화면으로 이동
             // 홈 화면으로 이동합니다.
-            let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-            sceneDelegate?.setupMainInterface()
+            //let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+            //sceneDelegate?.setupMainInterface()
         }
         
         
@@ -237,28 +250,32 @@ extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizatio
             let userIdentifier = appleIDCredential.user
             // 사용자 식별자를 UserDefaults에 저장
             UserDefaults.standard.set(userIdentifier, forKey: "userIdentifier")
-            
+            print("사용자 식별자", userIdentifier)
             let fullName = appleIDCredential.fullName
             let email = appleIDCredential.email
             print(appleIDCredential)
-            
+            // 애플 로그인 확인
             if  let authorizationCode = appleIDCredential.authorizationCode,
                 let identityToken = appleIDCredential.identityToken,
                 let authCodeString = String(data: authorizationCode, encoding: .utf8),
                 let identifyTokenString = String(data: identityToken, encoding: .utf8) {
-                print("authorizationCode: \(String(data: authorizationCode, encoding: .utf8))")
+                print("인가 코드 확인: \(String(data: authorizationCode, encoding: .utf8))")
                 print("identityToken: \(identityToken)")
                 print("authCodeString: \(authCodeString)")
                 print("identifyTokenString: \(identifyTokenString)")
+                if let authorizationCodeToString = String(data: authorizationCode, encoding: .utf8) {
+                    viewModel.login(socialType: .apple, idToken: authorizationCodeToString)
+                }
             }
             
             print("useridentifier: \(userIdentifier)")
             print("fullName: \(String(describing: fullName))")
             print("email: \(String(describing: email))")
+            // 로그인 api 연결
             
             // 홈 화면으로 이동합니다.
-            let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-            sceneDelegate?.setupMainInterface()
+            //let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
+            //sceneDelegate?.setupMainInterface()
             
         case let passwordCredential as ASPasswordCredential:
             // Sign in using an existing iCloud Keychain credential.

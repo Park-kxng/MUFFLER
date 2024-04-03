@@ -1,0 +1,23 @@
+name: Alamofire, nameSpecified: Alamofire, owner: Alamofire, version: 5.8.1, source: https://github.com/Alamofire/Alamofire
+
+name: FSCalendar, nameSpecified: FSCalendar, owner: WenchaoD, version: 2.8.4, source: https://github.com/WenchaoD/FSCalendar
+
+name: kakao-ios-sdk, nameSpecified: KakaoOpenSDK, owner: kakao, version: 2.20.0, source: https://github.com/kakao/kakao-ios-sdk
+
+name: kakao-ios-sdk-rx, nameSpecified: RxKakaoOpenSDK, owner: kakao, version: 2.20.0, source: https://github.com/kakao/kakao-ios-sdk-rx
+
+name: lottie-ios, nameSpecified: Lottie, owner: airbnb, version: 4.4.1, source: https://github.com/airbnb/lottie-ios
+
+name: Moya, nameSpecified: Moya, owner: Moya, version: 15.0.3, source: https://github.com/Moya/Moya
+
+name: OHHTTPStubs, nameSpecified: OHHTTPStubs, owner: AliSoftware, version: 9.1.0, source: https://github.com/AliSoftware/OHHTTPStubs
+
+name: ReactiveSwift, nameSpecified: ReactiveSwift, owner: ReactiveCocoa, version: 6.7.0, source: https://github.com/ReactiveCocoa/ReactiveSwift
+
+name: RxAlamofire, nameSpecified: RxAlamofire, owner: RxSwiftCommunity, version: 6.1.2, source: https://github.com/RxSwiftCommunity/RxAlamofire
+
+name: RxSwift, nameSpecified: RxSwift, owner: ReactiveX, version: 6.6.0, source: https://github.com/ReactiveX/RxSwift
+
+add-version-numbers: true
+
+LicensePlist Version: 3.25.1

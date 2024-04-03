@@ -56,21 +56,21 @@ class HomeMoreModalViewController: UIViewController, UITableViewDataSource, UITa
     private var iconViewList : [UIImageView] = []
     
     let categoryIconView : UIImageView = {
-           let v = UIImageView()
-           v.image = UIImage(named: "home_folder")
-           v.tintColor = .mpDarkGray
-           v.translatesAutoresizingMaskIntoConstraints = false
-           v.isUserInteractionEnabled = true
-           return v
+        let v = UIImageView()
+        v.image = UIImage(named: "home_folder")
+        v.tintColor = .mpDarkGray
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.isUserInteractionEnabled = true
+        return v
     }()
     
     let manageIconView : UIImageView = {
-           let v = UIImageView()
-           v.image = UIImage(named: "home_repeat")
-           v.tintColor = .mpDarkGray
-           v.translatesAutoresizingMaskIntoConstraints = false
-           v.isUserInteractionEnabled = true
-           return v
+        let v = UIImageView()
+        v.image = UIImage(named: "home_repeat")
+        v.tintColor = .mpDarkGray
+        v.translatesAutoresizingMaskIntoConstraints = false
+        v.isUserInteractionEnabled = true
+        return v
     }()
     
     override func viewDidLoad() {
@@ -92,7 +92,7 @@ class HomeMoreModalViewController: UIViewController, UITableViewDataSource, UITa
             customModal.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             customModal.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -36),
             customModal.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -64),
-            customModal.heightAnchor.constraint(equalToConstant: 256),
+            customModal.heightAnchor.constraint(equalToConstant: 228),
             
             modalBar.widthAnchor.constraint(equalToConstant: 49),
             modalBar.heightAnchor.constraint(equalToConstant: 4),
@@ -105,7 +105,7 @@ class HomeMoreModalViewController: UIViewController, UITableViewDataSource, UITa
             titleLabel.heightAnchor.constraint(equalToConstant: 28),
             
             
-            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
+            tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 25),
             tableView.leadingAnchor.constraint(equalTo: customModal.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: customModal.trailingAnchor, constant: -24),
             tableView.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -36)
@@ -131,14 +131,21 @@ class HomeMoreModalViewController: UIViewController, UITableViewDataSource, UITa
         return 60.0 // Change the cell height as needed
     }
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-
+        
         let cell = tableView.dequeueReusableCell(withIdentifier: "IconCell", for: indexPath) as! IconTableViewCell
-          
-          // 아이콘 및 텍스트 설정
+        
+        // 아이콘 및 텍스트 설정
         cell.iconImageView.image = iconViewList[indexPath.row].image
         cell.titleLabel.text = pages[indexPath.row]
         cell.selectionStyle = .none
-          
+        
+        // 마지막 행인 경우 밑줄을 제거
+        if indexPath.row == pages.count - 1 {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: cell.bounds.size.width, bottom: 0, right: 0)
+        } else {
+            cell.separatorInset = UIEdgeInsets(top: 0, left: 24, bottom: 0, right: 0) // 다른 행들의 밑줄 설정
+        }
+        
         return cell
     }
     
@@ -167,7 +174,7 @@ class IconTableViewCell: UITableViewCell {
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = .mpFont18M()
         label.textColor = .mpBlack
-
+        
         return label
     }()
     

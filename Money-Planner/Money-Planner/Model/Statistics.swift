@@ -8,6 +8,6 @@
 import Foundation
 
 struct Statistics {
-    let totalCost : Int64
-    let goalBudget : Int64
+    var totalCost : Int64
+    var goalBudget : Int64
 }

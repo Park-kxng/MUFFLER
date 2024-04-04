@@ -59,6 +59,7 @@
 		20AFDD952B65B882008F8AB9 /* ChooseDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD942B65B882008F8AB9 /* ChooseDateView.swift */; };
 		20C040FC2BBD397200D715F8 /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C040FB2BBD397200D715F8 /* TokenManager.swift */; };
 		20C040FF2BBD96E300D715F8 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 20C040FE2BBD96E300D715F8 /* KeychainAccess */; };
+		20C041032BBEA18700D715F8 /* OnBoardingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */; };
 		20E63BD82BB6DDF600A71DBA /* EmailPostRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BD72BB6DDF600A71DBA /* EmailPostRequest.swift */; };
 		20E63BDB2BBAF90900A71DBA /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BDA2BBAF90900A71DBA /* LoginRequest.swift */; };
 		20E63BDD2BBAF9A400A71DBA /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */; };
@@ -268,6 +269,7 @@
 		20AFDD922B659779008F8AB9 /* RepeatIntervalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatIntervalViewController.swift; sourceTree = "<group>"; };
 		20AFDD942B65B882008F8AB9 /* ChooseDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseDateView.swift; sourceTree = "<group>"; };
 		20C040FB2BBD397200D715F8 /* TokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenManager.swift; sourceTree = "<group>"; };
+		20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingProfileViewController.swift; sourceTree = "<group>"; };
 		20E63BD72BB6DDF600A71DBA /* EmailPostRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = EmailPostRequest.swift; sourceTree = "<group>"; };
 		20E63BDA2BBAF90900A71DBA /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
 		20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
@@ -798,6 +800,7 @@
 				7A610AD72B49008600D3096F /* Home */,
 				7A610AD42B49005400D3096F /* Battle */,
 				7A610AD32B49004500D3096F /* MyPage */,
+				20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -1257,6 +1260,7 @@
 				552A423E2B671B86007AEAAD /* EditGoalViewController.swift in Sources */,
 				208C90B02B6E887A00C67960 /* ReasonModalViewController.swift in Sources */,
 				208C90BA2B6FE45B00C67960 /* UnregisterTitleLabel.swift in Sources */,
+				20C041032BBEA18700D715F8 /* OnBoardingProfileViewController.swift in Sources */,
 				208C90C02B72636C00C67960 /* UIHelper.swift in Sources */,
 				208C90A82B6D48B300C67960 /* User.swift in Sources */,
 				20AFDD952B65B882008F8AB9 /* ChooseDateView.swift in Sources */,

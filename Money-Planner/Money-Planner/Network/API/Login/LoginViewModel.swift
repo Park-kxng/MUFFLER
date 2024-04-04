@@ -100,7 +100,7 @@ class LoginViewModel {
                             // 온보딩 화면으로 이동 (임시로 홈화면으로 이동)
                             // 홈 화면으로 이동합니다.
                             if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                                sceneDelegate.moveToHome()
+                                sceneDelegate.moveToOnBoarding()
                             }                        }else{
                             print("원래 있던 회원 : 홈 화면으로 이동")
                             // 홈 화면으로 이동

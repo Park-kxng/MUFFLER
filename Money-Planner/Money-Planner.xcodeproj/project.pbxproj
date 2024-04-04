@@ -620,6 +620,19 @@
 			path = Login;
 			sourceTree = "<group>";
 		};
+		20C041042BBEEBF800D715F8 /* Category */ = {
+			isa = PBXGroup;
+			children = (
+				D20D70132B612BB4006D6762 /* CategoryTableView.swift */,
+				206C58D72B626465008410C1 /* CategoryModalViewController.swift */,
+				206C58D32B623C43008410C1 /* CategoryCell.swift */,
+				20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */,
+				208C90D42B7F7B6100C67960 /* CategoryIconSelectionViewController.swift */,
+				208C90D62B7F7FBB00C67960 /* CategoryIconCell.swift */,
+			);
+			path = Category;
+			sourceTree = "<group>";
+		};
 		20E63BD62BB6DDE100A71DBA /* Mail */ = {
 			isa = PBXGroup;
 			children = (
@@ -664,7 +677,6 @@
 			isa = PBXGroup;
 			children = (
 				206C58D02B617396008410C1 /* Modal */,
-				D20D70122B612BA5006D6762 /* Category */,
 				D20D6FF62B5E9734006D6762 /* Statistics */,
 				D20D6FDF2B5AEC76006D6762 /* TabBar */,
 				7A610AE62B491F1600D3096F /* HeaderView.swift */,
@@ -793,6 +805,7 @@
 		7A610ACC2B480B0E00D3096F /* View */ = {
 			isa = PBXGroup;
 			children = (
+				20C041042BBEEBF800D715F8 /* Category */,
 				20118A0E2B56A83400B2569E /* Consume */,
 				7A610AEC2B493F3B00D3096F /* Usage */,
 				7A610AE82B493E8000D3096F /* Goal */,
@@ -992,19 +1005,6 @@
 				D253EEAE2B7A0CA500A4FC1C /* MainNoGoal.swift */,
 			);
 			path = Statistics;
-			sourceTree = "<group>";
-		};
-		D20D70122B612BA5006D6762 /* Category */ = {
-			isa = PBXGroup;
-			children = (
-				D20D70132B612BB4006D6762 /* CategoryTableView.swift */,
-				206C58D72B626465008410C1 /* CategoryModalViewController.swift */,
-				206C58D32B623C43008410C1 /* CategoryCell.swift */,
-				20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */,
-				208C90D42B7F7B6100C67960 /* CategoryIconSelectionViewController.swift */,
-				208C90D62B7F7FBB00C67960 /* CategoryIconCell.swift */,
-			);
-			path = Category;
 			sourceTree = "<group>";
 		};
 		D20D701F2B66FE8F006D6762 /* Home */ = {

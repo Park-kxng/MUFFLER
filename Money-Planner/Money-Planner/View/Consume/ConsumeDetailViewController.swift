@@ -327,7 +327,7 @@ class ConsumeDetailViewController: UIViewController, UITextFieldDelegate, Catego
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "mpWhite")
         view.backgroundColor = .systemBackground
-        
+        hideKeyboardWhenTappedAround()
         
         // 완료 버튼 추가
         setupCompleteButton()
@@ -974,5 +974,18 @@ class ConsumeDetailViewController: UIViewController, UITextFieldDelegate, Catego
             }).disposed(by: disposeBag)
         
         dismiss(animated: true)
+    }
+    
+}
+// 키보드 숨기기
+extension ConsumeDetailViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(ConsumeDetailViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

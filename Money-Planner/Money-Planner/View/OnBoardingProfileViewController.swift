@@ -8,10 +8,21 @@
 import Foundation
 import UIKit
 
-class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, CategoryIconSelectionDelegate {
+    func didSelectCategoryIcon(_ icon: Int) {
+        print("아이콘 설정 완료")
+        
+        if icon != 9 {
+            selectedIcon = "add-0\(icon+1)"
+        }else{
+            selectedIcon = "add-\(icon+1)"
+        }
+        picButton.setImage(UIImage(named: selectedIcon), for: .normal)
+    }
+    
     private var UserName: String = ""
     var profileImage: UIImage?
-
+    var selectedIcon : String = "add-05"
     weak var delegate: ProfileViewDelegate?
     private lazy var headerView = HeaderView(title: "")
     var currText : String = ""
@@ -144,7 +155,7 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
         setupTextField()
 
         nameTextField.delegate = self // Make sure to set the delegate
-        picButton.addTarget( self, action: #selector(editProfileImage), for: .touchUpInside) //이름 수정 가능하게
+        hideKeyboardWhenTappedAround()
 
     }
     
@@ -185,7 +196,7 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
            ])
         let plus: UIView = {
                  let view = UIView()
-                 view.backgroundColor = .mpWhite
+                 view.backgroundColor = .clear
                  view.layer.cornerRadius = 10
                  view.layer.masksToBounds = true
                  return view
@@ -218,9 +229,9 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
              plusImageView.trailingAnchor.constraint(equalTo: plus.trailingAnchor),
              plusImageView.bottomAnchor.constraint(equalTo: plus.bottomAnchor),
          ])
-
-        
+        picButton.addTarget( self, action: #selector(selectIcon), for: .touchUpInside)
     }
+    
     private func setupNameLabel(){
 
         view.addSubview(nameLabel)
@@ -236,7 +247,7 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
     private func setupTextField() {
         view.addSubview(nameContainer)
         NSLayoutConstraint.activate([
-            nameContainer.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 3),
+            nameContainer.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 5),
             nameContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             nameContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             nameContainer.heightAnchor.constraint(equalToConstant: 64) // Set a fixed height
@@ -336,11 +347,26 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
     @objc
     private func completeButtonTapped(){
         print("프로필 설정이 완료되었습니다..")
-        if let changedName = nameTextField.text{
-            delegate?.profileNameChanged (changedName, profileImage)
-            print(changedName)
-        }
-       
-        dismiss(animated: true, completion: nil)
+        // 온보딩 화면으로 이동하기 - 윤진
+        
+    }
+    @objc
+    private func selectIcon(){
+        // 프로필 설정 모달
+        let iconSelectionVC = CategoryIconSelectionViewController()
+        iconSelectionVC.delegate = self
+        present(iconSelectionVC, animated: true)
+    }
+}
+// 키보드 숨기기
+extension OnBoardingProfileViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(OnBoardingProfileViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

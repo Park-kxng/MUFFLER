@@ -26,6 +26,7 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
     weak var delegate: ProfileViewDelegate?
     private lazy var headerView = HeaderView(title: "")
     var currText : String = ""
+    let viewModel = LoginViewModel()
     
     private let titleLabel : UnregisterTitleLabel = {
         let label = UnregisterTitleLabel()
@@ -141,20 +142,25 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
         setupUI()
     }
     private func setupUI() {
-        // 배경색상 추가
         super.viewDidLoad()
+        
+        // 배경색상 추가
         view.backgroundColor = UIColor(named: "mpWhite")
         view.backgroundColor = .systemBackground
-        
 
+        // 제목
         setupTitleLabel()
         // 완료 버튼 추가
         setupCompleteButton()
+        completeButton.isEnabled = false
+        
+        // 프로필, 텍스트필드
         setupPic()
         setupNameLabel()
         setupTextField()
 
         nameTextField.delegate = self // Make sure to set the delegate
+        // 키보드 숨김
         hideKeyboardWhenTappedAround()
 
     }
@@ -311,10 +317,12 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let text = textField.text else { return false }
-        currText = text
         let newText = (text as NSString).replacingCharacters(in: range, with: string)
-        // 이미 동일한 카테고리가 있는 경우 return False
         let textSize = newText.count
+        currText = newText
+        print(currText)
+        // 완료 버튼 활성화 확인
+        checkAndEnableCompleteButton()
         
         if textSize > 16 {
             
@@ -333,21 +341,23 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
         }
     }
     
-    // 이미지 선택이 완료되면 호출되는 메소드
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            // 선택한 이미지를 버튼에 적용
-            picButton.setImage(selectedImage, for: .normal)
-            profileImage = selectedImage
-        }
-
-        dismiss(animated: true, completion: nil)
-    }
     
     @objc
     private func completeButtonTapped(){
-        print("프로필 설정이 완료되었습니다..")
-        // 온보딩 화면으로 이동하기 - 윤진
+        print("완료 버튼 클릭 > 프로필 설정 시도")
+        
+        viewModel.join(name: currText, img: selectedIcon) { success in
+            if success{
+                print("결과 : 프로필 설정 완료")
+                // 온보딩 화면으로 이동하기 - 윤진
+                // 홈 화면으로 이동(임시)
+                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                    sceneDelegate.moveToHome()
+                }
+            }else{
+                print("결과 : 프로필 설정 실패")
+            }
+        }
         
     }
     @objc
@@ -356,6 +366,16 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
         let iconSelectionVC = CategoryIconSelectionViewController()
         iconSelectionVC.delegate = self
         present(iconSelectionVC, animated: true)
+    }
+    
+    // 완료 버튼 활성화 확인
+    private func checkAndEnableCompleteButton() {
+        if currText != ""  && currText.count < 16{
+            completeButton.isEnabled = true
+        }else{
+            completeButton.isEnabled = false
+        }
+
     }
 }
 // 키보드 숨기기

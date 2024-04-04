@@ -32,6 +32,11 @@ class LoginRepository {
             .map(LoginResponse.self)
             .asObservable()
     }
+    func join(request : JoinRequest)-> Observable<JoinResponse> {
+        return provider.request(.join(request: request))
+            .map(JoinResponse.self)
+            .asObservable()
+    }
 
 }
 

@@ -485,7 +485,7 @@ extension HomeViewController{
             statisticsView.progress = 0.0
         }
         
-        if(self.categoryScrollView.selectedCategoryIndex == -1){
+        if(self.categoryScrollView.selectedCategoryIndex == -1 && allStatisticsData != nil){
             statisticsView.statistics = allStatisticsData
             calendarView.goal = self.nowGoal
             if self.allStatisticsData != nil {

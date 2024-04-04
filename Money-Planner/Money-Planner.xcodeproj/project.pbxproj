@@ -483,13 +483,6 @@
 			path = "Test-park";
 			sourceTree = "<group>";
 		};
-		208C90A22B6C00F600C67960 /* Model */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = Model;
-			sourceTree = "<group>";
-		};
 		208C90BC2B6FE4CF00C67960 /* Member */ = {
 			isa = PBXGroup;
 			children = (
@@ -1028,7 +1021,6 @@
 				D253EEBB2B7B651500A4FC1C /* Expense */,
 				208C90C52B7BA6EB00C67960 /* ConsumeAPI */,
 				D217EBED2B7460A700EB6BF3 /* Category */,
-				208C90A22B6C00F600C67960 /* Model */,
 				208C908D2B6AB76600C67960 /* Test-park */,
 				D2D0B7342B6BA82C003B6B5E /* Home */,
 				D20D70382B68C57F006D6762 /* Test */,

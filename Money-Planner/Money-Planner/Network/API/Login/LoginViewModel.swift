@@ -75,7 +75,44 @@ class LoginViewModel {
     }
 
     
-    
+    func join(name : String, img : String, completion: @escaping (Bool) -> Void){
+        print(name, img)
+        let request = JoinRequest(name: name, profileImg: img)
+        
+        loginRepository.join(request: request)
+            .subscribe(onNext: { response in
+                print(response)
+               
+                if response.isSuccess == false {
+                    completion(false)
+                    DispatchQueue.main.async {
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let topViewController = windowScene.windows.first?.rootViewController {
+                            let alertController = UIAlertController(title: "프로필 설정 실패", message: "프로필 설정을 실패하였습니다. 다시 시도해주세요.", preferredStyle: .alert)
+                            alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                            topViewController.present(alertController, animated: true, completion: nil)
+                        }
+                    }
+                }else{
+                    completion(true)
+                }
+            }, onError: { error in
+                // 오류가 발생한 경우에 대한 처리를 수행합니다.
+                completion(false)
+                print(error)
+                print("Error refreshing access token: \(error.localizedDescription)")
+                // Display an alert
+                           DispatchQueue.main.async {
+                               if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                  let topViewController = windowScene.windows.first?.rootViewController {
+                                   let alertController = UIAlertController(title: "프로필 설정 실패", message: "프로필 설정을 실패하였습니다. 다시 시도해주세요.", preferredStyle: .alert)
+                                   alertController.addAction(UIAlertAction(title: "OK", style: .default, handler: nil))
+                                   topViewController.present(alertController, animated: true, completion: nil)
+                               }
+                           }
+            })
+            .disposed(by: disposeBag)
+    }
 
     // 토큰이 없는 경우 > 로그인 화면
     func login(socialType:LoginRequest.SocialType, idToken:String){
@@ -100,7 +137,7 @@ class LoginViewModel {
                             // 온보딩 화면으로 이동 (임시로 홈화면으로 이동)
                             // 홈 화면으로 이동합니다.
                             if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                                sceneDelegate.moveToHome()
+                                sceneDelegate.moveToOnBoarding()
                             }                        }else{
                             print("원래 있던 회원 : 홈 화면으로 이동")
                             // 홈 화면으로 이동

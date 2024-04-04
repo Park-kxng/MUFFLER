@@ -82,10 +82,9 @@ extension ExpenseAPI : BaseAPI {
     }
     
     public var headers: [String: String]? {
-        let defaults = UserDefaults.standard
-        if let token = defaults.string(forKey: "accessToken") {
+        if let accessToken = TokenManager.shared.accessToken {
             print("토큰 불러오기 성공")
-            return ["Authorization": "Bearer \(token)"]
+            return ["Authorization": "Bearer \(accessToken)"]
         } else {
             return nil
         }

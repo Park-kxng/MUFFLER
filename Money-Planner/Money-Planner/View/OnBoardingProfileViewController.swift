@@ -1,20 +1,17 @@
 //
-//  ProfileViewController.swift
+//  OnBoardingProfileViewController.swift
 //  Money-Planner
 //
-//  Created by p_kxn_g on 2/2/24.
+//  Created by p_kxn_g on 4/4/24.
 //
 
 import Foundation
 import UIKit
 
-protocol ProfileViewDelegate : AnyObject{
-    func profileNameChanged(_ userName : String, _ profileImage : String)
-    
-}
-class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, CategoryIconSelectionDelegate {
+class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, CategoryIconSelectionDelegate {
     func didSelectCategoryIcon(_ icon: Int) {
         print("아이콘 설정 완료")
+        
         if icon != 9 {
             selectedIcon = "add-0\(icon+1)"
         }else{
@@ -22,31 +19,39 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         }
         picButton.setImage(UIImage(named: selectedIcon), for: .normal)
     }
+    
+    private var UserName: String = ""
+    var profileImage: UIImage?
+    var selectedIcon : String = "add-05"
+    weak var delegate: ProfileViewDelegate?
+    private lazy var headerView = HeaderView(title: "")
+    var currText : String = ""
     let viewModel = LoginViewModel()
     
-    private var UserName: String?
-    var profileImage: UIImage?
-    var selectedIcon : String = ""
-    var initName : String = ""
-    var initImg : String = ""
-    weak var delegate: ProfileViewDelegate?
-    private lazy var headerView = HeaderView(title: "프로필 설정")
-    var currText : String = ""
+    private let titleLabel : UnregisterTitleLabel = {
+        let label = UnregisterTitleLabel()
+        label.font = .mpFont26B()
+        label.text = "프로필을 입력해주세요"
+        label.numberOfLines = 1
+        label.textColor = .mpBlack
+        return label
+    }()
+    
     let picContainer : UIView = {
         let view = UIView()
         //view.backgroundColor = .red
         return view
     }()
-    lazy var picButton : UIButton = {
+    let picButton : UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: selectedIcon), for: .normal)
+        button.setImage(UIImage(named: "add-05"), for: .normal)
         button.layer.cornerRadius = 45
         button.layer.masksToBounds = true
         button.backgroundColor = .mpGypsumGray
         return button
     }()
 
-    @objc 
+    @objc
     func editProfileImage() {
         let imagePickerController = UIImagePickerController()
         imagePickerController.delegate = self
@@ -67,19 +72,21 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         //view.backgroundColor = .red
         return view
     }()
-    
     // 이름 수정 버튼
     lazy var nameEditButton: UIButton = {
         let button = UIButton()
-        let arrowImage = UIImage(named: "btn_Edit_fill")?.withTintColor(.mpMidGray, renderingMode: .alwaysOriginal)
-        button.setImage(arrowImage, for: .normal)
+        let currTextSize = nameTextField.text?.count
+        if let textSize = currTextSize {
+            button.setTitle("\(textSize)/16", for: .normal)
+        }
+        button.titleLabel?.font = .mpFont14B()
+        button.setTitleColor(.mpDarkGray, for: .normal)
+       
         button.translatesAutoresizingMaskIntoConstraints = false
-        
-        button.isUserInteractionEnabled = true  // 클릭 활성화
-        button.addTarget(self, action: #selector(editName), for: .touchUpInside) //이름 수정 액션 추가
+        button.isUserInteractionEnabled = false  // 클릭 비활성화
         return button
+        
     }()
-
     @objc
     func editName(){
         print("이름을 수정할 수 있습니다")
@@ -93,6 +100,7 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         }
         nameEditButton.titleLabel?.font = .mpFont14B()
         nameEditButton.setTitleColor(.mpDarkGray, for: .normal)
+        
     }
     private var completeButton = MainBottomBtn(title: "완료")
     private let nameTextField : UITextField = {
@@ -108,10 +116,12 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         let leftView = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: text.frame.height)) // 조절하고자 하는 여백 크기
         text.leftView = leftView
         text.leftViewMode = .always
+        text.isUserInteractionEnabled = true
+        text.isEnabled = true
         
         return text
     }()
- 
+    
     private let nameLabel : MPLabel = {
         let label = MPLabel()
         label.font = .mpFont14B()
@@ -119,18 +129,10 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         label.textColor = .mpGray
         return label
     }()
-   
+
     
-    init(name: String, imgName : String) {
-        super.init(nibName: nil, bundle: nil)
-        self.UserName = name
-        self.selectedIcon = imgName
-        // 비교하기 위하여 초기 사진 및 이름 저장
-        self.initImg = imgName
-        self.initName = name
-        // 텍스트 필드에 세팅
-        nameTextField.text = UserName
-        
+    init() {
+            super.init(nibName: nil, bundle: nil)
     }
     
     required init?(coder: NSCoder) {
@@ -140,41 +142,42 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         setupUI()
     }
     private func setupUI() {
-        // 배경색상 추가
         super.viewDidLoad()
+        
+        // 배경색상 추가
         view.backgroundColor = UIColor(named: "mpWhite")
         view.backgroundColor = .systemBackground
-        
-        // 헤더
-        setupHeader()
-        
+
+        // 제목
+        setupTitleLabel()
         // 완료 버튼 추가
         setupCompleteButton()
-        // 프로필, 이름 설정
+        completeButton.isEnabled = false
+        
+        // 프로필, 텍스트필드
         setupPic()
         setupNameLabel()
         setupTextField()
 
-        
         nameTextField.delegate = self // Make sure to set the delegate
-        picButton.addTarget( self, action: #selector(selectIcon), for: .touchUpInside) //이름 수정 가능하게
+        // 키보드 숨김
         hideKeyboardWhenTappedAround()
+
     }
     
-    // 세팅 : 헤더
-    private func setupHeader(){
-        view.addSubview(headerView)
-        headerView.translatesAutoresizingMaskIntoConstraints = false
+ 
+    
+    private func setupTitleLabel(){
+        view.addSubview(titleLabel)
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            headerView.heightAnchor.constraint(equalToConstant: 60)
+            titleLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
+            titleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            titleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
         ])
-        
-        headerView.addBackButtonTarget(target: self, action: #selector(previousScreen), for: .touchUpInside)
     }
+    
     @objc private func previousScreen(){
         dismiss(animated: true)
     }
@@ -183,7 +186,7 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         view.addSubview(picContainer)
         picContainer.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            picContainer.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 48),
+            picContainer.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 48),
             picContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             picContainer.heightAnchor.constraint(equalToConstant: 90),
             picContainer.widthAnchor.constraint(equalToConstant: 90)
@@ -208,7 +211,7 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
             let imageView = UIImageView()
             imageView.image = UIImage(systemName: "plus.circle.fill")?
                 .withTintColor(.mpGray, renderingMode: .alwaysOriginal)
-            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 22, weight: .medium))
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .medium))
             imageView.contentMode = .scaleAspectFit
                        return imageView
                    }()
@@ -232,16 +235,11 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
              plusImageView.trailingAnchor.constraint(equalTo: plus.trailingAnchor),
              plusImageView.bottomAnchor.constraint(equalTo: plus.bottomAnchor),
          ])
-
-        
+        picButton.addTarget( self, action: #selector(selectIcon), for: .touchUpInside)
     }
+    
     private func setupNameLabel(){
-        //4
-        //38
-        // 높이 23
-        // 컨테이터
-        
-        
+
         view.addSubview(nameLabel)
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
@@ -252,51 +250,31 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         
 
     }
-    private func setupTextField(){
+    private func setupTextField() {
         view.addSubview(nameContainer)
         NSLayoutConstraint.activate([
-            
-            nameContainer.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 3),
-            nameContainer.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            nameContainer.topAnchor.constraint(equalTo: nameLabel.bottomAnchor, constant: 5),
             nameContainer.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             nameContainer.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            nameContainer.heightAnchor.constraint(equalToConstant: 64)
+            nameContainer.heightAnchor.constraint(equalToConstant: 64) // Set a fixed height
         ])
-        // 텍스트 필드
-                nameContainer.addSubview(nameTextField)
-                
-                // 텍스트 필드
-                NSLayoutConstraint.activate([
-                    nameTextField.topAnchor.constraint(equalTo: nameContainer.topAnchor),
-                    nameTextField.bottomAnchor.constraint(equalTo: nameContainer.bottomAnchor),
-                    nameTextField.leadingAnchor.constraint(equalTo: nameContainer.leadingAnchor),
-                    nameTextField.trailingAnchor.constraint(equalTo: nameContainer.trailingAnchor),
-                ])
-                nameTextField.translatesAutoresizingMaskIntoConstraints = false
-                nameTextField.isEnabled = false // 수정가능
-
+        
+        
         
         // 버튼 컨테이너
         let buttonContainerView = UIView()
         buttonContainerView.translatesAutoresizingMaskIntoConstraints = false
-        buttonContainerView.backgroundColor = .clear
         nameContainer.addSubview(buttonContainerView)
+        
         
         NSLayoutConstraint.activate([
             buttonContainerView.widthAnchor.constraint(equalToConstant: 40),
-                buttonContainerView.heightAnchor.constraint(equalToConstant: 40),
-                buttonContainerView.centerYAnchor.constraint(equalTo: nameContainer.centerYAnchor),
-                buttonContainerView.trailingAnchor.constraint(equalTo: nameContainer.trailingAnchor, constant: -16)
-              
-    
-        
+            buttonContainerView.heightAnchor.constraint(equalToConstant: 40),
+            buttonContainerView.centerYAnchor.constraint(equalTo: nameContainer.centerYAnchor),
+            buttonContainerView.trailingAnchor.constraint(equalTo: nameContainer.trailingAnchor, constant: -16)
         ])
+        
         buttonContainerView.addSubview(nameEditButton)
-        // 클릭 되게 하려고.... 시도 중
-        buttonContainerView.isUserInteractionEnabled = true
-//        self.view.bringSubviewToFront(nameEditButton)
-//        nameEditButton.isUserInteractionEnabled = true
-//        buttonContainerView.layer.zPosition = 999
         
         NSLayoutConstraint.activate([
             nameEditButton.leadingAnchor.constraint(equalTo: buttonContainerView.leadingAnchor),
@@ -304,9 +282,21 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
             nameEditButton.topAnchor.constraint(equalTo: buttonContainerView.topAnchor),
             nameEditButton.bottomAnchor.constraint(equalTo: buttonContainerView.bottomAnchor)
         ])
+        
+        // Add the text field to the nameContainer
+        nameContainer.addSubview(nameTextField)
+        nameTextField.isEnabled = true
+        NSLayoutConstraint.activate([
+            nameTextField.topAnchor.constraint(equalTo: nameContainer.topAnchor),
+            nameTextField.bottomAnchor.constraint(equalTo: nameContainer.bottomAnchor),
+            nameTextField.leadingAnchor.constraint(equalTo: nameContainer.leadingAnchor),
+            nameTextField.trailingAnchor.constraint(equalTo: buttonContainerView.leadingAnchor)
+        ])
+        nameTextField.translatesAutoresizingMaskIntoConstraints = false
+   }
+    
 
-    }
- 
+
     // 세팅 : 완료 버튼
     private func setupCompleteButton(){
         completeButton.isEnabled = true // 버튼 활성화
@@ -327,26 +317,53 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let text = textField.text else { return false }
-        
         let newText = (text as NSString).replacingCharacters(in: range, with: string)
-        currText = newText
-        checkAndEnableCompleteButton()
         let textSize = newText.count
+        currText = newText
+        print(currText)
+        // 완료 버튼 활성화 확인
+        checkAndEnableCompleteButton()
+        
         if textSize > 16 {
             
             // Your existing code to handle the error (e.g., update UI elements)
-            textField.layer.borderColor = UIColor.mpRed.cgColor
-            textField.layer.borderWidth = 1.0  // Set an appropriate border width
+            nameContainer.layer.borderColor = UIColor.mpRed.cgColor
+            nameContainer.layer.borderWidth = 1.0  // Set an appropriate border width
             nameEditButton.setTitleColor(.mpRed, for: .normal)
 
             return false
         } else {
             nameEditButton.setTitle("\(textSize)/16", for: .normal)
-            textField.layer.borderColor = UIColor.clear.cgColor
-            textField.layer.borderWidth = 0.0
+            nameContainer.layer.borderColor = UIColor.clear.cgColor
+            nameContainer.layer.borderWidth = 0.0
             nameEditButton.setTitleColor(.mpDarkGray, for: .normal)
             return true
         }
+    }
+    
+    
+    @objc
+    private func completeButtonTapped(){
+        print("완료 버튼 클릭 > 프로필 설정 시도")
+        
+        viewModel.join(name: currText, img: selectedIcon) { success in
+            if success{
+                print("결과 : 프로필 설정 완료")
+                
+                UserDefaults.standard.set(self.currText, forKey: "name")
+                UserDefaults.standard.set(self.selectedIcon, forKey: "profileImg")
+                
+
+                // 온보딩 화면으로 이동하기 - 윤진
+                // 홈 화면으로 이동(임시)
+                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                    sceneDelegate.moveToHome()
+                }
+            }else{
+                print("결과 : 프로필 설정 실패")
+            }
+        }
+        
     }
     @objc
     private func selectIcon(){
@@ -365,43 +382,11 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         }
 
     }
-    
-    @objc
-    private func completeButtonTapped(){
-        print("프로필 설정이 완료되었습니다..")
-        if currText != "" || selectedIcon != initImg{
-            viewModel.join(name: currText, img: selectedIcon) { success in
-                if success{
-                    print("결과 : 프로필 설정 완료")
-                    // 프로필 저장
-                    if self.currText != ""{
-                        // 텍스트 필드를 수정했다는 의미
-                        self.currText = self.nameTextField.text ?? ""
-                    }
-                    else{
-                        // 텍스트 필드는 수정 안했음
-                        self.currText = self.initName
-                    }
-                    UserDefaults.standard.set(self.currText, forKey: "name")
-                    UserDefaults.standard.set(self.selectedIcon, forKey: "profileImg")
-                    self.delegate?.profileNameChanged(self.currText, self.selectedIcon)
-                    self.dismiss(animated: true, completion: nil) // 뒤로 가기
-
-                }else{
-                    print("결과 : 프로필 설정 실패")
-                }
-            }
-        }
-        dismiss(animated: true, completion: nil) // 뒤로 가기
-
-       
-        
-    }
 }
 // 키보드 숨기기
-extension ProfileViewController {
+extension OnBoardingProfileViewController {
     func hideKeyboardWhenTappedAround() {
-        let tap = UITapGestureRecognizer(target: self, action: #selector(ProfileViewController.dismissKeyboard))
+        let tap = UITapGestureRecognizer(target: self, action: #selector(OnBoardingProfileViewController.dismissKeyboard))
         tap.cancelsTouchesInView = false
         view.addGestureRecognizer(tap)
     }

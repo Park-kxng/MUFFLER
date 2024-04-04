@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          // login api 연결
          let viewModel = LoginViewModel()
          let disposeBag = viewModel.disposeBag
-         //TokenManager.shared.clearTokens()
+         //TokenManager.shared.clearTokens() // 토큰 삭제
          let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부
          print(isLoggedIn)
          if isLoggedIn {
@@ -152,7 +152,43 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             self.window?.makeKeyAndVisible()
         }
     }
+    
+    func moveToOnBoarding(){
+        print("온보딩 화면으로 이동")
+        DispatchQueue.main.async {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            if let window = windowScene.windows.first {
+                let onBoardingVC = OnBoardingProfileViewController()
+                let navigationController = UINavigationController(rootViewController: onBoardingVC)
+                if let chevronImage = UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysOriginal) {
+                    let backButton = UIButton(type: .custom)
+                    
+                    chevronImage.withTintColor(.black) // 뒤로가기 버튼 : 검정색 적용
+                    backButton.setImage(chevronImage, for: .normal)
+                    backButton.tintColor = .mpBlack
+                    
+                    let buttonSize: CGFloat = 40 // 버튼의 크기 설정
+                    backButton.frame = CGRect(x: 0, y: 0, width: buttonSize, height: buttonSize) // 버튼의 프레임 설정
+                    
+                    backButton.addTarget(self, action: #selector(self.cancelOnBoarding), for: .touchUpInside)
+                    onBoardingVC.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+                }
+                window.rootViewController = navigationController
+                window.makeKeyAndVisible()
+            }
+        }
+    }
 
+   
+    @objc func cancelOnBoarding() {
+        print("온보딩 취소")
+        moveToLogin()
+        // 저장한 토큰 삭제
+        TokenManager.shared.clearTokens()
+
+    }
+
+    
     
 }
 

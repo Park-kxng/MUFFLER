@@ -12,6 +12,7 @@ enum LoginAPI {
     // Member Controller
     case refreshToken( refreshToken : RefreshTokenRequest)
     case login (request : LoginRequest)
+    case join (request : JoinRequest)
     case loginKakao
     case loginApple
     case connect
@@ -30,6 +31,9 @@ extension LoginAPI: TargetType {
             return "/api/member/refresh-token"
         case .login:
             return "/api/member/login"
+        case .join:
+            return "/api/member/join"
+            
         case .loginKakao:
             return "/api/member/login/kakao"
         case .loginApple:
@@ -41,9 +45,11 @@ extension LoginAPI: TargetType {
     
     var method: Moya.Method {
         switch self {
-            // Define HTTP methods for each API endpoint
+        // Define HTTP methods for each API endpoint
         case .refreshToken, .loginKakao, .loginApple,.login:
             return .post
+        case .join:
+            return .patch
         case .connect:
             return .get
         }
@@ -54,8 +60,10 @@ extension LoginAPI: TargetType {
         switch self {
         case  .loginKakao, .loginApple, .connect:
             return .requestPlain
-        case .login(let loginRequest):
-            return .requestJSONEncodable(loginRequest)
+        case .join(let request):
+            return .requestJSONEncodable(request)
+        case .login(let request):
+            return .requestJSONEncodable(request)
         case .refreshToken(let refreshTokenRequest):
             return .requestJSONEncodable(refreshTokenRequest)
             

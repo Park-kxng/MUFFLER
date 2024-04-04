@@ -349,6 +349,11 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
         viewModel.join(name: currText, img: selectedIcon) { success in
             if success{
                 print("결과 : 프로필 설정 완료")
+                
+                UserDefaults.standard.set(self.currText, forKey: "name")
+                UserDefaults.standard.set(self.selectedIcon, forKey: "profileImg")
+                
+
                 // 온보딩 화면으로 이동하기 - 윤진
                 // 홈 화면으로 이동(임시)
                 if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {

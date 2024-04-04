@@ -9,7 +9,7 @@ import UIKit
 
 class MyPageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ProfileViewDelegate {
     var tempUserName : String = ""
-    var tempProfileImage: UIImage?
+    var tempProfileImage: String = ""
 
     var user = User()
     // 테이블 뷰 데이터 소스
@@ -30,7 +30,11 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
   
     override func viewDidLoad() {
         super.viewDidLoad()
-        tempUserName = user.userNameString
+        if let userName = UserDefaults.standard.string(forKey: "name"),
+           let userImg = UserDefaults.standard.string(forKey: "profileImg"){
+            tempUserName = userName
+            tempProfileImage = userImg
+        }
         navigationController?.isNavigationBarHidden = true // 네비게이션 바 숨김
 
         // 커스텀 UITableViewCell 등록
@@ -71,8 +75,10 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
         if item == "프로필"{
             text = "프로필 설정"
             cell.optionalLabel.text = text
-            tempProfileImage = UIImage(named: "add-05")
-            cell.addProfile(user.userNameString, image : tempProfileImage)
+            if let userName = UserDefaults.standard.string(forKey: "name"),
+            let userImg = UserDefaults.standard.string(forKey: "profileImg"){
+                cell.addProfile(userName, image: UIImage(named: userImg))
+            }
 
             // 프로필인 경우 프로필 띄우기
         }
@@ -162,18 +168,15 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
         var items: [String]
     }
     
-    func profileNameChanged(_ userName: String, _ profileImage : UIImage?) {
+    func profileNameChanged(_ userName: String, _ profileImage : String) {
         user.changeUserName(userName)
         tempUserName = userName
-        tempProfileImage = profileImage // Set the profile image in your User model
-
-        // Reload only the cell representing the profile
+        tempProfileImage = profileImage
+        
         if let indexPath = indexPathForProfileCell() {
             tableView.reloadRows(at: [indexPath], with: .none)
         }
-
         print("프로필 이름이 변경되었습니다")
-        print(user.userNameString)
         view.layoutIfNeeded()
     }
 
@@ -187,10 +190,13 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
     }
     
     func settingProfile() {
-        let profileVC = ProfileViewController(tempUserName: tempUserName) // 프로필 설정 화면으로 이동
-        profileVC.modalPresentationStyle = .fullScreen
-        profileVC.delegate = self
-        present(profileVC, animated: true)
+
+            let profileVC = ProfileViewController(name: tempUserName, imgName: tempProfileImage) // 프로필 설정 화면으로 이동
+            profileVC.modalPresentationStyle = .fullScreen
+            profileVC.delegate = self
+            present(profileVC, animated: true)
+        
+        
     }
     func Ask(){
         let askVC = AskViewController() // 프로필 설정 화면으로 이동

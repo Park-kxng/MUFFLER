@@ -10,7 +10,6 @@ import RxSwift
 import RxCocoa
 
 // GoalCreationManager
-
 class GoalCreationManager {
     
     static let shared = GoalCreationManager()
@@ -23,50 +22,13 @@ class GoalCreationManager {
     var endDate: String? = "2024-4-27"
     var categoryGoals: [CategoryGoal] = []
     var dailyBudgets: [Int64] = [] // Added dailyBudgets property
+    var canRestore : Bool?
+    var restore : Bool?
     
     private let disposeBag = DisposeBag()
     let postGoalResultRelay = PublishRelay<Bool>()
 
     private init() {} // Private initializer to ensure singleton usage
-
-//    func createGoalRequest() -> PostGoalRequest? {
-//        guard let icon = icon,
-//              let goalTitle = goalTitle,
-//              let goalDetail = goalDetail, // Ensure goalDetail is not nil
-//              let goalBudget = goalBudget,
-//              let startDate = startDate,
-//              let endDate = endDate
-//        else {
-//            return nil
-//        }
-//        
-//        return PostGoalRequest(icon: icon,
-//                               title: goalTitle,
-//                               detail: goalDetail,
-//                               startDate: startDate,
-//                               endDate: endDate,
-//                               totalBudget: goalBudget,
-//                               categoryGoals: categoryGoals,
-//                               dailyBudgets: dailyBudgets)
-//    }
-
-    //목표를 post하려 한다. 성공 여부에 따라 postGoalResultRelay를 사용
-//    func postGoal() {
-//        guard let request = createGoalRequest() else {
-//            postGoalResultRelay.accept(false) // Could not create request
-//            return
-//        }
-//    
-//        
-//        GoalRepository.shared.postGoal(request: request)
-//            .subscribe(onSuccess: { [weak self] response in // 성공 response
-//                // Assuming response has an isSuccess property or similar to indicate success
-//                self?.postGoalResultRelay.accept(response.isSuccess)
-//            }, onFailure: { [weak self] _ in
-//                self?.postGoalResultRelay.accept(false) //실패 response
-//            })
-//            .disposed(by: disposeBag)
-//    }
 
     func addCategoryGoals(categoryGoals: [CategoryGoal]) {
         var isUnique = true
@@ -111,6 +73,11 @@ class GoalCreationManager {
             print("The number of budgets does not match the number of days")
         }
     }
+    
+    func restoration(canRestore : Bool, restore : Bool?){
+        self.canRestore = canRestore
+        self.restore = restore
+    }
 
     func clear() {
         icon = nil
@@ -121,6 +88,8 @@ class GoalCreationManager {
         endDate = nil
 //        categoryGoals = [] // Clear categoryGoals
         dailyBudgets = [] // Clear dailyBudgets
+        restore = nil
+        canRestore = nil
     }
     
     func postContent(){
@@ -132,9 +101,12 @@ class GoalCreationManager {
         print(goalBudget)
         print(categoryGoals)
         print(dailyBudgets)
-        GoalRepository.shared.postContent(icon: icon!, title: goalTitle!, startDate: startDate!, endDate: endDate!, totalBudget: goalBudget!, categoryGoals: categoryGoals, dailyBudgets: dailyBudgets){
+        print(canRestore)
+        print(restore)
+        GoalRepository.shared.postContent(icon: icon!, title: goalTitle!, startDate: startDate!, endDate: endDate!, totalBudget: goalBudget!, categoryGoals: categoryGoals, dailyBudgets: dailyBudgets, canRestore: canRestore!, restore: restore!){
             _ in
-            
         }
+        clear()
     }
+    
 }

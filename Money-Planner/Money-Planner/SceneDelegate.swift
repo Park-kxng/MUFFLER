@@ -30,6 +30,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          print(defaults.string(forKey: "accessToken"))
          print(defaults.string(forKey: "refreshToken"))
          print("____________")
+         
          // 임시 토큰 초기 세팅
 //         if let accessToken = defaults.string(forKey: "accessToken"){
 //             
@@ -45,9 +46,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 //             UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTI4NDA3NzF9.qtPQBdgkOKou1aTepPhJAT7p2izfSir2rfAGmono_u4", forKey: "refreshToken")
 //         }
        
-         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI4NzI1NjQyIiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTAzNDIxMjV9.P6QY1YMDuKN357cFhcrHZrFahRtU8vwOaNZmx3ibBkY", forKey: "accessToken")
+         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI4NzI1NjQyIiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTIzMzgyNTN9.4ZLwoc5a6ekBUGMbXRJseEyOHmkVS948RuXPKM3mY_A", forKey: "accessToken")
          
-         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTI4NDc3MjV9.Dhz3k-0Ml54v7jhmeLJweydO7MXtxDMLeRJzYK-SZT0", forKey: "refreshToken")
+         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTQ4NDM4NTN9.tW-srOvpbOh2bf4SBqkJBTGyjx6i3oWJRkpmc8tynXk", forKey: "refreshToken")
         
         // 엑세스 토큰이 있는 경우
          if let accessToken = defaults.string(forKey: "accessToken"){
@@ -116,6 +117,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          tabBarController.selectedIndex = 0 // 홈을 기본 선택 탭으로 설정
 
          window?.rootViewController = tabBarController
+//         let vc = EditGoalViewController(1)
+//         let VC = UINavigationController(rootViewController: vc)
+//         window?.rootViewController = VC
      }
     
     func sceneDidDisconnect(_ scene: UIScene) {

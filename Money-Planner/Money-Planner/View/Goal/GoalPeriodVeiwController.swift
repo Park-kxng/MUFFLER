@@ -11,6 +11,11 @@ import Moya
 
 // 도전할 소비 목표의 기간을 선택해주세요
 extension GoalPeriodViewController: PeriodSelectionDelegate {
+    
+    func cancelFilter1() {
+       //여기선 필요 없음.
+    }
+    
     func periodSelectionDidSelectDates(startDate: Date, endDate: Date) {
         periodBtn.setPeriod(startDate: startDate, endDate: endDate)
         btmbtn.isEnabled = true // btmBtn의 이름은 실제 버튼 변수명에 따라 달라질 수 있음
@@ -19,45 +24,30 @@ extension GoalPeriodViewController: PeriodSelectionDelegate {
 }
 
 extension GoalPeriodViewController: FoundPreviousConsumeRecordModalDelegate {
-    func modalGoToGoalAmountVC() {
+    func modalGoToGoalAmountVC(canRestore : Bool, restore : Bool?) {
         goToGoalAmountVC()
+        goalCreationManager.restoration(canRestore: canRestore, restore: restore)
     }
 }
 
 class GoalPeriodViewController : UIViewController, UINavigationControllerDelegate {
     
-    private var header : HeaderView = HeaderView(title: "")
     private var descriptionView : DescriptionView = DescriptionView(text: "도전할 소비 목표의 기간을 선택해주세요", alignToCenter: false)
     private lazy var periodBtn = PeriodButton()
     private lazy var btmbtn : MainBottomBtn = MainBottomBtn(title: "다음")
     
     private let goalCreationManager = GoalCreationManager.shared //목표 생성용
+    private let viewModel = GoalPeriodViewModel.shared
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        setupHeader()
+     
         setupDescriptionView()
         setupPeriodBtn()
         setUpBtmBtn()
-        
-        btmbtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
-        
-        // 기본 네비게이션 바의 뒤로 가기 버튼 숨기기
-        navigationItem.hidesBackButton = true
-        navigationItem.leftBarButtonItem = nil
-        
-        btmbtn.isEnabled = false
-        
     }
 
-    
-    override func viewWillAppear(_ animated: Bool) {
-        super.viewWillAppear(animated)
-        
-        // 네비게이션 바 숨기기
-        self.navigationController?.setNavigationBarHidden(true, animated: animated)
-    }
     
     @objc func btmButtonTapped() {
 //        goToGoalAmountVC()
@@ -68,6 +58,7 @@ class GoalPeriodViewController : UIViewController, UINavigationControllerDelegat
             modal.delegate = self
             self.present(modal, animated: true)
         } else {
+            goalCreationManager.restoration(canRestore: false, restore: false)
             goToGoalAmountVC()
         }
     }
@@ -90,19 +81,6 @@ class GoalPeriodViewController : UIViewController, UINavigationControllerDelegat
         navigationController?.pushViewController(goalTotalAmountVC, animated: true)
     }
     
-    private func setupHeader() {
-        header.translatesAutoresizingMaskIntoConstraints = false
-        header.addBackButtonTarget(target: self, action: #selector(backButtonTapped), for: .touchUpInside)
-        view.addSubview(header)
-        
-        NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            header.heightAnchor.constraint(equalToConstant: 60) // 예시 높이값
-        ])
-    }
-    
     @objc private func backButtonTapped() {
         // 뒤로 가기 기능 구현
         goalCreationManager.startDate = nil
@@ -115,7 +93,7 @@ class GoalPeriodViewController : UIViewController, UINavigationControllerDelegat
         view.addSubview(descriptionView)
         
         NSLayoutConstraint.activate([
-            descriptionView.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 30),
+            descriptionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             descriptionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             descriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
@@ -158,14 +136,17 @@ class GoalPeriodViewController : UIViewController, UINavigationControllerDelegat
             btmbtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
             btmbtn.heightAnchor.constraint(equalToConstant: 50)
         ])
+        
+        btmbtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
+        btmbtn.isEnabled = false
     }
     
     //다음 버튼을 눌렀을때,
     func findOutPreviousConsumeRecord() -> Bool {
         let startDate = periodBtn.startDate
         let endDate = periodBtn.endDate
-
-        return true
+        viewModel.fetchCanRestore(startDate: startDate.toString(format: "yyyy-MM-dd"), endDate: endDate.toString(format: "yyyy-MM-dd"))
+        return viewModel.canRestore.value
     }
     
 }

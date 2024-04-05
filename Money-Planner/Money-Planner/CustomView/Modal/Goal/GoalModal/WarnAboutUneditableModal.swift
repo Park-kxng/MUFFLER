@@ -77,7 +77,7 @@ class WarnAboutUneditableModal : UIViewController {
         let components = calendar.dateComponents([.day], from: startDate, to: endDate)
         if let day = components.day {
             // 일수를 주 단위로 변환하여 표시할지, 일 단위로 그대로 표시할지 결정
-            label.text = day % 7 == 0 ? "\(day / 7)주" : "\(day)일"
+            label.text = day % 7 == 0 ? "\((day+1) / 7)주" : "\(day+1)일"
         } else {
             // components.day가 nil인 경우의 기본값 처리
             label.text = "기간 계산 불가"

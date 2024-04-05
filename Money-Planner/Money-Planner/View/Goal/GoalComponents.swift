@@ -736,7 +736,7 @@ class MoneyAmountTextCell: UITableViewCell, UITextFieldDelegate {
         
         // 숫자 길이 제한
         if digitsOnly.count > 12 {
-            amountLabel.text = "12자리 이상 입력하실 수 없습니다."
+            amountLabel.text = "입력할 수 있는 범위를 초과했습니다."
             amountLabel.textColor = .mpRed
             self.contentView.layer.borderWidth = 1
             self.contentView.layer.borderColor = UIColor.mpRed.cgColor

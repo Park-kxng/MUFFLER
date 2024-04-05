@@ -64,6 +64,8 @@ extension RepeatConsumeViewController{
     
     func fetchRepeatConsumeData(){
         self.loading = true
+        
+        // endpoint 추가해줘야함
         RoutineRepository.shared.getRoutineList{
             (result) in
             switch result{
@@ -298,5 +300,31 @@ extension RepeatConsumeViewController {
 extension RepeatConsumeViewController {
     @objc func getNotificationChangeRoutine(){
         fetchRepeatConsumeData()
+    }
+}
+
+extension RepeatConsumeViewController : UIScrollViewDelegate{
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        if(self.loading){
+            return
+        }
+        
+        // MARK: - 무한스크롤
+        
+        // 테이블 뷰의 컨텐츠 크기
+        let contentHeight = tableView.contentSize.height
+        
+        // 테이블 뷰의 현재 위치
+        let offsetY = tableView.contentOffset.y
+        
+        // 테이블 뷰의 높이
+        let tableViewHeight = tableView.bounds.size.height
+        
+        // 만약 스크롤이 테이블 뷰의 맨 아래에 도달했을 때
+        if offsetY > contentHeight - tableViewHeight {
+            if self.hasNext {
+                fetchRepeatConsumeData()
+            }
+        }
     }
 }

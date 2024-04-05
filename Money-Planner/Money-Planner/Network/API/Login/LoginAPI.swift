@@ -11,6 +11,8 @@ import Moya
 enum LoginAPI {
     // Member Controller
     case refreshToken( refreshToken : RefreshTokenRequest)
+    case login (request : LoginRequest)
+    case join (request : JoinRequest)
     case loginKakao
     case loginApple
     case connect
@@ -27,6 +29,11 @@ extension LoginAPI: TargetType {
             // Member Controller
         case .refreshToken:
             return "/api/member/refresh-token"
+        case .login:
+            return "/api/member/login"
+        case .join:
+            return "/api/member/join"
+            
         case .loginKakao:
             return "/api/member/login/kakao"
         case .loginApple:
@@ -38,9 +45,11 @@ extension LoginAPI: TargetType {
     
     var method: Moya.Method {
         switch self {
-            // Define HTTP methods for each API endpoint
-        case .refreshToken, .loginKakao, .loginApple:
+        // Define HTTP methods for each API endpoint
+        case .refreshToken, .loginKakao, .loginApple,.login:
             return .post
+        case .join:
+            return .patch
         case .connect:
             return .get
         }
@@ -51,6 +60,10 @@ extension LoginAPI: TargetType {
         switch self {
         case  .loginKakao, .loginApple, .connect:
             return .requestPlain
+        case .join(let request):
+            return .requestJSONEncodable(request)
+        case .login(let request):
+            return .requestJSONEncodable(request)
         case .refreshToken(let refreshTokenRequest):
             return .requestJSONEncodable(refreshTokenRequest)
             
@@ -65,16 +78,17 @@ extension LoginAPI: TargetType {
     
     var headers: [String: String]? {
         switch self {
-            case .refreshToken:
+        case .refreshToken, .login:
+            return nil
+        default:
+            // Add access token to headers
+            if let accessToken = TokenManager.shared.accessToken {
+                return ["Authorization": "Bearer \(accessToken)"]
+            } else {
                 return nil
-            default:
-                // Add access token to headers
-                if let accessToken = UserDefaults.standard.string(forKey: "accessToken") {
-                    return ["Authorization": "Bearer \(accessToken)"]
-                } else {
-                    return nil
-                }
-            }    }
+            }
+        }
+    }
 }
 
 

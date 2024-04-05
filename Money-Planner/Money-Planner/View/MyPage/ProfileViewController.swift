@@ -9,13 +9,26 @@ import Foundation
 import UIKit
 
 protocol ProfileViewDelegate : AnyObject{
-    func profileNameChanged(_ userName : String, _ profileImage : UIImage?)
+    func profileNameChanged(_ userName : String, _ profileImage : String)
     
 }
-class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate {
+class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerControllerDelegate, UINavigationControllerDelegate, CategoryIconSelectionDelegate {
+    func didSelectCategoryIcon(_ icon: Int) {
+        print("아이콘 설정 완료")
+        if icon != 9 {
+            selectedIcon = "add-0\(icon+1)"
+        }else{
+            selectedIcon = "add-\(icon+1)"
+        }
+        picButton.setImage(UIImage(named: selectedIcon), for: .normal)
+    }
+    let viewModel = LoginViewModel()
+    
     private var UserName: String?
     var profileImage: UIImage?
-
+    var selectedIcon : String = ""
+    var initName : String = ""
+    var initImg : String = ""
     weak var delegate: ProfileViewDelegate?
     private lazy var headerView = HeaderView(title: "프로필 설정")
     var currText : String = ""
@@ -24,9 +37,9 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         //view.backgroundColor = .red
         return view
     }()
-    let picButton : UIButton = {
+    lazy var picButton : UIButton = {
         let button = UIButton()
-        button.setImage(UIImage(named: "add-05"), for: .normal)
+        button.setImage(UIImage(named: selectedIcon), for: .normal)
         button.layer.cornerRadius = 45
         button.layer.masksToBounds = true
         button.backgroundColor = .mpGypsumGray
@@ -54,19 +67,19 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         //view.backgroundColor = .red
         return view
     }()
+    
     // 이름 수정 버튼
     lazy var nameEditButton: UIButton = {
         let button = UIButton()
-        let arrowImage = UIImage(systemName:"pencil") // Replace "arrow_down" with the actual image name in your assets
-        arrowImage?.withTintColor(.mpDarkGray)
+        let arrowImage = UIImage(named: "btn_Edit_fill")?.withTintColor(.mpMidGray, renderingMode: .alwaysOriginal)
         button.setImage(arrowImage, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
-        button.isUserInteractionEnabled = true  // 클릭 활성화
-        //button.backgroundColor = UIColor.red
-        button.addTarget(self, action: #selector(editName), for: .touchUpInside) //이름 수정 가능하게
-        return button
         
+        button.isUserInteractionEnabled = true  // 클릭 활성화
+        button.addTarget(self, action: #selector(editName), for: .touchUpInside) //이름 수정 액션 추가
+        return button
     }()
+
     @objc
     func editName(){
         print("이름을 수정할 수 있습니다")
@@ -98,24 +111,7 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         
         return text
     }()
-    private let emailTextField : UITextField = {
-        let text = UITextField()
-        text.placeholder = "mufler@kakao.com"// 이메일 주소
-        text.layer.cornerRadius = 8
-        text.layer.masksToBounds = true
-        text.layer.borderColor = UIColor.mpLightGray.cgColor
-        text.layer.borderWidth = 1
-        text.font = UIFont.mpFont20M()
-        text.tintColor = UIColor.mpMainColor
-        text.backgroundColor = .clear
-        text.keyboardType = .default
-        // 여백 추가
-        let leftView = UIView(frame: CGRect(x: 0, y: 0, width: 24, height: text.frame.height)) // 조절하고자 하는 여백 크기
-        text.leftView = leftView
-        text.leftViewMode = .always
-        
-        return text
-    }()
+ 
     private let nameLabel : MPLabel = {
         let label = MPLabel()
         label.font = .mpFont14B()
@@ -123,19 +119,19 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         label.textColor = .mpGray
         return label
     }()
-    private let emailLabel : MPLabel = {
-        let label = MPLabel()
-        label.font = .mpFont14B()
-        label.text = "이메일 주소"
-        label.textColor = .mpGray
-        return label
-    }()
+   
     
-    init(tempUserName: String?) {
-            super.init(nibName: nil, bundle: nil)
-            self.UserName = tempUserName
-            nameTextField.text = UserName // 마이페이지에서 사용자 이름 가져오기
-        }
+    init(name: String, imgName : String) {
+        super.init(nibName: nil, bundle: nil)
+        self.UserName = name
+        self.selectedIcon = imgName
+        // 비교하기 위하여 초기 사진 및 이름 저장
+        self.initImg = imgName
+        self.initName = name
+        // 텍스트 필드에 세팅
+        nameTextField.text = UserName
+        
+    }
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
@@ -154,15 +150,15 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         
         // 완료 버튼 추가
         setupCompleteButton()
+        // 프로필, 이름 설정
         setupPic()
         setupNameLabel()
         setupTextField()
-        setupEmailLabel()
-        setupEmailTextField()
+
         
         nameTextField.delegate = self // Make sure to set the delegate
-        picButton.addTarget( self, action: #selector(editProfileImage), for: .touchUpInside) //이름 수정 가능하게
-
+        picButton.addTarget( self, action: #selector(selectIcon), for: .touchUpInside) //이름 수정 가능하게
+        hideKeyboardWhenTappedAround()
     }
     
     // 세팅 : 헤더
@@ -203,7 +199,7 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
            ])
         let plus: UIView = {
                  let view = UIView()
-                 view.backgroundColor = .mpWhite
+                 view.backgroundColor = .clear
                  view.layer.cornerRadius = 10
                  view.layer.masksToBounds = true
                  return view
@@ -212,7 +208,7 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
             let imageView = UIImageView()
             imageView.image = UIImage(systemName: "plus.circle.fill")?
                 .withTintColor(.mpGray, renderingMode: .alwaysOriginal)
-            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 20, weight: .medium))
+            .withConfiguration(UIImage.SymbolConfiguration(pointSize: 22, weight: .medium))
             imageView.contentMode = .scaleAspectFit
                        return imageView
                    }()
@@ -310,35 +306,7 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
         ])
 
     }
-    private func setupEmailLabel(){
-        //4
-        //38
-        // 높이 23
-        view.addSubview(emailLabel)
-        emailLabel.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            emailLabel.topAnchor.constraint(equalTo: nameContainer.bottomAnchor, constant: 36),
-            emailLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            emailLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-        ])
-    }
-    private func setupEmailTextField(){
-        view.addSubview(emailTextField)
-        emailTextField.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            emailTextField.topAnchor.constraint(equalTo: emailLabel.bottomAnchor, constant: 3),
-            emailTextField.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            emailTextField.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            emailTextField.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
-            emailTextField.heightAnchor.constraint(equalToConstant: 64)
-        ])
-        emailTextField.isEnabled = false // 수정불가
-        
-        //60
-        //16,16
-        // 높이 64
-        
-    }
+ 
     // 세팅 : 완료 버튼
     private func setupCompleteButton(){
         completeButton.isEnabled = true // 버튼 활성화
@@ -359,11 +327,11 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
     
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         guard let text = textField.text else { return false }
-        currText = text
-        let newText = (text as NSString).replacingCharacters(in: range, with: string)
-        // 이미 동일한 카테고리가 있는 경우 return False
-        let textSize = newText.count
         
+        let newText = (text as NSString).replacingCharacters(in: range, with: string)
+        currText = newText
+        checkAndEnableCompleteButton()
+        let textSize = newText.count
         if textSize > 16 {
             
             // Your existing code to handle the error (e.g., update UI elements)
@@ -380,26 +348,65 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
             return true
         }
     }
+    @objc
+    private func selectIcon(){
+        // 프로필 설정 모달
+        let iconSelectionVC = CategoryIconSelectionViewController()
+        iconSelectionVC.delegate = self
+        present(iconSelectionVC, animated: true)
+    }
     
-    // 이미지 선택이 완료되면 호출되는 메소드
-    func imagePickerController(_ picker: UIImagePickerController, didFinishPickingMediaWithInfo info: [UIImagePickerController.InfoKey : Any]) {
-        if let selectedImage = info[UIImagePickerController.InfoKey.originalImage] as? UIImage {
-            // 선택한 이미지를 버튼에 적용
-            picButton.setImage(selectedImage, for: .normal)
-            profileImage = selectedImage
+    // 완료 버튼 활성화 확인
+    private func checkAndEnableCompleteButton() {
+        if currText != ""  && currText.count < 16{
+            completeButton.isEnabled = true
+        }else{
+            completeButton.isEnabled = false
         }
 
-        dismiss(animated: true, completion: nil)
     }
     
     @objc
     private func completeButtonTapped(){
         print("프로필 설정이 완료되었습니다..")
-        if let changedName = nameTextField.text{
-            delegate?.profileNameChanged (changedName, profileImage)
-            print(changedName)
+        if currText != "" || selectedIcon != initImg{
+            viewModel.join(name: currText, img: selectedIcon) { success in
+                if success{
+                    print("결과 : 프로필 설정 완료")
+                    // 프로필 저장
+                    if self.currText != ""{
+                        // 텍스트 필드를 수정했다는 의미
+                        self.currText = self.nameTextField.text ?? ""
+                    }
+                    else{
+                        // 텍스트 필드는 수정 안했음
+                        self.currText = self.initName
+                    }
+                    UserDefaults.standard.set(self.currText, forKey: "name")
+                    UserDefaults.standard.set(self.selectedIcon, forKey: "profileImg")
+                    self.delegate?.profileNameChanged(self.currText, self.selectedIcon)
+                    self.dismiss(animated: true, completion: nil) // 뒤로 가기
+
+                }else{
+                    print("결과 : 프로필 설정 실패")
+                }
+            }
         }
+        dismiss(animated: true, completion: nil) // 뒤로 가기
+
        
-        dismiss(animated: true, completion: nil)
+        
+    }
+}
+// 키보드 숨기기
+extension ProfileViewController {
+    func hideKeyboardWhenTappedAround() {
+        let tap = UITapGestureRecognizer(target: self, action: #selector(ProfileViewController.dismissKeyboard))
+        tap.cancelsTouchesInView = false
+        view.addGestureRecognizer(tap)
+    }
+    
+    @objc func dismissKeyboard() {
+        view.endEditing(true)
     }
 }

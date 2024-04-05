@@ -15,85 +15,40 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
      
      // 앱이 시작될 때 초기 화면 설정
      func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
-         
          // UIWindowScene 유효성 검사
          guard let windowScene = (scene as? UIWindowScene) else { return }
          window = UIWindow(windowScene: windowScene)
-         
-         let defaults = UserDefaults.standard
+         // login api 연결
          let viewModel = LoginViewModel()
-         
-//         defaults.removeObject(forKey: "accessToken")
-//         defaults.removeObject(forKey: "refreshToken")
-//         
-         print("____________")
-         print(defaults.string(forKey: "accessToken"))
-         print(defaults.string(forKey: "refreshToken"))
-         print("____________")
-         
-         // 임시 토큰 초기 세팅
-//         if let accessToken = defaults.string(forKey: "accessToken"){
-//             
-//         }else{
-//             print("엑세스 초기 세팅 완")
-//             UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI0NjEzNzk1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTAzMzUxNzF9.JItaIW7T6zZytxAt1BumHJ-FiiVJjWw9WHPRogwJ36Q", forKey: "accessToken")
-//         }
-//         
-//         if let refreshToken = defaults.string(forKey: "refreshToken"){
-//             
-//         }else{
-//             print("리프레쉬 초기 세팅 완")
-//             UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTI4NDA3NzF9.qtPQBdgkOKou1aTepPhJAT7p2izfSir2rfAGmono_u4", forKey: "refreshToken")
-//         }
-       
-         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI4NzI1NjQyIiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTIzMzgyNTN9.4ZLwoc5a6ekBUGMbXRJseEyOHmkVS948RuXPKM3mY_A", forKey: "accessToken")
-         
-         UserDefaults.standard.set("eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTQ4NDM4NTN9.tW-srOvpbOh2bf4SBqkJBTGyjx6i3oWJRkpmc8tynXk", forKey: "refreshToken")
-        
-        // 엑세스 토큰이 있는 경우
-         if let accessToken = defaults.string(forKey: "accessToken"){
-             
-             viewModel.isLoginEnabled { isEnabled in
-                 if isEnabled {
-                     // 로그인 가능한 경우
-                     print("로그인 가능합니다. - 현재 가지고 있는 엑세스 토큰이 유효함")
-                     print(defaults.string(forKey: "accessToken"))
-                     self.setupMainInterface()
-                 } else {
-                     // 로그인 불가능한 경우
-                     print("로그인이 불가능합니다.- 엑세스 토큰을 가지고 있으나 기간 만료 (갱신 필요)")
-                     if let refreshToken = defaults.string(forKey: "refreshToken"){
-                         //리프레쉬 토큰이 있는 경우
-                         print("리프레쉬 토큰 존재함")
-                         print(defaults.string(forKey: "refreshToken"))
+         let disposeBag = viewModel.disposeBag
+         //TokenManager.shared.clearTokens() // 토큰 삭제
+         let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부
+         print(isLoggedIn)
+         if isLoggedIn {
+             print("로그인 한 적 있음")
+             // 가진 토큰으로 로그인 시도
+             viewModel.isLoginEnabled()
+                 .subscribe(onNext: { isEnabled in
+                     if isEnabled {
+                         print("로그인 가능 > 홈화면으로 이동")
+                         // 홈화면으로 이동
+                         self.setupMainInterface()
+                     } else {
+                         print("로그인 불가능 > 토큰 갱신 시도")
+                         // 로그인 불가능한 경우의 처리를 수행합니다.
                          viewModel.refreshAccessTokenIfNeeded()
                      }
-                 }
-             }
-         }else{
-            window?.rootViewController = LoginViewController()
-         }
-    
-         // UserDefaults를 사용하여 이전 로그인 여부 확인 및 자동 로그인 처리
-         // 예시 코드로, 실제 앱에서는 로그인 상태를 관리하는 더 안전한 방법을 사용해야 합니다.
-         let isLoggedIn = defaults.bool(forKey: "isLoggedIn")
-         if isLoggedIn {
-             print("로그인 상태입니다")
-             if let refreshToken = defaults.string(forKey: "refreshToken"){
-                 //리프레쉬 토큰이 있는 경우
-                 let viewModel = LoginViewModel()
-                 viewModel.refreshAccessTokenIfNeeded()
-
-             }
-
-             // 로그인 상태이면 메인 화면으로 이동
-             setupMainInterface()
+                 })
+                 .disposed(by: disposeBag)
          } else {
-             // 로그인 상태가 아니면 로그인 화면으로 이동
-             print("로그인 상태가 아닙니다.")
-             window?.rootViewController = LoginViewController()
+             print("토큰 없음")
+             // 로그인 화면으로 이동
+             DispatchQueue.main.async {
+                 self.window?.rootViewController = LoginViewController()
+                 
+             }
          }
-         window?.makeKeyAndVisible()
+         self.window?.makeKeyAndVisible()
      }
      
      // 메인 인터페이스 설정
@@ -174,6 +129,68 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // Use this method to save data, release shared resources, and store enough scene-specific state information
         // to restore the scene back to its current state.
     }
+    func scene(_ scene: UIScene, openURLContexts URLContexts: Set<UIOpenURLContext>) {
+            if let url = URLContexts.first?.url {
+                if (AuthApi.isKakaoTalkLoginUrl(url)) {
+                    _ = AuthController.handleOpenUrl(url: url)
+                }
+            }
+        }
+    
+    func moveToHome(){
+        print("홈화면으로 이동")
+        DispatchQueue.main.async {
+            self.setupMainInterface()
+        }
+
+    }
+    
+    func moveToLogin() {
+        print("로그인 화면으로 이동")
+        DispatchQueue.main.async {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            
+            self.window = UIWindow(windowScene: windowScene)
+            self.window?.rootViewController = LoginViewController()
+            self.window?.makeKeyAndVisible()
+        }
+    }
+    
+    func moveToOnBoarding(){
+        print("온보딩 화면으로 이동")
+        DispatchQueue.main.async {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            if let window = windowScene.windows.first {
+                let onBoardingVC = OnBoardingProfileViewController()
+                let navigationController = UINavigationController(rootViewController: onBoardingVC)
+                if let chevronImage = UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysOriginal) {
+                    let backButton = UIButton(type: .custom)
+                    
+                    chevronImage.withTintColor(.black) // 뒤로가기 버튼 : 검정색 적용
+                    backButton.setImage(chevronImage, for: .normal)
+                    backButton.tintColor = .mpBlack
+                    
+                    let buttonSize: CGFloat = 40 // 버튼의 크기 설정
+                    backButton.frame = CGRect(x: 0, y: 0, width: buttonSize, height: buttonSize) // 버튼의 프레임 설정
+                    
+                    backButton.addTarget(self, action: #selector(self.cancelOnBoarding), for: .touchUpInside)
+                    onBoardingVC.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+                }
+                window.rootViewController = navigationController
+                window.makeKeyAndVisible()
+            }
+        }
+    }
+
+   
+    @objc func cancelOnBoarding() {
+        print("온보딩 취소")
+        moveToLogin()
+        // 저장한 토큰 삭제
+        TokenManager.shared.clearTokens()
+
+    }
+
     
     
 }

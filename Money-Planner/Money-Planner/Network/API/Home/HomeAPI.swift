@@ -84,11 +84,10 @@ extension HomeAPI : BaseAPI {
     }
     
     public var headers: [String: String]? {
-        let defaults = UserDefaults.standard
-        if let token = defaults.string(forKey: "accessToken") {
-            print("토큰 불러오기 성공")
-            return ["Authorization": "Bearer \(token)"]
+        if let accessToken = TokenManager.shared.accessToken {
+            return ["Authorization": "Bearer \(accessToken)"]
         } else {
+            print("저장된 토큰이 없습니다.")
             return nil
         }
        

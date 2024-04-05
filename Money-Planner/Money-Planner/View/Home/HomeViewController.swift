@@ -107,6 +107,10 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
     
     var statisticsData : Statistics?
     
+    // 전체 탭 통계 저장해놓는 변수
+    var 
+    allStatisticsData : Statistics?
+    
     var hasNext : Bool = false
     var loading : Bool = false
     
@@ -123,7 +127,7 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
         contentScrollView.delegate = self
         categoryScrollView.delegate = self
         consumeView.tableView.delegate = self
-//        consumeView.
+        //        consumeView.
         
         fetchCalendarData()
         fetchCategoryList()
@@ -138,6 +142,9 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
         NotificationCenter.default.addObserver(self, selector: #selector(getNotificationChangeCalendarView), name: Notification.Name("changeCalendar"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(getNotificationChangeHomenow), name: Notification.Name("addGoal"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(getNotificationDeleteConsumeList(_:)), name: Notification.Name("deleteExpense"), object: nil)
+        
         
         // 스크롤 뷰 작업
         NSLayoutConstraint.activate([
@@ -175,6 +182,7 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
     func didChangeMonth(monthIndex: Int, year: Int) {
         // 값 있을 때는 넘겨주고 없으면 초기화 하기
         calendarView.changeMonth(monthIndex: monthIndex, year: year)
+        categoryScrollView.changeSelectedButton(index: -1)
         
         if(collectionView.currentPage == 0){
             fetchChangeMonthCalendarData()
@@ -212,7 +220,7 @@ extension HomeViewController{
                 
                 if(goal != nil){
                     self.nowGoal = goal
-                    self.statisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
+                    self.allStatisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
                 }
                 
                 
@@ -259,6 +267,10 @@ extension HomeViewController{
                     if(goal != nil){
                         self.nowGoal = goal
                         self.statisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
+                        
+                        if(self.categoryScrollView.selectedCategoryIndex == -1){
+                            self.allStatisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
+                        }
                     }
                     
                     if(data?.dailyList != nil){
@@ -289,6 +301,11 @@ extension HomeViewController{
                     if(goal != nil){
                         self.nowGoal = goal
                         self.statisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
+                        
+                        
+                        if(self.categoryScrollView.selectedCategoryIndex == -1){
+                            self.allStatisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
+                        }
                     }
                     
                     if(data?.dailyList != nil){
@@ -468,6 +485,14 @@ extension HomeViewController{
             statisticsView.progress = 0.0
         }
         
+        if(self.categoryScrollView.selectedCategoryIndex == -1 && allStatisticsData != nil){
+            statisticsView.statistics = allStatisticsData
+            calendarView.goal = self.nowGoal
+            if self.allStatisticsData != nil {
+                statisticsView.progress = getProgress(numerator: self.allStatisticsData!.totalCost, denominator: self.allStatisticsData!.goalBudget)
+            }
+        }
+        
         calendarView.dailyList = getDailyList(rawData: self.dailyList)
         
     }
@@ -512,7 +537,7 @@ extension HomeViewController{
         }
         
         if(self.nowGoal?.icon != nil){
-            titleLabel.text = self.nowGoal!.icon! + titleLabel.text!
+            titleLabel.text = self.nowGoal!.icon! + " " + titleLabel.text!
         }
         
         let tapGesture = UITapGestureRecognizer(target: self, action: #selector(monthViewTapped))
@@ -874,7 +899,7 @@ extension HomeViewController : CategoryButtonScrollDelegate{
         if(collectionView.currentPage == 1){
             self.consumeList.removeAll()
             self.hasNext = false
- 
+            
             fetchConsumeData(lastDate: nil, lastExpenseId: nil)
         }
         
@@ -948,7 +973,13 @@ extension HomeViewController : OrderModalDelegate {
 
 // notification 기능 등록 함수
 extension HomeViewController {
-    @objc func getNotificationConsumeView(){
+    @objc func getNotificationConsumeView(_ notification: Notification){
+        
+        if let userInfo = notification.userInfo {
+            let cost = userInfo["cost"] as? Int64
+            self.allStatisticsData = Statistics(totalCost: self.allStatisticsData!.totalCost + cost!, goalBudget: self.allStatisticsData!.goalBudget)
+        }
+        
         if(collectionView.currentPage == 0){
             fetchChangeMonthCalendarData()
         }
@@ -969,6 +1000,25 @@ extension HomeViewController {
     @objc func getNotificationChangeHomenow(){
         if(collectionView.currentPage == 0){
             fetchCalendarData()
+        }
+    }
+    
+    @objc func getNotificationDeleteConsumeList(_ notification: Notification){
+        if(collectionView.currentPage == 1){
+            if let userInfo = notification.userInfo {
+                let expenseId = userInfo["expenseId"] as? Int
+                for (consumeIndex, consumeDetail) in consumeList.enumerated(){
+                    for (expenseIndex, expense) in consumeDetail.expenseDetailList!.enumerated() {
+                        if(expense.expenseId == expenseId){
+                            consumeList[consumeIndex].expenseDetailList?.remove(at: expenseIndex)
+                            consumeView.data = consumeList
+                            consumeView.tableView.reloadData()
+                            break
+                        }
+                    }
+                }
+            }
+            reloadUI()
         }
     }
 }

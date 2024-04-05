@@ -8,8 +8,27 @@ import UIKit
 
 
 class MyPageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ProfileViewDelegate, PopupViewDelegate {
+    func popupChecked(view: String) {
+        switch view {
+        case "logOut":
+            // 저장한 토큰 지우기 - 엑세스, 리프레쉬 토큰 삭제
+            TokenManager.shared.clearTokens()
+            // 로그인 화면으로 이동
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                sceneDelegate.moveToLogin()
+            }
+            
+        case "ask":
+            print("문의하기 완료")
+        default:
+            print("작업 완료")
+        }
+    }
+    
     func popupChecked() {
         // 로그아웃 확인 완료
+        // 저장한 토큰 지우기 - 엑세스, 리프레쉬 토큰 삭제
+        TokenManager.shared.clearTokens()
         
         // 로그인 화면으로 이동
         if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
@@ -153,7 +172,8 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
             print("개인정보 처리 방침 선택됨")
         case "1:1 문의하기":
             // 1:1 문의하기 뷰로 이동
-            Ask()
+            let askVC = AskViewController() // 프로필 설정 화면으로 이동
+            self.navigationController?.pushViewController(askVC, animated: true)
             print("1:1 문의하기 선택됨")
         case "로그아웃":
             // 로그아웃 처리
@@ -209,13 +229,7 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
         
         
     }
-    func Ask(){
-        let askVC = AskViewController() // 프로필 설정 화면으로 이동
-        askVC.modalPresentationStyle = .fullScreen
-        //askVC.delegate = self
-        present(askVC, animated: true)
-        
-    }
+
     func Unregister(){
         let unregisterVC = UnregisterViewController() // 프로필 설정 화면으로 이동
         unregisterVC.modalPresentationStyle = .fullScreen

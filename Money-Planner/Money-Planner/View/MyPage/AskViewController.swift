@@ -15,10 +15,12 @@ import RxCocoa
 //    
 //}
 class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate,PopupViewDelegate {
-    func popupChecked() {
-        // 확인 누르면 문의하기 화면도 없어짐
-        dismiss(animated: true)
+    func popupChecked(view: String) {
+        // 마이페이지 화면으로 이동
+        self.navigationController?.popViewController(animated: true)
     }
+    
+   
     
     let disposeBag = DisposeBag()
     let viewModel = MufflerViewModel()
@@ -157,17 +159,17 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
     override func viewDidLoad() {
         setupUI()
         self.hideKeyboardWhenTappedAround()
+        self.title = "1:1문의하기"
     }
     private func setupUI() {
         // 배경색상 추가
         super.viewDidLoad()
         view.backgroundColor = UIColor(named: "mpWhite")
         view.backgroundColor = .systemBackground
+        
         // 완료 버튼 활성화 확인
         print(completeCheck.contentsError)
-        // 헤더
-        setupHeader()
-        
+
         // 완료 버튼 추가
         setupCompleteButton()
         
@@ -176,35 +178,17 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
         setupContentsLabel()
         setupContentsTextField()
         
-        //nameTextField.delegate = self // Make sure to set the delegate
         emailTextField.delegate = self
         contentsTextField.delegate = self
        
     }
     
-    // 세팅 : 헤더
-    private func setupHeader(){
-        view.addSubview(headerView)
-        headerView.translatesAutoresizingMaskIntoConstraints = false
-        NSLayoutConstraint.activate([
-            headerView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            headerView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            headerView.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            headerView.heightAnchor.constraint(equalToConstant: 60)
-            
-        ])
-        
-        headerView.addBackButtonTarget(target: self, action: #selector(previousScreen), for: .touchUpInside)
-    }
-    @objc private func previousScreen(){
-        dismiss(animated: true)
-    }
-                                             
+                                     
     private func setupEmailLabel(){
         view.addSubview(emailLabel)
         emailLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            emailLabel.topAnchor.constraint(equalTo: headerView.bottomAnchor, constant: 40),
+            emailLabel.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 40),
             emailLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             emailLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             
@@ -427,7 +411,7 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
     
     @objc
     private func completeButtonTapped(){
-        print("문의하기가 완료되었습니다..")
+        print("문의하기 시도")
       // api 연결
         let emailRequest = EmailPostRequest(email: emailTextField.text ?? "", content: contentsTextField.text)
     
@@ -447,18 +431,24 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
         viewModel.postEmail(emailRequest: emailRequest)
             .subscribe(
             onSuccess: { response in
-               print(response)
+                print("결과 : 문의하기 성공 - \(response)")
+                
+                // 문의하기 성공 팝업 띄우기
+                let completeVC = PopupViewController() // 로그아웃 완료 팝업 띄우기
+                completeVC.titleLabel.text = "문의하기가 완료되었습니다."
+                completeVC.contentLabel.text = "1:1 문의에 대한 답변은 이메일로 보내드려요"
+                completeVC.contentLabel.font = .mpFont16M()
+                completeVC.delegate = self
+                self.present(completeVC, animated: true)
+                
+
+                
             }, onFailure: {error in
-                print(error)
+                print("결과 : 문의하기 실패 - \(error)")
+                self.presentAlert(title: "문의하기 실패", message: "문의하기를 실패하였습니다. 다시 시도해주세요.")
             }).disposed(by: disposeBag)
         
-        let completeVC = PopupViewController() // 로그아웃 완료 팝업 띄우기
-        completeVC.titleLabel.text = "문의하기가 완료되었습니다."
-        completeVC.contentLabel.text = "1:1 문의에 대한 답변은 이메일로 보내드려요"
-        completeVC.contentLabel.font = .mpFont16M()
-        completeVC.delegate = self
-        present(completeVC, animated: true)
-        //dismiss(animated: true, completion: nil)
+        
     }
     
     struct compeleBtnCheck {

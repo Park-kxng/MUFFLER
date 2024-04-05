@@ -11,10 +11,10 @@ import RxSwift
 import RxCocoa
 
 class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelectionDelegate,CalendarSelectionDelegate,RepeatModalViewDelegate,AddCategoryViewDelegate, PopupViewDelegate {
-        
-    func popupChecked() {
+    func popupChecked(view: String) {
         dismiss()
     }
+    
     
 
     let StackView = UIStackView()

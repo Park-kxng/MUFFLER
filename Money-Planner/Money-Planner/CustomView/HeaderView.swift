@@ -34,7 +34,7 @@ class HeaderView: UIView {
     //추후 색 변환 가능
     private func setupBackButton() {
         if let chevronImage = UIImage(systemName: "chevron.left")?.withRenderingMode(.alwaysOriginal) {
-            let darkGrayChevron = chevronImage.withTintColor(.mpGray)
+            let darkGrayChevron = chevronImage.withTintColor(.mpBlack)
             backButton.setImage(darkGrayChevron, for: .normal)
         }
         addSubview(backButton)

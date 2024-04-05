@@ -146,10 +146,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         print("로그인 화면으로 이동")
         DispatchQueue.main.async {
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
-            
-            self.window = UIWindow(windowScene: windowScene)
-            self.window?.rootViewController = LoginViewController()
-            self.window?.makeKeyAndVisible()
+            // 루트 뷰 컨트롤러를 로그인 뷰 컨트롤러로 설정하면서 애니메이션 적용
+                if let window = self.window {
+                    // 애니메이션과 함께 루트 뷰 컨트롤러 변경
+                    UIView.transition(with: window, duration: 0.2, options: .transitionCrossDissolve, animations: {
+                        window.rootViewController = LoginViewController()
+                        self.window?.makeKeyAndVisible()
+                    })
+                }
+          
         }
     }
     

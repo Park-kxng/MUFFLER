@@ -17,7 +17,7 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
             if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                 sceneDelegate.moveToLogin()
             }
-            
+            print("로그아웃 완료")
         case "ask":
             print("문의하기 완료")
         default:
@@ -257,6 +257,7 @@ class AppVersionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
+        self.title = "앱 버전"
 
         let label = UILabel()
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "알 수 없음"

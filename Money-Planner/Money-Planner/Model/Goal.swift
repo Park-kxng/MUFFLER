@@ -60,11 +60,14 @@ struct PostGoalRequest: Encodable {
     let totalBudget: Int64
     let categoryGoals: [CategoryGoal]
     let dailyBudgets: [Int64]
+    let canRestore: Bool
+    let restore: Bool
 }
 
 
 // A substructure for the category goals within the PostGoalRequest
-struct CategoryGoal: Encodable {
+struct CategoryGoal: Codable {
+    let categoryGoalId : Int64
     let categoryId: Int64
     let categoryBudget: Int64
 }

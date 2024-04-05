@@ -349,8 +349,8 @@ class ShowingPeriodSelectionModal : UIViewController, FSCalendarDelegate, FSCale
         customModal.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             customModal.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
-            customModal.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            customModal.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            customModal.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            customModal.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
             customModal.heightAnchor.constraint(equalToConstant: 616)
         ])
         
@@ -419,7 +419,7 @@ class ShowingPeriodSelectionModal : UIViewController, FSCalendarDelegate, FSCale
         NSLayoutConstraint.activate([
             selectWholeButton.centerYAnchor.constraint(equalTo: completeBtn.centerYAnchor),
             selectWholeButton.leadingAnchor.constraint(equalTo: customModal.leadingAnchor, constant: 24),
-            selectWholeButton.widthAnchor.constraint(equalToConstant: 90),
+            selectWholeButton.widthAnchor.constraint(equalToConstant: 120),
             selectWholeButton.heightAnchor.constraint(equalToConstant: 56)
         ])
     }
@@ -722,66 +722,3 @@ extension ShowingPeriodSelectionModal : MonthSelectionDelegate {
         calendar.setCurrentPage(date, animated: true)
     }
 }
-
-
-
-//@objc func monthButtonTapped() {
-//    // Container view for the date picker and toolbar
-//    containerView = UIView()
-//    containerView!.backgroundColor = .white
-//    containerView!.layer.cornerRadius = 12
-//
-//    containerView!.layer.shadowColor = UIColor.mpBlack.cgColor
-//    containerView!.layer.shadowOpacity = 0.5
-//    containerView!.layer.shadowOffset = CGSize(width: 0, height: 2)
-//    containerView!.layer.shadowRadius = 8
-//
-//    containerView!.translatesAutoresizingMaskIntoConstraints = false
-//    view.addSubview(containerView!)
-//
-//    // Date Picker setup
-//    let datePicker = UIDatePicker()
-//    datePicker.datePickerMode = .date
-//    if #available(iOS 13.4, *) {
-//        datePicker.preferredDatePickerStyle = .wheels
-//    }
-//    datePicker.translatesAutoresizingMaskIntoConstraints = false
-//
-//    // Done Button setup
-//    let doneButton = UIButton()
-//    doneButton.layer.cornerRadius = 5
-//    doneButton.backgroundColor = .mpMainColor
-//    doneButton.setTitle("완료", for: .normal)
-//    doneButton.setTitleColor(.mpWhite, for: .normal)
-//    doneButton.translatesAutoresizingMaskIntoConstraints = false
-//    doneButton.addTarget(self, action: #selector(dismissDatePicker), for: .touchUpInside)
-//
-//    containerView!.addSubview(datePicker)
-//    containerView!.addSubview(doneButton)
-//
-//    NSLayoutConstraint.activate([
-//        containerView!.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//        containerView!.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-//        containerView!.widthAnchor.constraint(equalToConstant: 300),
-//        containerView!.heightAnchor.constraint(equalToConstant: 250),
-//
-//        datePicker.topAnchor.constraint(equalTo: containerView!.topAnchor, constant: 20),
-//        datePicker.leadingAnchor.constraint(equalTo: containerView!.leadingAnchor, constant: 10),
-//        datePicker.trailingAnchor.constraint(equalTo: containerView!.trailingAnchor, constant: -10),
-//
-//        doneButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 20),
-//        doneButton.heightAnchor.constraint(equalToConstant: 44),
-//        doneButton.leadingAnchor.constraint(equalTo: containerView!.leadingAnchor, constant: 10),
-//        doneButton.trailingAnchor.constraint(equalTo: containerView!.trailingAnchor, constant: -10),
-//        doneButton.bottomAnchor.constraint(equalTo: containerView!.bottomAnchor, constant: -20)
-//    ])
-//
-//    // Only show month and year in the date picker
-//    if #available(iOS 13.4, *) {
-//        datePicker.locale = Locale(identifier: "en_GB")
-//        datePicker.datePickerMode = .date
-//        datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
-//    } else {
-//        // Fallback for earlier versions
-//    }
-//}

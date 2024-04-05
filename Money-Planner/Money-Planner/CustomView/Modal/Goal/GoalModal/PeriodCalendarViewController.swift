@@ -14,6 +14,7 @@ import Lottie
 //기간 선택 프로토콜 정의
 protocol PeriodSelectionDelegate: AnyObject {
     func periodSelectionDidSelectDates(startDate: Date, endDate: Date)
+    func cancelFilter1()
 }
 
 //선택된 날짜의 배경색 설정
@@ -340,8 +341,8 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
         customModal.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
             customModal.bottomAnchor.constraint(equalTo: view.bottomAnchor, constant: -30),
-            customModal.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            customModal.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            customModal.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 32),
+            customModal.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -32),
             customModal.heightAnchor.constraint(equalToConstant: 616)
         ])
         

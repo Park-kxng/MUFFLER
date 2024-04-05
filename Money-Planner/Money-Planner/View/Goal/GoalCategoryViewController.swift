@@ -141,7 +141,6 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     
     var currentCellIndex : Int = 0
     //화면 구성 요소
-    var header = HeaderView(title: "")
     var descriptionView = DescriptionView(text: "카테고리별 목표 금액을\n입력해주세요", alignToCenter: false)
     var progressBar = GoalProgressBar(goalAmt: 300000, usedAmt: 0) // 임시 값으로 초기화
     let totalCostLabel = MPLabel() //progressBar 안에
@@ -169,16 +168,11 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        
-        setupHeader()
+    
         setupDescriptionView()
         setupStackView()
         setupBtmBtn()
         setupTableView()
-        
-        // 기본 네비게이션 바의 뒤로 가기 버튼 숨기기
-        navigationItem.hidesBackButton = true
-        navigationItem.leftBarButtonItem = nil
         
         btmBtn.isEnabled = false
     }
@@ -195,7 +189,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
                let categoryBudgetText = amountCell.textField.text,
                let categoryBudget = Int64(categoryBudgetText.replacingOccurrences(of: ",", with: "")) {
                 
-                let categoryGoal = CategoryGoal(categoryId: categoryId, categoryBudget: categoryBudget)
+                let categoryGoal = CategoryGoal(categoryGoalId: Int64(-1), categoryId: categoryId, categoryBudget: categoryBudget)
                 categoryGoals.append(categoryGoal)
             }
         }
@@ -208,18 +202,18 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         navigationController?.pushViewController(goalDailyVC, animated: true)
     }
     
-    private func setupHeader() {
-        header.translatesAutoresizingMaskIntoConstraints = false
-        header.addBackButtonTarget(target: self, action: #selector(backButtonTapped), for: .touchUpInside)
-        view.addSubview(header)
-        
-        NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            header.heightAnchor.constraint(equalToConstant: 60) // 예시 높이값
-        ])
-    }
+//    private func setupHeader() {
+//        header.translatesAutoresizingMaskIntoConstraints = false
+//        header.addBackButtonTarget(target: self, action: #selector(backButtonTapped), for: .touchUpInside)
+//        view.addSubview(header)
+//        
+//        NSLayoutConstraint.activate([
+//            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+//            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+//            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+//            header.heightAnchor.constraint(equalToConstant: 60) // 예시 높이값
+//        ])
+//    }
     
     @objc private func backButtonTapped() {
         // 뒤로 가기 기능 구현
@@ -231,7 +225,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         view.addSubview(descriptionView)
         
         NSLayoutConstraint.activate([
-            descriptionView.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 30),
+            descriptionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             descriptionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             descriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])

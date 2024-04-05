@@ -18,12 +18,17 @@ class GoalDetailViewModel {
     let goalRelay = PublishRelay<GoalDetail>()
     let goalReportRelay = PublishRelay<GoalReportResult>()
     let dailyExpenseListRelay = BehaviorRelay<[DailyExpense]>(value: [])//PublishRelay<[DailyExpense]>()
+    let selectedCategoryRelay = BehaviorRelay<[String : Bool]>(value: [:])
     
     var hasNext = false
     private var lastDate: String?
     private var lastExpenseId: String?
     private var selectedStartDate: String?
     private var selectedEndDate: String?
+    
+    func updateSelectedCategory(selected : [String : Bool]){
+        selectedCategoryRelay.accept(selected)
+    }
     
     func fetchGoal(goalId: String) {
         repository.getGoalDetail(goalId: goalId)

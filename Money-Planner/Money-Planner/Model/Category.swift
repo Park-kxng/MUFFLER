@@ -8,7 +8,7 @@
 import Foundation
 
 // MARK: - Category
-struct Category: Codable {
+struct Category: Codable, Hashable{
     let id: Int
     var categoryIcon : String?
     var name: String

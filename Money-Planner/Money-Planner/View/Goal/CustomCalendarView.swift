@@ -53,6 +53,7 @@ class CustomCalendarView: UIView, FSCalendarDelegate, FSCalendarDataSource, FSCa
         
         calendar.register(CustomFSCalendarCell.self, forCellReuseIdentifier: "customCell")
     }
+    
     // 특정 기간 설정
     func setPeriod(startDate: Date, endDate: Date) {
         self.startDate = startDate
@@ -84,6 +85,7 @@ class CustomFSCalendarCell: FSCalendarCell {
         let imageView = UIImageView()
         imageView.contentMode = .scaleAspectFill
         self.contentView.insertSubview(imageView, belowSubview: self.titleLabel)
+        self.titleLabel.font = .mpFont18R()
         self.customImageView = imageView
         
         // Configure the amount label
@@ -281,15 +283,15 @@ class GoalAmountModalViewController: UIViewController, UITextFieldDelegate, Mone
         view.addSubview(backgroundView)
         
         grabberView.translatesAutoresizingMaskIntoConstraints = false
-        grabberView.backgroundColor = UIColor.systemGray4
+        grabberView.backgroundColor = .mpLightGray
         grabberView.layer.cornerRadius = 3
         backgroundView.addSubview(grabberView)
         
         NSLayoutConstraint.activate([
-            grabberView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 8),
+            grabberView.topAnchor.constraint(equalTo: backgroundView.topAnchor, constant: 12),
             grabberView.centerXAnchor.constraint(equalTo: backgroundView.centerXAnchor),
-            grabberView.widthAnchor.constraint(equalToConstant: 36),
-            grabberView.heightAnchor.constraint(equalToConstant: 6),
+            grabberView.widthAnchor.constraint(equalToConstant: 49),
+            grabberView.heightAnchor.constraint(equalToConstant: 4),
             
             backgroundView.heightAnchor.constraint(equalTo: view.heightAnchor, multiplier: 0.4),
             backgroundView.leadingAnchor.constraint(equalTo: view.leadingAnchor),
@@ -311,8 +313,8 @@ class GoalAmountModalViewController: UIViewController, UITextFieldDelegate, Mone
         
         if let date = date {
             let formatter = DateFormatter()
-            formatter.dateFormat = "yyyy.MM.dd"
-            subtitleLabel.text = "\(formatter.string(from: date))의 목표금액을 입력하세요"
+            formatter.dateFormat = "M월 d일"
+            subtitleLabel.text = "\(formatter.string(from: date))의 목표금액을 입력해주세요"
         }
         subtitleLabel.font = .mpFont16M()
         subtitleLabel.textAlignment = .left
@@ -324,7 +326,7 @@ class GoalAmountModalViewController: UIViewController, UITextFieldDelegate, Mone
         
         confirmButton.setTitle("확인", for: .normal)
         confirmButton.layer.cornerRadius = 16
-        confirmButton.backgroundColor = UIColor.systemTeal
+        confirmButton.backgroundColor = .mpMainColor
         confirmButton.addTarget(self, action: #selector(saveAmount), for: .touchUpInside)
         backgroundView.addSubview(confirmButton)
     }
@@ -336,7 +338,7 @@ class GoalAmountModalViewController: UIViewController, UITextFieldDelegate, Mone
         confirmButton.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            titleLabel.topAnchor.constraint(equalTo: backgroundView.safeAreaLayoutGuide.topAnchor, constant: 20),
+            titleLabel.topAnchor.constraint(equalTo: grabberView.safeAreaLayoutGuide.bottomAnchor, constant: 24),
             titleLabel.leadingAnchor.constraint(equalTo: backgroundView.leadingAnchor, constant: 16),
             titleLabel.trailingAnchor.constraint(equalTo: backgroundView.trailingAnchor, constant: -16),
             

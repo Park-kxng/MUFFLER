@@ -7,8 +7,29 @@
 
 import Foundation
 import UIKit
+import RxSwift
 
 class EditGoalViewController : UIViewController {
+    
+//    let amount : Int64
+    let goalId : Int64
+//    let startDate : String
+//    let endDate : String
+    
+    let viewModel = GoalEditViewModel.shared
+    var disposeBag = DisposeBag()
+    
+    init(goalId: Int64) {//, startDate: String, endDate: String, amount: Int64
+        self.goalId = goalId
+//        self.startDate = startDate
+//        self.endDate = endDate
+//        self.amount = amount
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
     
     let contentScrollView : UIScrollView = {
         let scrollView = UIScrollView()
@@ -43,15 +64,17 @@ class EditGoalViewController : UIViewController {
     
     let goalPeriodLabel = SmallDescriptionView(text: "목표 기간", alignToCenter: false)
     let goalPeriodTextfield = LockedTextField(placeholder: "", iconName: "icon_date")
+    
     let dateLabel = UILabel()
+    
     let totalPeriodLabel = UILabel()
     
     let goalBudgetLabel = SmallDescriptionView(text: "목표 예산", alignToCenter: false)
     let goalBudgetTextfield = LockedTextField(placeholder: "", iconName: "icon_Wallet")
+    
     let numAmount = UILabel()
     let charAmount = UILabel()
     let wonLabel = UILabel()
-    
     let moreLabel = SmallDescriptionView(text: "자세히", alignToCenter: false)
     let editByCategory = TextImageButton()
     let editByDate = TextImageButton()
@@ -88,14 +111,37 @@ class EditGoalViewController : UIViewController {
         setupMore()
         setupNextButton()
         
+        emojiTextfield.delegate = self
         goalNameTextfield.delegate = self
         
+        viewModel.fetchGoal(goalId: String(goalId))
+        
+        // GoalDetail 데이터 수신
+        viewModel.goalDetailRelay
+            .subscribe(onNext: { [weak self] goalDetail in
+                self?.configureNameEdit(title: goalDetail.title)
+                self?.configurePeriodEdit(startDate: goalDetail.startDate, endDate: goalDetail.endDate)
+                self?.configureBudgetEdit(totalAmount: goalDetail.totalBudget)
+                self?.configureEmoji(emoji: goalDetail.icon)
+            })
+            .disposed(by: disposeBag)
+        
+        navigationController?.isNavigationBarHidden = false
     }
     
 //    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        super.touchesBegan(touches, with: event)
 //        self.view.endEditing(true) // 키보드를 숨기는 메서드 호출
 //    }
+    
+    func validateFields() {
+        // Ensure the emojiTextField has a single emoji and the goalNameTextField is not empty.
+        let isEmojiValid = emojiTextfield.text?.count == 1
+        let isTitleValid = !(goalNameTextfield.text?.isEmpty ?? true) && goalNameTextfield.text!.count <= 15
+        
+        // Enable the next button if both conditions are met.
+        nextBtn.isEnabled = isEmojiValid && isTitleValid
+    }
     
     func hideKeyboard() {
             let tap: UITapGestureRecognizer = UITapGestureRecognizer(target: self, action: #selector(dismissKeyboard))
@@ -106,6 +152,15 @@ class EditGoalViewController : UIViewController {
         view.endEditing(true)
     }
     
+}
+
+extension EditGoalViewController : goalDeleteModalDelegate {
+    
+    func deleteGoal() {
+        viewModel.deleteGoalByGoalID(goalId: self.goalId)
+        self.tabBarController?.tabBar.isHidden = false
+        self.navigationController?.popToRootViewController(animated: true)
+    }
 }
 
 extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
@@ -138,17 +193,23 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
     }
     
     func presentCustomModal() {
-        let customModalVC = goalDeleteModalView()
+        let customModalVC = goalDeleteModalView(goalName: goalNameTextfield.text!)
         customModalVC.modalPresentationStyle = .overFullScreen
         customModalVC.modalTransitionStyle = .crossDissolve
+        customModalVC.delegate = self
         present(customModalVC, animated: true, completion: nil)
-        
-        customModalVC.cancelButton.addTarget(self, action: #selector(dismissCustomModal), for: .touchUpInside)
+        customModalVC.deleteButton.addTarget(self, action: #selector(deleteAndReturnByCustomModal), for: .touchUpInside)
     }
     
-    @objc private func dismissCustomModal() {
-         dismiss(animated: true, completion: nil)
+    @objc private func deleteAndReturnByCustomModal() {
+        dismiss(animated: true, completion: nil)
+        tabBarController?.tabBar.isHidden = false
+        self.navigationController?.popViewController(animated: true)
      }
+    
+    func configureEmoji(emoji : String){
+        emojiTextfield.text = emoji
+    }
     
     func setupImageEdit() {
         backgroundView.translatesAutoresizingMaskIntoConstraints = false
@@ -179,6 +240,13 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
             addButtonImageView.widthAnchor.constraint(equalToConstant: 24),
             addButtonImageView.heightAnchor.constraint(equalToConstant: 24)
         ])
+        
+        emojiTextfield.addTarget(self, action: #selector(textFieldDidChange(_:)), for: .editingChanged)
+    }
+    
+    func configureNameEdit(title : String){
+        goalNameTextfield.text = title
+        characterCountLabel.text = "\(title.count)" + "/15"
     }
     
     func setupNameEdit() {
@@ -190,7 +258,6 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
         contentView.addSubview(goalNameTextfield)
         contentView.addSubview(characterCountLabel)
         
-        characterCountLabel.text = "0/15"
         characterCountLabel.font = UIFont.mpFont14M()
         characterCountLabel.textColor = UIColor.mpDarkGray
         characterCountLabel.textAlignment = .right
@@ -217,8 +284,27 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
     }
     
     @objc func textFieldDidChange(_ textField: UITextField) {
-        guard let text = textField.text else { return }
-        characterCountLabel.text = "\(text.count)/15"
+        validateFields()
+        if textField == goalNameTextfield {
+            let textCount = goalNameTextfield.text?.count ?? 0
+            characterCountLabel.text = "\(textCount)/15"
+        }
+    }
+    
+    func configurePeriodEdit(startDate : String, endDate : String){
+        let formatter = DateFormatter()
+        formatter.dateFormat = "M월 d일" // Custom format for "month day"
+        formatter.locale = Locale(identifier: "ko_KR") // Korean locale to ensure month names are in Korean
+
+        let startDateString = formatter.string(from: startDate.toDate!)
+        let endDateString = formatter.string(from: endDate.toDate!)
+        dateLabel.text = "\(startDateString) - \(endDateString)"
+        
+        let calendar = Calendar.current
+        let components = calendar.dateComponents([.day], from: startDate.toDate!, to: endDate.toDate!)
+        if let day = components.day {
+            totalPeriodLabel.text = (day+1) % 7 == 0 ? "\((day+1) / 7)주" : "\(day+1)일"
+        }
     }
     
     func setupPeriodEdit() {
@@ -232,11 +318,10 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
         contentView.addSubview(dateLabel)
         contentView.addSubview(totalPeriodLabel)
         
-        dateLabel.text = "7월 7일 - 7월 21일"
+        
         dateLabel.font = UIFont.mpFont20M()
         dateLabel.textColor = UIColor.mpGray
-        
-        totalPeriodLabel.text = "n주"
+    
         totalPeriodLabel.font = UIFont.mpFont20M()
         totalPeriodLabel.textColor = UIColor.mpMainColor
         totalPeriodLabel.textAlignment = .right
@@ -257,6 +342,36 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
             totalPeriodLabel.centerYAnchor.constraint(equalTo: goalPeriodTextfield.centerYAnchor),
             totalPeriodLabel.trailingAnchor.constraint(equalTo: goalPeriodTextfield.trailingAnchor, constant: -20)
         ])
+    }
+    
+    func setComma(cash: Int64) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: cash)) ?? ""
+    }
+    
+    func numberToKorean(_ number: Int64) -> String {
+        let unitLarge = ["", "만", "억", "조"]
+        
+        var result = ""
+        var num = number
+        var unitIndex = 0
+        
+        while num > 0 {
+            let segment = num % 10000
+            if segment != 0 {
+                result = "\((segment))\(unitLarge[unitIndex]) \(result)"
+            }
+            num /= 10000
+            unitIndex += 1
+        }
+        
+        return result.isEmpty ? "0" : result
+    }
+    
+    func configureBudgetEdit(totalAmount : Int64){
+        numAmount.text = setComma(cash: totalAmount)
+        charAmount.text = numberToKorean(totalAmount)
     }
     
     func setupBudgetEdit() {
@@ -321,11 +436,11 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
         
         editByCategory.text = "카테고리별 목표 수정"
         editByCategory.image = UIImage(named: "btn_arrow_small-black")
-        editByCategory.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        editByCategory.addTarget(self, action: #selector(categoryGoalEditButtonTapped), for: .touchUpInside)
         
         editByDate.text = "날짜별 목표 수정"
         editByDate.image = UIImage(named: "btn_arrow_small-black")
-        editByDate.addTarget(self, action: #selector(buttonTapped), for: .touchUpInside)
+        editByDate.addTarget(self, action: #selector(dailyGoalEditButtonTapped), for: .touchUpInside)
     
         contentView.addSubview(moreLabel)
         contentView.addSubview(editByCategory)
@@ -352,14 +467,21 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
         ])
     }
     
-    @objc func buttonTapped() {
+    @objc func categoryGoalEditButtonTapped() {
+        print("카테고리 목표 수정")
+        let vc = EditGoalCategoryViewController()
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
+    @objc func dailyGoalEditButtonTapped() {
         print("버튼눌림")
-//        let evaluationVC = EvaluationViewController()
-//        navigationController?.pushViewController(evaluationVC, animated: true)
+        let vc = EditGoalDailyViewController()
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     func setupNextButton(){
         nextBtn.translatesAutoresizingMaskIntoConstraints = false
+        nextBtn.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
         view.addSubview(nextBtn)
         
         NSLayoutConstraint.activate([
@@ -369,6 +491,11 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
             nextBtn.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
             nextBtn.heightAnchor.constraint(equalToConstant: 55)
         ])
+    }
+    
+    @objc func nextButtonTapped(){
+        viewModel.updateGoalTitleAndIcon(goalId: String(goalId), newTitle: goalNameTextfield.text!, newIcon: emojiTextfield.text!)
+        navigationController?.popViewController(animated: true)
     }
     
     func createListLabel(title: String) -> UILabel {
@@ -524,7 +651,54 @@ class TextImageButton: UIButton {
     }
 }
 
-class EmojiTextField: UITextField {
+//class EmojiTextField: UITextField {
+//    override var textInputContextIdentifier: String? { "" }
+//    
+//    override var textInputMode: UITextInputMode? {
+//        for mode in UITextInputMode.activeInputModes {
+//            if mode.primaryLanguage == "emoji" {
+//                return mode
+//            }
+//        }
+//        return nil
+//    }
+//    
+//    // 백스페이스 허용
+//    override func deleteBackward() {
+//        super.deleteBackward()
+//    }
+//    
+//    // 커서 숨기기
+//    override func caretRect(for position: UITextPosition) -> CGRect {
+//        return .zero
+//    }
+//}
+
+class EmojiTextField: UITextField, UITextFieldDelegate {
+    override init(frame: CGRect) {
+        super.init(frame: frame)
+        self.delegate = self // 텍스트 필드의 델리게이트로 자기 자신을 지정합니다.
+    }
+    
+    required init?(coder aDecoder: NSCoder) {
+        super.init(coder: aDecoder)
+        self.delegate = self
+    }
+    
+    // TextField Delegate 메서드를 사용하여 문자 수 제한
+    func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
+        // 현재 텍스트를 가져옵니다.
+        let currentText = textField.text ?? ""
+        
+        // 예정된 텍스트 변경으로 인해 업데이트 될 텍스트를 가져옵니다.
+        guard let stringRange = Range(range, in: currentText) else { return false }
+        let updatedText = currentText.replacingCharacters(in: stringRange, with: string)
+        
+        // 새로운 텍스트의 길이가 1자 이하인지 확인하고, 그에 따라 true 또는 false를 반환합니다.
+        return updatedText.count <= 1
+    }
+    
+    // 나머지 EmojiTextField 구현
     override var textInputContextIdentifier: String? { "" }
     
     override var textInputMode: UITextInputMode? {
@@ -537,11 +711,10 @@ class EmojiTextField: UITextField {
     }
     
     override func deleteBackward() {
-        // Disable the delete key
+        super.deleteBackward()
     }
     
     override func caretRect(for position: UITextPosition) -> CGRect {
-        // Hide the cursor
         return .zero
     }
 }

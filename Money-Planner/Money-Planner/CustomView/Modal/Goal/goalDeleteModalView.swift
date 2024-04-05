@@ -7,8 +7,26 @@
 
 import Foundation
 import UIKit
+import Lottie
+
+protocol goalDeleteModalDelegate {
+    func deleteGoal()
+}
 
 class goalDeleteModalView : UIViewController {
+    
+    let goalName: String
+    
+    init(goalName: String) {
+        self.goalName = goalName
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    var delegate : goalDeleteModalDelegate?
     let customModal = UIView(frame: CGRect(x: 0, y: 0, width: 322, height: 400))
     
     let titleLabel: MPLabel = {
@@ -29,11 +47,13 @@ class goalDeleteModalView : UIViewController {
         return label
     }()
     
-    let ImageView : UIView = {
-        let view = UIView()
-        view.backgroundColor = UIColor.mpGray
-        
-        return view
+    let ImageView : LottieAnimationView = {
+        let animationView: LottieAnimationView = .init(name: "muffler_delete")
+        animationView.loopMode = .loop
+        animationView.contentMode = .scaleAspectFit
+        animationView.animationSpeed = 2
+        animationView.translatesAutoresizingMaskIntoConstraints = false
+        return animationView
     }()
     
     let controlButtons = SmallBtnView()
@@ -71,6 +91,7 @@ class goalDeleteModalView : UIViewController {
         controlButtons.addCancelAction(target: self, action: #selector(cancelButtonTapped))
         controlButtons.addCompleteAction(target: self, action: #selector(deleteButtonTapped))
         
+        ImageView.play()
     }
     
     @objc func cancelButtonTapped() {
@@ -81,13 +102,15 @@ class goalDeleteModalView : UIViewController {
     @objc func deleteButtonTapped() {
         print("삭제 버튼이 탭되었습니다.")
         // 삭제 버튼 액션 처리
+        dismiss(animated: true){
+            self.delegate?.deleteGoal()
+        }
     }
     
     func presentCustomModal() {
         customModal.backgroundColor = UIColor.mpWhite
         view.addSubview(customModal)
         customModal.center = view.center
-        
     }
     
     private func setupBackground() {
@@ -99,11 +122,12 @@ class goalDeleteModalView : UIViewController {
     private func setupdeleteView() {
         customModal.addSubview(titleLabel)
         customModal.addSubview(contentLabel)
+        customModal.addSubview(ImageView)
         
         let paragraphStyle = NSMutableParagraphStyle()
         paragraphStyle.lineSpacing = 5
         
-        let titleAttributedText = NSAttributedString(string: "[목표이름]\n목표를 정말 삭제하시겠어요?", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
+        let titleAttributedText = NSAttributedString(string: "[" + goalName + "]\n목표를 정말 삭제하시겠어요?", attributes: [NSAttributedString.Key.paragraphStyle: paragraphStyle])
         titleLabel.attributedText = titleAttributedText
         titleLabel.textAlignment = .center
        
@@ -113,14 +137,17 @@ class goalDeleteModalView : UIViewController {
         
         titleLabel.translatesAutoresizingMaskIntoConstraints = false
         contentLabel.translatesAutoresizingMaskIntoConstraints = false
+        ImageView.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             titleLabel.topAnchor.constraint(equalTo: customModal.topAnchor, constant: 35),
             titleLabel.centerXAnchor.constraint(equalTo: customModal.centerXAnchor),
             
             contentLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 15),
-            contentLabel.centerXAnchor.constraint(equalTo: customModal.centerXAnchor)
+            contentLabel.centerXAnchor.constraint(equalTo: customModal.centerXAnchor),
             
+            ImageView.topAnchor.constraint(equalTo: contentLabel.bottomAnchor, constant: 15),
+            ImageView.centerXAnchor.constraint(equalTo: customModal.centerXAnchor),
         ])
         
         customModal.addSubview(controlButtons)
@@ -130,10 +157,11 @@ class goalDeleteModalView : UIViewController {
         controlButtons.completeButton.setTitle("삭제", for: .normal)
         
         NSLayoutConstraint.activate([
-            controlButtons.bottomAnchor.constraint(equalTo: customModal.bottomAnchor, constant: -15),
+            controlButtons.topAnchor.constraint(greaterThanOrEqualTo: ImageView.bottomAnchor, constant: 15),
             controlButtons.leadingAnchor.constraint(equalTo: customModal.leadingAnchor, constant: 15),
             controlButtons.trailingAnchor.constraint(equalTo: customModal.trailingAnchor, constant: -15),
-            controlButtons.heightAnchor.constraint(equalToConstant: 58)
+            controlButtons.heightAnchor.constraint(equalToConstant: 58),
+            controlButtons.bottomAnchor.constraint(equalTo: customModal.bottomAnchor, constant: -15)
         ])
     }
 

@@ -11,7 +11,7 @@ import RxMoya
 import Moya
 
 class LoginRepository {
-    private let provider = MoyaProvider<LoginAPI>().rx
+    private let provider = MoyaProvider<LoginAPI>(plugins: [TokenAuthPlugin()]).rx
     let disposeBag = DisposeBag()
     
     // member controller

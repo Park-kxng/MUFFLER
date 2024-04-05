@@ -29,6 +29,12 @@ class LoginViewModel {
 
 
     func refreshAccessTokenIfNeeded() {
+        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+           let topViewController = windowScene.windows.first?.rootViewController {
+            let alertController = UIAlertController(title: "로그인 세션 만료", message: "보안상의 이유로 다시 로그인이 필요합니다. 자동으로 로그인을 시도합니다.", preferredStyle: .alert)
+            alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+            topViewController.present(alertController, animated: true, completion: nil)
+        }
         // 이미 저장된 리프레시 토큰이 있는 경우
         if let refreshToken = TokenManager.shared.refreshToken {
             print(refreshToken)
@@ -39,6 +45,7 @@ class LoginViewModel {
                     print(response)
                     // 새로운 액세스 토큰이 성공적으로 갱신된 경우
                     if response.isSuccess {
+                        print("결과 : 성공 - 엑세스 토큰 갱신 ")
                         // 갱신된 액세스 토큰을 저장하거나, 필요한 처리를 수행합니다.
                         if let result = response.result {
                             let accessToken  = result.accessToken
@@ -52,6 +59,7 @@ class LoginViewModel {
                         }
 
                     } else {
+                        print("결과 : 실패 - 엑세스 토큰 갱신 ")
                         // 실패한 경우에 대한 처리를 수행합니다.
                         print("Failed to refresh access token: \(response.message)")
                         // 디코딩 에러에서 상태 코드를 확인하여 401 에러인 경우 로그인 화면으로 이동

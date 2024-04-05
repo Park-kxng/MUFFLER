@@ -195,13 +195,17 @@ extension MufflerAPI: TargetType {
 
     // Define headers for the request
     var headers: [String: String]? {
-        if let accessToken = TokenManager.shared.accessToken {
-            print("현재 저장된 토큰 불러오기 성공")
-            return ["Authorization": "Bearer \(accessToken)"]
-        } else {
-            return nil
-        }
+        return ["Content-type": "application/json"]
+
     }
 }
 
 
+extension MufflerAPI: AuthenticatedAPI {
+    var requiresAuthentication: Bool {
+        switch self {
+        default:
+            return true
+        }
+    }
+}

@@ -11,7 +11,7 @@ import RxMoya
 import Moya
 
 class MufflerViewModel {
-    private let provider = MoyaProvider<MufflerAPI>().rx
+    private let provider = MoyaProvider<MufflerAPI>(plugins: [TokenAuthPlugin()]).rx
     let disposeBag = DisposeBag()
     
     // 소비등록 > 달력 모달뷰

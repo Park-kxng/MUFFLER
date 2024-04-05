@@ -18,6 +18,11 @@ enum LoginAPI {
 }
 
 extension LoginAPI: TargetType {
+    
+    var headers: [String : String]? {
+        return ["Content-type": "application/json"]
+    }
+    
     var baseURL: URL {
         return URL(string: "https://muffler.world")!
     }
@@ -69,26 +74,14 @@ extension LoginAPI: TargetType {
         return Data()
     }
     
-    var headers: [String: String]? {
-        switch self {
-        case .refreshToken, .login:
-            return nil
-        default:
-            // Add access token to headers
-            if let accessToken = TokenManager.shared.accessToken {
-                return ["Authorization": "Bearer \(accessToken)"]
-            } else {
-                return nil
-            }
-        }
-    }
+    
 }
 
 
 extension LoginAPI: AuthenticatedAPI {
     var requiresAuthentication: Bool {
         switch self {
-        case .join, .login, .refreshToken, .connect:
+        case .login, .refreshToken:
             return false
         default:
             return true

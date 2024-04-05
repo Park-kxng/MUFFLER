@@ -12,11 +12,22 @@ import UIKit
 
 final class TokenAuthPlugin: PluginType {
     func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
-            guard let authTarget = target as? AuthenticatedAPI, authTarget.requiresAuthentication,
-                  let accessToken = TokenManager.shared.accessToken else {
-                return request
-            }
+//            guard let authTarget = target as? AuthenticatedAPI, authTarget.requiresAuthentication,
+//                  let accessToken = TokenManager.shared.accessToken else {
+//                print("헤더에 엑세스 토큰 추가")
+//                return request
+//            }
+        // AuthenticatedAPI로 캐스팅이 가능하고, 인증이 필요한 경우에만
+           guard let authTarget = target as? AuthenticatedAPI, authTarget.requiresAuthentication else {
+               print("인증이 필요하지 않는 요청")
+               return request
+           }
 
+           // 엑세스 토큰을 가져올 수 있는 경우에만
+           guard let accessToken = TokenManager.shared.accessToken else {
+               print("엑세스 토큰을 가져올 수 없음")
+               return request
+           }
             var request = request
             request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
             return request

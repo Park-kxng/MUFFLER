@@ -345,7 +345,6 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
     @objc
     private func completeButtonTapped(){
         print("완료 버튼 클릭 > 프로필 설정 시도")
-        
         viewModel.join(name: currText, img: selectedIcon) { success in
             if success{
                 print("결과 : 프로필 설정 완료")

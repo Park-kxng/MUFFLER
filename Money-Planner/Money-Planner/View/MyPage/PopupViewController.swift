@@ -112,7 +112,15 @@ class PopupViewController: UIViewController {
     }
     @objc
     func popupDismiss(){
+        // 저장한 토큰 지우기 - 엑세스, 리프레쉬 토큰 삭제
+        TokenManager.shared.clearTokens()
+        
+        // 팝업창 지우기
         dismiss(animated: true)
+        
+        // 로그아웃 확인 전달
         delegate?.popupChecked()
+        
+        
     }
 }

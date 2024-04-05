@@ -706,6 +706,7 @@
 		7A4C67342B5A47F9008BCAC9 /* Label */ = {
 			isa = PBXGroup;
 			children = (
+				208C90B92B6FE45B00C67960 /* UnregisterTitleLabel.swift */,
 				7A8F3ED92B85057000480902 /* DdayLabel.swift */,
 				7A4C67382B5A4A49008BCAC9 /* MPLabel.swift */,
 				7A4C673A2B5A4A8D008BCAC9 /* DescriptionView.swift */,
@@ -873,7 +874,6 @@
 				208C90A72B6D48B300C67960 /* User.swift */,
 				208C90AB2B6E3F8100C67960 /* UnregisterViewController.swift */,
 				208C90AF2B6E887A00C67960 /* ReasonModalViewController.swift */,
-				208C90B92B6FE45B00C67960 /* UnregisterTitleLabel.swift */,
 			);
 			path = MyPage;
 			sourceTree = "<group>";

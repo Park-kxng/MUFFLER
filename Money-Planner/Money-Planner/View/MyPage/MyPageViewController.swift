@@ -7,7 +7,17 @@ import Foundation
 import UIKit
 
 
-class MyPageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ProfileViewDelegate {
+class MyPageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ProfileViewDelegate, PopupViewDelegate {
+    func popupChecked() {
+        // 로그아웃 확인 완료
+        
+        // 로그인 화면으로 이동
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            sceneDelegate.moveToLogin()
+        }
+        
+    }
+    
     var tempUserName : String = ""
     var tempProfileImage: String = ""
 
@@ -150,6 +160,7 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
             print("로그아웃 선택됨")
             // 로그아웃 모달로 이동
             let logoutVC = PopupViewController() // 로그아웃 완료 팝업 띄우기
+            logoutVC.delegate = self
             present(logoutVC, animated: true)
             
             

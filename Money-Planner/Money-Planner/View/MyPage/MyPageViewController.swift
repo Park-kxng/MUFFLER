@@ -25,18 +25,6 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
         }
     }
     
-    func popupChecked() {
-        // 로그아웃 확인 완료
-        // 저장한 토큰 지우기 - 엑세스, 리프레쉬 토큰 삭제
-        TokenManager.shared.clearTokens()
-        
-        // 로그인 화면으로 이동
-        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-            sceneDelegate.moveToLogin()
-        }
-        
-    }
-    
     var tempUserName : String = ""
     var tempProfileImage: String = ""
 

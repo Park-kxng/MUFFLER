@@ -349,7 +349,7 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
             if success{
                 print("결과 : 프로필 설정 완료")
                 
-                UserDefaults.standard.set(self.currText, forKey: "name")
+                UserDefaults.standard.set(self.nameTextField.text, forKey: "name")
                 UserDefaults.standard.set(self.selectedIcon, forKey: "profileImg")
                 
 

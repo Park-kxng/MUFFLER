@@ -26,20 +26,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          print(isLoggedIn)
          if isLoggedIn {
              print("로그인 한 적 있음")
-             // 가진 토큰으로 로그인 시도
-             viewModel.isLoginEnabled()
-                 .subscribe(onNext: { isEnabled in
-                     if isEnabled {
-                         print("로그인 가능 > 홈화면으로 이동")
-                         // 홈화면으로 이동
-                         self.setupMainInterface()
-                     } else {
-                         print("로그인 불가능 > 토큰 갱신 시도")
-                         // 로그인 불가능한 경우의 처리를 수행합니다.
-                         viewModel.refreshAccessTokenIfNeeded()
-                     }
-                 })
-                 .disposed(by: disposeBag)
+             self.setupMainInterface()
+//              // 가진 토큰으로 로그인 시도
+//             viewModel.isLoginEnabled()
+//                 .subscribe(onNext: { isEnabled in
+//                     if isEnabled {
+//                         print("로그인 가능 > 홈화면으로 이동")
+//                         // 홈화면으로 이동
+//                          self.setupMainInterface()
+//                     } else {
+//                         print("로그인 불가능 > 토큰 갱신 시도")
+//                     }
+//                 })
+//                 .disposed(by: disposeBag)
          } else {
              print("토큰 없음")
              // 로그인 화면으로 이동

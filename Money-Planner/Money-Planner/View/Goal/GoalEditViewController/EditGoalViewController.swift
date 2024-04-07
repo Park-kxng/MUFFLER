@@ -129,6 +129,11 @@ class EditGoalViewController : UIViewController {
         navigationController?.isNavigationBarHidden = false
     }
     
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.fetchGoal(goalId: String(goalId))
+    }
+    
 //    override func touchesBegan(_ touches: Set<UITouch>, with event: UIEvent?) {
 //        super.touchesBegan(touches, with: event)
 //        self.view.endEditing(true) // 키보드를 숨기는 메서드 호출

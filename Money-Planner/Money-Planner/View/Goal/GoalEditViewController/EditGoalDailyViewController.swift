@@ -80,6 +80,10 @@ class EditGoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalen
             initializeArray(start: start, end: end)
         }
         
+        
+            
+                
+        
         setupNavigationBar()
         setupViews()
         setupConstraints()
@@ -208,9 +212,9 @@ class EditGoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalen
     }
     
     @objc private func btmButtonTapped() {
-        let goalFinalVC = GoalFinalViewController()
         let budgets = convertToInt64Array(from: amountInfo)
-        navigationController?.pushViewController(goalFinalVC, animated: true)
+        goalEditionManager.updateGoalDailyBudgets(goalId: goalEditionManager.goalId!, newDailyBudgets: budgets)
+        navigationController?.popViewController(animated: true)
     }
     
     ///calendar관련

@@ -107,6 +107,7 @@ extension UIColor {
     static let mpBlack = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 1) // #000000
     static let mpRed = UIColor(red: 255/255, green: 88/255, blue: 89/255, alpha: 1)  //##FF5859
     static let mpDim = UIColor(red: 0/255, green: 0/255, blue: 0/255, alpha: 0.4)
+    static let mpYellow = UIColor(hexCode: "#FFDA45")
 }
 
 

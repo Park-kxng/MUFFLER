@@ -16,6 +16,7 @@ class GoalEditViewModel {
     let repository = GoalRepository.shared
     let disposeBag = DisposeBag()
     
+    var goalId: String?
     var startDate: String?
     var endDate: String?
     var goalBudget : Int64?
@@ -31,6 +32,7 @@ class GoalEditViewModel {
                 switch event {
                 case .success(let response):
                     self?.goalDetailRelay.accept(response.result)
+                    self?.goalId = goalId
                     self?.categoryGoals = response.result.categoryGoals
                     self?.dailyBudgets = response.result.dailyBudgets
                     self?.goalBudget = response.result.totalBudget

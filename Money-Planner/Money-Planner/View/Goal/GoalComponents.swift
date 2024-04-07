@@ -167,6 +167,7 @@ class GoalPresentationCell: UITableViewCell {
     let btn = UIButton()
     let title = MPLabel()
     let dday = MPLabel()
+    let ddayView = UIView()
     var progressBar = GoalProgressBar(goalAmt: 1, usedAmt: 0)
     let progressPercentage = MPLabel()
     let totalCost = MPLabel()
@@ -203,6 +204,16 @@ class GoalPresentationCell: UITableViewCell {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.clipsToBounds = true
         
+        ddayView.addSubview(dday) // Add dday label to ddayView
+        
+        ddayView.translatesAutoresizingMaskIntoConstraints = false
+        dday.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            dday.centerYAnchor.constraint(equalTo: ddayView.centerYAnchor),
+            dday.centerXAnchor.constraint(equalTo: ddayView.centerXAnchor)
+        ])
+        
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
@@ -214,7 +225,8 @@ class GoalPresentationCell: UITableViewCell {
             btn.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ])
         
-        let horizontalStackView1 = UIStackView(arrangedSubviews: [title, dday])
+        //let horizontalStackView1 = UIStackView(arrangedSubviews: [title, dday])
+        let horizontalStackView1 = UIStackView(arrangedSubviews: [title, ddayView])
         let horizontalStackView2 = UIStackView(arrangedSubviews: [progressBar])
         let horizontalStackView3 = UIStackView(arrangedSubviews: [progressPercentage, totalCost])
         let verticalStackView = UIStackView(arrangedSubviews: [horizontalStackView1, horizontalStackView2, horizontalStackView3])
@@ -292,13 +304,23 @@ class GoalPresentationCell: UITableViewCell {
         
         
         dday.text = ddayText
-        dday.backgroundColor = ddayBackgroundColor
+        
+        dday.superview?.layoutIfNeeded()
+        
+        ddayView.backgroundColor = ddayBackgroundColor
         dday.textColor = ddayTextColor
-        dday.layer.cornerRadius = 6
+        ddayView.layer.cornerRadius = 6
+        
         dday.clipsToBounds = true
         dday.textAlignment = .center
-        dday.widthAnchor.constraint(equalToConstant: 37).isActive = true
-        dday.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        
+        let padding: CGFloat = 16 // Assuming 8 points padding on each side
+        let ddayLabelWidth = dday.intrinsicContentSize.width + padding
+        
+        ddayView.widthAnchor.constraint(equalToConstant: ddayLabelWidth).isActive = true
+        ddayView.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        
+        ddayView.superview?.layoutIfNeeded()
         
         //progressPercentage
         let progressPercentageValue = Double(goal.totalCost ?? 0) / Double(goal.totalBudget) * 100.0

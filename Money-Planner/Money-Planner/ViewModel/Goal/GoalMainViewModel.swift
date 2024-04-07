@@ -26,7 +26,6 @@ class GoalMainViewModel {
     let notNowGoals = BehaviorRelay<[Goal_]>(value : [])
     let futureGoals = BehaviorRelay<[Goal_]>(value: [])
     let pastGoals = BehaviorRelay<[Goal_]>(value: [])
-    let addedNotNowGoals = BehaviorRelay<[Goal_]>(value : [])
     
     var hasNext = false
     private var endDate: String?
@@ -34,7 +33,7 @@ class GoalMainViewModel {
     private init() {}
 
     // Initial fetch without endDate
-    func fetchInitialGoals(completion: @escaping () -> Void) {
+    func fetchInitialGoals() {
 //        resetData()
         fetchNowGoal()
         fetchNotNowGoals(forceRefresh: true)
@@ -52,59 +51,14 @@ class GoalMainViewModel {
             })
             .disposed(by: disposeBag)
     }
-    
 
-//    func fetchNotNowGoals() {
-//        //hasNext가 true일때만 받을 수 있도록 처리
-//        guard hasNext.value else { return }
-//        GoalRepository.shared.getNotNowGoals(endDate: endDate).subscribe(onSuccess: { [weak self] response in
-//            guard let self = self else { return }
-//            if response.isSuccess {
-//                let newGoals = response.result.futureGoal + response.result.endedGoal
-//                self.addedNotNowGoals.accept(newGoals)
-//                var currentGoals = self.notNowGoals.value
-//                currentGoals.append(contentsOf: newGoals)
-//                print(newGoals)
-//                self.notNowGoals.accept(currentGoals)
-//                print(currentGoals)
-//                // Update hasNext and endDate for pagination
-//                self.hasNext.accept(response.result.hasNext)
-//                self.endDate = currentGoals.last?.endDate
-//            }
-//        }, onFailure: { error in
-//            print("error : notNowResponse")
-//            print(error)
-//        }).disposed(by: disposeBag)
-//    }
-    
-//    func fetchNotNowGoals() {
-//        //hasNext가 true일때만 받을 수 있도록 처리
-//        guard hasNext.value else { return }
-//        GoalRepository.shared.getNotNowGoals(endDate: endDate)
-//            .subscribe(onSuccess: { [weak self] response in
-//                guard let self = self else { return }
-//                if response.isSuccess {
-//                    let newGoals = response.result.futureGoal + response.result.endedGoal
-//                    self.addedNotNowGoals.accept(newGoals)
-//                    var currentGoals = self.notNowGoals.value
-//                    currentGoals.append(contentsOf: newGoals)
-//                    self.notNowGoals.accept(currentGoals)
-//                    
-//                    // Update hasNext and endDate for pagination
-//                    self.hasNext.accept(response.result.hasNext)
-//                    self.endDate = currentGoals.last?.endDate
-//                }
-//            }, onFailure: { error in
-//                // Error handling
-//            }).disposed(by: disposeBag)
-//    }
     
     func fetchNotNowGoals(forceRefresh : Bool = true) {
         
         if forceRefresh {
             endDate = nil
             hasNext = false
-            addedNotNowGoals.accept([])
+            notNowGoals.accept([])
             print("refresh!!")
         }
         
@@ -112,6 +66,8 @@ class GoalMainViewModel {
             .subscribe(onSuccess: { [weak self] response in
                 guard let self = self else { return }
                 if response.isSuccess {
+                    print("\nget Not Now goals Response : ")
+                    print(response)
                     let newGoals = response.result.futureGoal + response.result.endedGoal
                     // 새로운 데이터 병합
                     let updatedGoals = notNowGoals.value + newGoals

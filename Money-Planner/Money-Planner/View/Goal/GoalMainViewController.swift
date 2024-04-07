@@ -63,7 +63,7 @@ class GoalMainViewController: UIViewController, UITableViewDataSource, UITableVi
     override func viewDidLoad() {
         super.viewDidLoad()
 
-                NotificationCenter.default.addObserver(self, selector: #selector(getNotificationGoalView), name: Notification.Name("addGoal"), object: nil)
+        NotificationCenter.default.addObserver(self, selector: #selector(getNotificationGoalView), name: Notification.Name("addGoal"), object: nil)
         
         view.backgroundColor = UIColor(hexCode: "F5F6FA")
         
@@ -77,9 +77,12 @@ class GoalMainViewController: UIViewController, UITableViewDataSource, UITableVi
             .skip(1) // 초기값을 스킵하고 실제 업데이트 될 때만 반응하도록 설정
             .subscribe(onNext: { [weak self] notNowGoals in
                 self?.notNowData = notNowGoals
+//                self?.refreshSectionWithNewData(newNotNowGoals: notNowGoals)
+//                self?.updateTableWithNewData(newNotNowGoals: notNowGoals)
+                print("목표 탭에서 notNowGoals 출력")
+                print(notNowGoals)
                 self?.goalTable.reloadData()
             }).disposed(by: disposeBag)
-//        setupSubscriptions()
         
         setupHeaderView()
         setupGoalTable()
@@ -87,8 +90,8 @@ class GoalMainViewController: UIViewController, UITableViewDataSource, UITableVi
         goalTable.delegate = self
         headerView.addNewGoalBtn.addTarget(self, action: #selector(addNewGoalButtonTapped), for: .touchUpInside)
         
-        viewModel.fetchNowGoal()
-        viewModel.fetchNotNowGoals()
+//        viewModel.fetchNowGoal()
+//        viewModel.fetchNotNowGoals()
         
         navigationController?.isNavigationBarHidden = true
     }
@@ -98,12 +101,110 @@ class GoalMainViewController: UIViewController, UITableViewDataSource, UITableVi
     }
     
     override func viewDidAppear(_ animated: Bool) {
+        viewModel.fetchInitialGoals()
         super.viewDidAppear(animated)
         navigationController?.isNavigationBarHidden = true
-        
-//        viewModel.fetchNowGoal()
-//        viewModel.fetchNotNowGoals()
     }
+    
+    
+    func refreshSectionWithNewData(newNotNowGoals: [Goal_]) {
+        // Assuming section 1 is for notNowData
+        let sectionToUpdate = 1
+
+        // Find the current number of rows in the section from the tableView
+        var oldCount = goalTable.numberOfRows(inSection: sectionToUpdate)
+
+        // If the old data set was empty, we might have shown an "empty" cell
+        // Check if notNowData was empty and adjust oldCount accordingly
+        if notNowData.isEmpty {
+            oldCount = 1 // Assume there was 1 "empty" cell displayed
+        }
+
+        // Update the data source
+        notNowData = newNotNowGoals
+        let newCount = newNotNowGoals.count
+
+        // Prepare index paths for the update
+        let deletionIndexPaths = (0..<oldCount).map { IndexPath(row: $0, section: sectionToUpdate) }
+        let insertionIndexPaths = (0..<newCount).map { IndexPath(row: $0, section: sectionToUpdate) }
+
+        // Perform the updates
+        goalTable.performBatchUpdates({
+            // If there was data (or an "empty" cell displayed), delete accordingly
+            if oldCount > 0 {
+                goalTable.deleteRows(at: deletionIndexPaths, with: .fade)
+            }
+            
+            // If there are new goals to display, insert their rows
+            if newCount > 0 {
+                goalTable.insertRows(at: insertionIndexPaths, with: .top)
+            } else {
+                // If there's no new data, we might need to insert an "empty" cell again
+                // This is optional and depends on how you handle empty states
+                goalTable.insertRows(at: [IndexPath(row: 0, section: sectionToUpdate)], with: .top)
+            }
+        }, completion: nil)
+    }
+
+//    func updateTableWithNewData(newNotNowGoals: [Goal_]) {
+//        // Assuming 'notNowData' is your current data before update
+//        let oldNotNowGoals = notNowData
+//        notNowData = newNotNowGoals // Update your data source first
+//
+//        // Calculate differences between oldNotNowGoals and newNotNowGoals
+//        // This example assumes you have a way to uniquely identify goals (e.g., an ID)
+//        // You would need to implement 'calculateDifferences' based on your specific data structures
+//        let differences = calculateDifferences(old: oldNotNowGoals, new: newNotNowGoals)
+//
+//        goalTable.performBatchUpdates({
+//            // Handle deletions
+//            goalTable.deleteRows(at: differences.deletions, with: .fade)
+//            // Handle insertions
+//            goalTable.insertRows(at: differences.insertions, with: .fade)
+//            // Optionally handle row reloads if some data changed without adding or removing rows
+//            goalTable.reloadRows(at: differences.reloads, with: .fade)
+//        }, completion: nil)
+//    }
+    
+    func calculateDifferences(old: [Goal_], new: [Goal_]) -> (deletions: [IndexPath], insertions: [IndexPath], reloads: [IndexPath]) {
+        var deletions = [IndexPath]()
+        var insertions = [IndexPath]()
+        var reloads = [IndexPath]()
+
+        let oldIds = Set(old.map { $0.goalId })
+        let newIds = Set(new.map { $0.goalId })
+
+        // Identify deletions
+        for (index, goal) in old.enumerated() {
+            if !newIds.contains(goal.goalId) {
+                deletions.append(IndexPath(row: index, section: 1)) // Assuming section 1 is for notNowData
+            }
+        }
+
+        // Identify insertions
+        for (index, goal) in new.enumerated() {
+            if !oldIds.contains(goal.goalId) {
+                insertions.append(IndexPath(row: index, section: 1)) // Assuming section 1 is for notNowData
+            }
+        }
+
+        // Identify reloads (updated goals present in both lists)
+        // This simplistic approach reloads a row if any data field has changed.
+        // You might want to refine this to check for specific fields depending on your UI needs.
+        for (newIndex, newGoal) in new.enumerated() {
+            if let oldIndex = old.firstIndex(where: { $0.goalId == newGoal.goalId }) {
+                let oldGoal = old[oldIndex]
+                if newGoal.goalTitle != oldGoal.goalTitle || newGoal.icon != oldGoal.icon ||
+                   newGoal.totalBudget != oldGoal.totalBudget || newGoal.totalCost != oldGoal.totalCost ||
+                   newGoal.endDate != oldGoal.endDate {
+                    reloads.append(IndexPath(row: newIndex, section: 1))
+                }
+            }
+        }
+
+        return (deletions, insertions, reloads)
+    }
+
     
 //    func update(with nowGoal : [Goal_], with notNowGoals : [Goal_]) {
 //        // selectedCategory가 비어있지 않은 경우, 선택된 카테고리에 해당하는 항목만 필터링
@@ -111,20 +212,20 @@ class GoalMainViewController: UIViewController, UITableViewDataSource, UITableVi
 //        self.notNowData = notNowGoals
 //    }
     
-    private func setupSubscriptions() {
-        viewModel.nowGoal.asObservable()
-            .subscribe(onNext: { [weak self] nowGoal in
-                self?.nowData = nowGoal
-                self?.goalTable.reloadData()
-            }).disposed(by: disposeBag)
-        
-        viewModel.notNowGoals.asObservable()
-            .skip(1) // 초기값을 스킵하고 실제 업데이트 될 때만 반응하도록 설정
-            .subscribe(onNext: { [weak self] notNowGoals in
-                self?.notNowData = notNowGoals
-                self?.goalTable.reloadData()
-            }).disposed(by: disposeBag)
-    }
+//    private func setupSubscriptions() {
+//        viewModel.nowGoal.asObservable()
+//            .subscribe(onNext: { [weak self] nowGoal in
+//                self?.nowData = nowGoal
+//                self?.goalTable.reloadData()
+//            }).disposed(by: disposeBag)
+//        
+//        viewModel.notNowGoals.asObservable()
+//            .skip(1) // 초기값을 스킵하고 실제 업데이트 될 때만 반응하도록 설정
+//            .subscribe(onNext: { [weak self] notNowGoals in
+//                self?.notNowData = notNowGoals
+//                self?.goalTable.reloadData()
+//            }).disposed(by: disposeBag)
+//    }
     
     
     @objc func addNewGoalButtonTapped() {
@@ -401,11 +502,10 @@ class GoalMainViewController: UIViewController, UITableViewDataSource, UITableVi
         goalTable.reloadData()
     }
     
-    
-    
     @objc func getNotificationGoalView(){
         viewModel.fetchNowGoal()
         viewModel.fetchNotNowGoals()
+        print("==================================")
     }
 }
 

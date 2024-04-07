@@ -84,12 +84,15 @@ extension HomeAPI : BaseAPI {
     }
     
     public var headers: [String: String]? {
-        if let accessToken = TokenManager.shared.accessToken {
-            return ["Authorization": "Bearer \(accessToken)"]
-        } else {
-            print("저장된 토큰이 없습니다.")
-            return nil
-        }
+        return ["Content-type": "application/json"]
+
        
+    }
+}
+
+
+extension HomeAPI: AuthenticatedAPI {
+    var requiresAuthentication: Bool {
+            return true
     }
 }

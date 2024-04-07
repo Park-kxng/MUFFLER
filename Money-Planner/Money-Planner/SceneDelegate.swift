@@ -26,8 +26,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          print(isLoggedIn)
          if isLoggedIn {
              print("로그인 한 적 있음")
-             self.setupMainInterface()
-//              // 가진 토큰으로 로그인 시도
+              // 가진 토큰으로 로그인 시도
 //             viewModel.isLoginEnabled()
 //                 .subscribe(onNext: { isEnabled in
 //                     if isEnabled {
@@ -47,6 +46,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                  
              }
          }
+         self.setupMainInterface()
          self.window?.makeKeyAndVisible()
      }
      

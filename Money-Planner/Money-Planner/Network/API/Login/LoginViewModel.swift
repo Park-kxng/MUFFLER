@@ -17,15 +17,20 @@ class LoginViewModel {
     
     func isLoginEnabled() -> Observable<Bool> {
         return loginRepository.connect()
-            .map { response in
+            .map { response -> Bool in
+                // 성공적인 응답 처리
+                print("success - \(response)")
                 return response.isSuccess
             }
             .catch { error -> Observable<Bool> in
-                // 오류가 발생한 경우에 대한 처리를 수행합니다.
-                print(error)
-                return Observable.just(false) // 로그인 불가능으로 처리
+                // 오류 발생 시 로깅
+                print("Login error: \(error.localizedDescription)")
+                // 오류 유형에 따른 분기 처리가 필요한 경우 여기서 수행
+                // 예: if error is SomeSpecificError { ... }
+                return Observable.just(false) // 일반적으로 로그인 불가능으로 처리
             }
     }
+
 
 
     func refreshAccessTokenIfNeeded() {
@@ -37,7 +42,7 @@ class LoginViewModel {
         }
         // 이미 저장된 리프레시 토큰이 있는 경우
         if let refreshToken = TokenManager.shared.refreshToken {
-            print(refreshToken)
+            print("refreshToken-\(refreshToken)")
             // 리프레시 토큰을 사용하여 새로운 액세스 토큰을 가져오는 요청을 수행합니다.
             let refreshTokenRequest = RefreshTokenRequest(refreshToken: refreshToken)
             loginRepository.refreshToken(refreshToken: refreshTokenRequest)

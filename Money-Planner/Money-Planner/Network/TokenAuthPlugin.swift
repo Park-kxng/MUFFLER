@@ -39,9 +39,18 @@ final class TokenAuthPlugin: PluginType {
         switch result {
         case .success(let response):
             print("결과 : api 연결 성공 - \(response)")
+            print("response.statuscode -\(response.statusCode)")
+            let error = response.statusCode
+            if  error == 401 {
+                print("401 - 엑세스 토큰 갱신 필요")
+                DispatchQueue.main.async {
+                    let viewModel = LoginViewModel()
+                     viewModel.refreshAccessTokenIfNeeded()
+                }
+            }
             break
         case .failure(let error):
-            print("error-\(String(describing: error.response))")
+            print("error-\(String(describing: error))")
             if let response = error.response {
                 // HTTP 상태 코드를 확인
                 if response.statusCode == 401 {

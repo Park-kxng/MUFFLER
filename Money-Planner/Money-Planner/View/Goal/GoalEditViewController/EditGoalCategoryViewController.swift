@@ -1,8 +1,8 @@
 //
-//  GoalCategoryViewController.swift
+//  EditGoalCategoryViewController.swift
 //  Money-Planner
 //
-//  Created by 유철민 on 1/12/24.
+//  Created by 유철민 on 3/22/24.
 //
 
 import Foundation
@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-extension GoalCategoryViewController: CategorySelectionDelegate{
+extension EditGoalCategoryViewController: CategorySelectionDelegate{
     
     func didSelectCategory(id: Int64, category: String, iconName: String) {
         // 선택된 카테고리 정보를 업데이트
@@ -38,9 +38,6 @@ extension GoalCategoryViewController: CategorySelectionDelegate{
         //btmBtn 활성화 결정 및 기타 UI 업데이트
         //checkForDuplicateCategoriesAndUpdateUI()
     }
-
-
-    
     
     func AddCategory() {
         // 직접 추가 화면으로 이동합니다
@@ -53,7 +50,7 @@ extension GoalCategoryViewController: CategorySelectionDelegate{
 }
 
 
-extension GoalCategoryViewController: MoneyAmountTextCellDelegate {
+extension EditGoalCategoryViewController: MoneyAmountTextCellDelegate {
     
     func didChangeAmountText(to newValue: String?, cell: MoneyAmountTextCell, oldValue: String?) {
         guard let indexPath = tableView.indexPath(for: cell) else { return }
@@ -68,7 +65,7 @@ extension GoalCategoryViewController: MoneyAmountTextCellDelegate {
         } else {
             // indexPath.section이 data 배열의 범위를 벗어난 경우의 처리
             print("섹션 인덱스가 data 배열의 범위를 벗어났습니다.")
-        }        
+        }
         let newValueNumeric = parseNumericValue(from: newValue)
         let oldValueNumeric = parseNumericValue(from: oldValue)
         var categoryGoalOver = false
@@ -115,11 +112,27 @@ extension GoalCategoryViewController: MoneyAmountTextCellDelegate {
 
 
 // 카테고리별 목표 금액 입력 화면
-class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddCategoryViewDelegate{
+class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddCategoryViewDelegate{
     
     
     func AddCategoryCompleted(_ name: String, iconName: String) {
         // 직접 추가 완료 후
+    }
+    
+    private func bindViewModel() {
+        // goalDetailRelay 구독을 통해 초기 카테고리 목표 데이터 설정
+//        goalEditViewModel.goalDetailRelay
+//            .subscribe(onNext: { [weak self] goalDetail in
+//                self?.data = goalDetail.categoryGoals.map { categoryGoal in
+//                    GoalCategory(
+//                        categoryName: categoryGoal.name,
+//                        categoryIcon: categoryGoal.iconName,
+//                        categoryId: categoryGoal.categoryId,
+//                        cost: categoryGoal.budget
+//                    )
+//                }
+//                self?.tableView.reloadData()
+//            }).disposed(by: disposeBag)
     }
     
     ///카테고리 셀을 만들기 위함.
@@ -127,6 +140,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     
     // api 연결
     let viewModel = MufflerViewModel()
+    let goalEditViewModel = GoalEditViewModel.shared
     let disposeBag = DisposeBag()
     
     // 카테고리 내용 저장
@@ -141,6 +155,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     
     var currentCellIndex : Int = 0
     //화면 구성 요소
+    var header = HeaderView(title: "")
     var descriptionView = DescriptionView(text: "카테고리별 목표 금액을\n입력해주세요", alignToCenter: false)
     var progressBar = GoalProgressBar(goalAmt: 300000, usedAmt: 0) // 임시 값으로 초기화
     let totalCostLabel = MPLabel() //progressBar 안에
@@ -168,11 +183,16 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-    
+        
+        setupHeader()
         setupDescriptionView()
         setupStackView()
         setupBtmBtn()
         setupTableView()
+        bindViewModel()
+        // 기본 네비게이션 바의 뒤로 가기 버튼 숨기기
+        navigationItem.hidesBackButton = true
+        navigationItem.leftBarButtonItem = nil
         
         btmBtn.isEnabled = false
     }
@@ -189,7 +209,8 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
                let categoryBudgetText = amountCell.textField.text,
                let categoryBudget = Int64(categoryBudgetText.replacingOccurrences(of: ",", with: "")) {
                 
-                let categoryGoal = CategoryGoal(categoryGoalId: Int64(-1), categoryId: categoryId, categoryBudget: categoryBudget)
+                //이 부분 무조건 수정해야함
+                let categoryGoal = CategoryGoal(categoryGoalId: -1, categoryId: categoryId, categoryBudget: categoryBudget)
                 categoryGoals.append(categoryGoal)
             }
         }
@@ -202,18 +223,18 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         navigationController?.pushViewController(goalDailyVC, animated: true)
     }
     
-//    private func setupHeader() {
-//        header.translatesAutoresizingMaskIntoConstraints = false
-//        header.addBackButtonTarget(target: self, action: #selector(backButtonTapped), for: .touchUpInside)
-//        view.addSubview(header)
-//        
-//        NSLayoutConstraint.activate([
-//            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-//            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-//            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-//            header.heightAnchor.constraint(equalToConstant: 60) // 예시 높이값
-//        ])
-//    }
+    private func setupHeader() {
+        header.translatesAutoresizingMaskIntoConstraints = false
+        header.addBackButtonTarget(target: self, action: #selector(backButtonTapped), for: .touchUpInside)
+        view.addSubview(header)
+        
+        NSLayoutConstraint.activate([
+            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
+            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
+            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
+            header.heightAnchor.constraint(equalToConstant: 60) // 예시 높이값
+        ])
+    }
     
     @objc private func backButtonTapped() {
         // 뒤로 가기 기능 구현
@@ -225,7 +246,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         view.addSubview(descriptionView)
         
         NSLayoutConstraint.activate([
-            descriptionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
+            descriptionView.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 30),
             descriptionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             descriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
@@ -363,7 +384,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
 //            if section < self.data.count {
 //                // 데이터 모델에서 해당 섹션 삭제
 //                self.data.remove(at: section)
-//                
+//
 //                // 테이블 뷰에서 섹션 삭제
 //                self.tableView.performBatchUpdates({
 //                    self.tableView.deleteSections(IndexSet(integer: section), with: .automatic)
@@ -680,65 +701,6 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
             cell.contentView.layer.borderColor = nil
         }
     }
-    
-}
-
-
-//커스텀 섹션 헤더뷰
-class CustomSectionHeaderView: UITableViewHeaderFooterView {
-    
-    static let identifier = "CustomSectionHeaderView"//이런식으로 유일한 identifier 강제 가능
-    
-    let titleLabel = MPLabel()
-    let deleteButton = UIButton()
-    
-    var onDeleteButtonTapped: (() -> Void)?
-    
-    override init(reuseIdentifier: String?) {
-        super.init(reuseIdentifier: reuseIdentifier)
-        configureContents()
-    }
-    
-    required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
-    }
-    
-    func configureContents() {
-        titleLabel.textColor = UIColor(hexCode: "979797") // 등록할까?
-        titleLabel.font = .mpFont14M()
-        titleLabel.translatesAutoresizingMaskIntoConstraints = false
-        deleteButton.translatesAutoresizingMaskIntoConstraints = false
-        
-        contentView.addSubview(titleLabel)
-        contentView.addSubview(deleteButton)
-        
-        // Configure titleLabel and deleteButton layout...
-        deleteButton.setImage(UIImage(systemName: "xmark"), for: .normal)
-        deleteButton.tintColor = .mpGray
-        deleteButton.addTarget(self, action: #selector(deleteButtonTapped), for: .touchUpInside)
-        
-        NSLayoutConstraint.activate([
-            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-            titleLabel.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 20),
-            
-            deleteButton.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -20),
-            deleteButton.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
-        ])
-    }
-    
-    //+셀에서 x 없애고 나타내기
-    func ableDeleteBtn(){
-        deleteButton.isHidden = false
-    }
-    
-    func disableDeleteBtn(){
-        deleteButton.isHidden = true
-    }
-    
-    @objc func deleteButtonTapped() {
-        onDeleteButtonTapped?()
-    }
-    
     
 }
 

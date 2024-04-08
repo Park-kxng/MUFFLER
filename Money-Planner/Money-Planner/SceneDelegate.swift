@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          // login api 연결
          let viewModel = LoginViewModel()
          let disposeBag = viewModel.disposeBag
-         //TokenManager.shared.clearTokens() // 토큰 삭제
+//         TokenManager.shared.clearTokens() // 토큰 삭제
          let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부
          print(isLoggedIn)
          if isLoggedIn {
@@ -72,6 +72,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          tabBarController.selectedIndex = 0 // 홈을 기본 선택 탭으로 설정
 
          window?.rootViewController = tabBarController
+//         let vc = EditGoalViewController(1)
+//         let VC = UINavigationController(rootViewController: vc)
+//         window?.rootViewController = VC
      }
     
     func sceneDidDisconnect(_ scene: UIScene) {

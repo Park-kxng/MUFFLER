@@ -32,7 +32,6 @@ extension GoalTotalAmountViewController: WarnAboutUneditableModalDelegate {
 
 class GoalTotalAmountViewController : UIViewController, UITableViewDataSource {
     
-    private var header : HeaderView = HeaderView(title: "")
     private var descriptionView : DescriptionView = DescriptionView(text: "도전할 소비 목표의 금액을 입력해주세요", alignToCenter: false)
     private var tableView : UITableView!
     private lazy var btmbtn : MainBottomBtn = MainBottomBtn(title: "다음")
@@ -44,14 +43,10 @@ class GoalTotalAmountViewController : UIViewController, UITableViewDataSource {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        setupHeader()
+        
         setupDescriptionView()
         setUpBtmBtn()
         setupTableView()
-        
-        // 기본 네비게이션 바의 뒤로 가기 버튼 숨기기
-        navigationItem.hidesBackButton = true
-        navigationItem.leftBarButtonItem = nil
         
         btmbtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
         btmbtn.isEnabled = false
@@ -80,19 +75,7 @@ class GoalTotalAmountViewController : UIViewController, UITableViewDataSource {
             goalCreationManager.goalBudget = amount
         }
     }
-    
-    private func setupHeader() {
-        header.translatesAutoresizingMaskIntoConstraints = false
-        header.addBackButtonTarget(target: self, action: #selector(backButtonTapped), for: .touchUpInside)
-        view.addSubview(header)
-        
-        NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            header.heightAnchor.constraint(equalToConstant: 60) // 예시 높이값
-        ])
-    }
+
     
     @objc private func backButtonTapped() {
         // 뒤로 가기 기능 구현
@@ -104,7 +87,7 @@ class GoalTotalAmountViewController : UIViewController, UITableViewDataSource {
         view.addSubview(descriptionView)
         
         NSLayoutConstraint.activate([
-            descriptionView.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 30),
+            descriptionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             descriptionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             descriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])

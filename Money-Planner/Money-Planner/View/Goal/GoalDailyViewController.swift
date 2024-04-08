@@ -19,6 +19,7 @@ extension GoalDailyViewController: GoalAmountModalViewControllerDelegate {
         // Update the amountInfo dictionary and reload the calendar
         amountInfo[dateKey] = newAmount
         isEdited[dateKey] = true
+        sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
         
         refreshAmountInfo(startDate: goalCreationManager.startDate!.toDate ?? Date(), endDate: goalCreationManager.endDate!.toDate ?? Date())
         
@@ -36,7 +37,12 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
     
     private let descriptionView = DescriptionView(text: "하루하루의 목표금액을\n조정해주세요", alignToCenter: false)
     
-    private let subdescriptionView = SubDescriptionView(text: "일정에 맞게 일일 목표 금액을 변경하면\n나머지 금액은 1/n 해드릴게요", alignToCenter: false)
+//    private let subdescriptionView = SubDescriptionView(text: "일정에 맞게 일일 목표 금액을 변경하면\n나머지 금액은 1/n 해드릴게요", alignToCenter: false)
+    
+    var progressBar = GoalProgressBar(goalAmt: 300000, usedAmt: 0) // 임시 값으로 초기화
+    let totalCostLabel = MPLabel() //progressBar 안에
+    let leftAmountLabel = MPLabel() //progressBar 안에
+    var verticalStack = UIStackView()
     
     private let btmBtn = MainBottomBtn(title: "다음")
     
@@ -44,6 +50,13 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
     
     var isEdited: [String: Bool] = [:]
     var amountInfo: [String: String] = [:]
+    
+    var sumAmount : Int64 = 0 {
+        didSet{
+            progressBar.changeUsedAmt(usedAmt: sumAmount, goalAmt: goalCreationManager.goalBudget!)
+            updateSumAmountDisplay()
+        }
+    }
     
     var customCalendarView: CustomCalendarView!
     
@@ -58,7 +71,8 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         
         customCalendarView.calendar.appearance.selectionColor = .clear
         customCalendarView.calendar.appearance.titleSelectionColor = .mpBlack
-        customCalendarView.calendar.appearance.todayColor = .clear
+//        customCalendarView.calendar.appearance.todayColor = .clear
+        customCalendarView.calendar.appearance.titleTodayColor = .mpMainColor
         
         customCalendarView.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 사용 설정
         view.addSubview(customCalendarView)
@@ -73,9 +87,11 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         setupWeekdayLabels()
         
         btmBtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
-        btmBtn.isEnabled = false
+//        btmBtn.isEnabled = false
         
         self.tabBarController?.tabBar.isHidden = true
+        
+        sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
     }
     
 //    private func setupNavigationBar() {
@@ -89,26 +105,28 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
     
     private func setupViews() {
         view.addSubview(descriptionView)
-        view.addSubview(subdescriptionView)
+//        view.addSubview(subdescriptionView)
         view.addSubview(customCalendarView)
         view.addSubview(btmBtn)
     }
     
     private func setupConstraints() {
         descriptionView.translatesAutoresizingMaskIntoConstraints = false
-        subdescriptionView.translatesAutoresizingMaskIntoConstraints = false
+        progressBar.translatesAutoresizingMaskIntoConstraints = false
+        totalCostLabel.translatesAutoresizingMaskIntoConstraints = false
+        leftAmountLabel.translatesAutoresizingMaskIntoConstraints = false
         btmBtn.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
             descriptionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
             descriptionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            descriptionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
+            descriptionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20)
+        ])
             
-            subdescriptionView.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 10),
-            subdescriptionView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
-            subdescriptionView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
-            
-            customCalendarView.topAnchor.constraint(equalTo: subdescriptionView.bottomAnchor, constant: 20),
+        setupStackView()
+        
+        NSLayoutConstraint.activate([
+            customCalendarView.topAnchor.constraint(equalTo: verticalStack.bottomAnchor, constant: 20),
             customCalendarView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 20),
             customCalendarView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: -20),
             customCalendarView.bottomAnchor.constraint(equalTo: btmBtn.topAnchor, constant: -30),
@@ -118,6 +136,72 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
             btmBtn.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
             btmBtn.heightAnchor.constraint(equalToConstant: 50)
         ])
+    }
+    
+    private func setupStackView() {
+        
+        updateSumAmountDisplay()
+        totalCostLabel.font = UIFont.systemFont(ofSize: 14)
+        leftAmountLabel.font = .mpFont14B()
+        
+        //가로 스택 뷰를 생성하고 component 추가
+        let horizontalStack = UIStackView(arrangedSubviews: [totalCostLabel, leftAmountLabel])
+        horizontalStack.axis = .horizontal
+        horizontalStack.distribution = .equalSpacing
+        horizontalStack.alignment = .center
+        
+        //Vstack를 생성, progressBar와 hstack추가
+        verticalStack = UIStackView(arrangedSubviews: [progressBar, horizontalStack])
+        verticalStack.axis = .vertical
+        verticalStack.spacing = 3
+        verticalStack.translatesAutoresizingMaskIntoConstraints = false
+        
+        view.addSubview(verticalStack)
+        
+        //Vstack auotolayout
+        NSLayoutConstraint.activate([
+            verticalStack.topAnchor.constraint(equalTo: descriptionView.bottomAnchor, constant: 20),
+            verticalStack.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+            verticalStack.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
+        ])
+        
+        progressBar.heightAnchor.constraint(equalToConstant: 20).isActive = true
+    }
+    
+    private func updateSumAmountDisplay() {
+        let formattedSumAmount = setComma(cash: sumAmount)
+        let goalBudget = goalCreationManager.goalBudget ?? 0
+        let formattedGoalAmount = setComma(cash: goalBudget)
+        
+        let text = "\(formattedSumAmount)원 / \(formattedGoalAmount)원"
+        
+        // NSAttributedString을 사용하여 다른 색상 적용
+        let attributedString = NSMutableAttributedString(string: text)
+        
+        // '/' 기호를 기준으로 전후 텍스트의 범위를 찾음
+        if let range = text.range(of: "/") {
+            let preSlashRange = NSRange(text.startIndex..<range.lowerBound, in: text)
+            let fromSlashRange = NSRange(range.lowerBound..<text.endIndex, in: text) //endIndex 포함시 오버플로우
+            attributedString.addAttribute(.foregroundColor, value: UIColor.mpDarkGray, range: preSlashRange )
+            attributedString.addAttribute(.foregroundColor, value: UIColor.mpGray, range: fromSlashRange)
+        }
+        
+        totalCostLabel.attributedText = attributedString
+        
+        let leftAmount = goalBudget > sumAmount ? goalBudget - sumAmount : sumAmount - goalBudget
+        let formattedLeftAmount = numberToKorean(leftAmount)
+        
+        
+        if goalBudget == sumAmount {
+            leftAmountLabel.text = "총합 \(numberToKorean(sumAmount))원"
+        }else {
+            leftAmountLabel.text = goalBudget > sumAmount ? "\(formattedLeftAmount)원을 더 채워주세요" : " \(formattedLeftAmount)원이 초과되었어요"
+        }
+        
+        leftAmountLabel.textColor = goalBudget == sumAmount ? .mpBlack : .mpRed
+        progressBar.usedAmtBar.backgroundColor = goalBudget == sumAmount ? .mpMainColor : .mpRed
+        
+        btmBtn.isEnabled = (sumAmount == goalBudget) // 사실 모든 카테고리가 다 선택되었는지 점검하는 기능도 추가해야함.
     }
     
     @objc private func backButtonTapped() {
@@ -581,6 +665,31 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         }
         
         return intArray
+    }
+    
+    func setComma(cash: Int64) -> String {
+        let formatter = NumberFormatter()
+        formatter.numberStyle = .decimal
+        return formatter.string(from: NSNumber(value: cash)) ?? ""
+    }
+    
+    func numberToKorean(_ number: Int64) -> String {
+        let unitLarge = ["", "만", "억", "조"]
+        
+        var result = ""
+        var num = number
+        var unitIndex = 0
+        
+        while num > 0 {
+            let segment = num % 10000
+            if segment != 0 {
+                result = "\((segment))\(unitLarge[unitIndex]) \(result)"
+            }
+            num /= 10000
+            unitIndex += 1
+        }
+        
+        return result.isEmpty ? "0" : result
     }
 }
 

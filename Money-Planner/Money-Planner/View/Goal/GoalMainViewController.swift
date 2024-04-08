@@ -15,14 +15,18 @@ extension GoalMainViewController: UIScrollViewDelegate {
         let offsetY = scrollView.contentOffset.y
         let contentHeight = scrollView.contentSize.height
         let boundsHeight = scrollView.bounds.size.height
-
-        if offsetY > (contentHeight - boundsHeight - 100) { // 100은 미리 로딩을 시작할 트리거 포인트
+        
+        //isUpdating 쓸모 없음을 확인. => viewModel에서 처리
+        if offsetY > (contentHeight - boundsHeight - 100) && !isUpdating { // 100은 미리 로딩을 시작할 트리거 포인트
+            isUpdating = true
             viewModel.fetchNextPageIfPossible(){ [weak self] in
                 DispatchQueue.main.async {
                    print("추가 notNowGoals 업데이트 됨")
                 }
             }
+            isUpdating = false
         }
+        
     }
 }
 
@@ -47,6 +51,7 @@ class GoalMainViewController: UIViewController, UITableViewDataSource, UITableVi
     private let headerView = GoalMainHeaderView()
     private let goalTable = UITableView(frame: .zero, style: .grouped)
     private let viewModel = GoalMainViewModel.shared
+    private var isUpdating = false
     
     private var nowData: Goal_? //{
 //        didSet {
@@ -79,8 +84,8 @@ class GoalMainViewController: UIViewController, UITableViewDataSource, UITableVi
                 self?.notNowData = notNowGoals
 //                self?.refreshSectionWithNewData(newNotNowGoals: notNowGoals)
 //                self?.updateTableWithNewData(newNotNowGoals: notNowGoals)
-                print("목표 탭에서 notNowGoals 출력")
-                print(notNowGoals)
+//                print("목표 탭에서 notNowGoals 출력")
+//                print(notNowGoals)
                 self?.goalTable.reloadData()
             }).disposed(by: disposeBag)
         

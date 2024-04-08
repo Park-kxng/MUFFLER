@@ -21,7 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          // login api 연결
          let viewModel = LoginViewModel()
          let disposeBag = viewModel.disposeBag
-         //TokenManager.shared.clearTokens() // 토큰 삭제
+//         TokenManager.shared.clearTokens() // 토큰 삭제
          let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부
          print(isLoggedIn)
          if isLoggedIn {

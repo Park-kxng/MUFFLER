@@ -80,10 +80,6 @@ class EditGoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalen
             initializeArray(start: start, end: end)
         }
         
-        
-            
-                
-        
         setupNavigationBar()
         setupViews()
         setupConstraints()

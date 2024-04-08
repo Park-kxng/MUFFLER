@@ -81,12 +81,13 @@ class GoalMainViewModel {
             }).disposed(by: disposeBag)
     }
 
-    func fetchNextPageIfPossible(completion: @escaping () -> Void) {
+    func fetchNextPageIfPossible(completion: @escaping () -> Void) {//
         guard hasNext else {
             print("notNowGoals 추가 없음")
             completion()
             return
         }
+        hasNext = false // 배울점 : 여기서 hasNext를 해두지 않으면, fetchNotNowGoals가 hasNext를 바꾸는 속도보다, GoalMainViewController에서 fetchNextPageIfPossible를 호출하는 속도가 빨라 같은 내용이 여러번 들어오게 된다. 어차피 여기서 hasNext를 false로 바꿔도, fetchNotNowGoals가 올바르게 바꿔준다.
         fetchNotNowGoals(forceRefresh: false)
         print("notNowGoals 추가")
         completion()

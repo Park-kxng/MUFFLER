@@ -210,8 +210,8 @@ class GoalPresentationCell: UITableViewCell {
         dday.translatesAutoresizingMaskIntoConstraints = false
         
         NSLayoutConstraint.activate([
-            dday.centerYAnchor.constraint(equalTo: ddayView.centerYAnchor),
-            dday.centerXAnchor.constraint(equalTo: ddayView.centerXAnchor)
+            dday.centerXAnchor.constraint(equalTo: ddayView.centerXAnchor),
+            dday.centerYAnchor.constraint(equalTo: ddayView.centerYAnchor)
         ])
         
         NSLayoutConstraint.activate([
@@ -280,32 +280,39 @@ class GoalPresentationCell: UITableViewCell {
         var ddayBackgroundColor: UIColor
         var ddayTextColor: UIColor
         
+        let ddayViewWidthAnchor : NSLayoutConstraint?
+        
+        //다른 페이지를 갔다오고 나서 이상하게 이 파트가 적용이 안된다.
         if isNow {
             if daysLeft == 0 {
                 ddayText = "D-Day"
-                ddayBackgroundColor = UIColor.mpCalendarHighLight
-                ddayTextColor = UIColor.mpMainColor
+                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
+                ddayViewWidthAnchor =  ddayView.widthAnchor.constraint(equalToConstant: CGFloat(ddayText.count * 6 + 8))
             } else {
                 ddayText = "D-\(daysLeft)"
-                ddayBackgroundColor = UIColor.mpCalendarHighLight
-                ddayTextColor = UIColor.mpMainColor
+                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
+                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(ddayText.count * 6 + 8))
             }
         } else {
             if currentDate > goalEndDate {
                 ddayText = "종료"
                 ddayBackgroundColor = UIColor.mpLightGray
                 ddayTextColor = UIColor.mpDarkGray
+                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(37))
             } else {
                 ddayText = "진행 전"
-                ddayBackgroundColor = UIColor.mpMainColorA30
-                ddayTextColor = UIColor.mpMainColor
+                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
+                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(50))
             }
         }
         
+        ddayViewWidthAnchor?.isActive = true
+        
         
         dday.text = ddayText
-        
-        dday.superview?.layoutIfNeeded()
         
         ddayView.backgroundColor = ddayBackgroundColor
         dday.textColor = ddayTextColor
@@ -314,13 +321,8 @@ class GoalPresentationCell: UITableViewCell {
         dday.clipsToBounds = true
         dday.textAlignment = .center
         
-        let padding: CGFloat = 16 // Assuming 8 points padding on each side
-        let ddayLabelWidth = dday.intrinsicContentSize.width + padding
-        
-        ddayView.widthAnchor.constraint(equalToConstant: ddayLabelWidth).isActive = true
         ddayView.heightAnchor.constraint(equalToConstant: 22).isActive = true
         
-        ddayView.superview?.layoutIfNeeded()
         
         //progressPercentage
         let progressPercentageValue = Double(goal.totalCost ?? 0) / Double(goal.totalBudget) * 100.0

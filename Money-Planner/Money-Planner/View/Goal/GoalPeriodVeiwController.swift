@@ -48,18 +48,25 @@ class GoalPeriodViewController : UIViewController, UINavigationControllerDelegat
         setUpBtmBtn()
     }
 
+    override func viewDidAppear(_ animated: Bool) {
+        viewModel.fetchPreviousGoals()
+        super.viewDidAppear(animated)
+    }
     
     @objc func btmButtonTapped() {
 //        goToGoalAmountVC()
         //이전 소비내역 발견, 모달 띄우기.
-        if findOutPreviousConsumeRecord() {
-            let modal = FoundPreviousConsumeRecordModal(startDate: periodBtn.startDate, endDate: periodBtn.endDate)
-            modal.modalPresentationStyle = .popover
-            modal.delegate = self
-            self.present(modal, animated: true)
-        } else {
-            goalCreationManager.restoration(canRestore: false, restore: false)
-            goToGoalAmountVC()
+        
+        findOutPreviousConsumeRecord { [self] canRestore in
+            if canRestore {
+                let modal = FoundPreviousConsumeRecordModal(startDate: periodBtn.startDate, endDate: periodBtn.endDate)
+                modal.modalPresentationStyle = .popover
+                modal.delegate = self
+                self.present(modal, animated: true)
+            } else {
+                goalCreationManager.restoration(canRestore: false, restore: false)
+                goToGoalAmountVC()
+            }
         }
     }
     
@@ -142,11 +149,15 @@ class GoalPeriodViewController : UIViewController, UINavigationControllerDelegat
     }
     
     //다음 버튼을 눌렀을때,
-    func findOutPreviousConsumeRecord() -> Bool {
+    func findOutPreviousConsumeRecord(completion: @escaping (Bool) -> Void) {
         let startDate = periodBtn.startDate
         let endDate = periodBtn.endDate
-        viewModel.fetchCanRestore(startDate: startDate.toString(format: "yyyy-MM-dd"), endDate: endDate.toString(format: "yyyy-MM-dd"))
-        return viewModel.canRestore.value
+        viewModel.fetchCanRestore(startDate: startDate.toString(format: "yyyy-MM-dd"), endDate: endDate.toString(format: "yyyy-MM-dd")) { [weak self] canRestore in
+            DispatchQueue.main.async {
+                print("period 설정 끝. 부활 여부 알려주기 : \(canRestore)")
+                completion(canRestore)
+            }
+        }
     }
     
 }

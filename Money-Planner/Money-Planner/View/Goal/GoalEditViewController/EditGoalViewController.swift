@@ -79,7 +79,7 @@ class EditGoalViewController : UIViewController {
     let editByCategory = TextImageButton()
     let editByDate = TextImageButton()
     
-    let nextBtn = MainBottomBtn(title: "다음")
+    let confirmBtn = MainBottomBtn(title: "저장")
     
     override func viewDidLoad(){
         view.backgroundColor = UIColor.mpWhite
@@ -145,7 +145,7 @@ class EditGoalViewController : UIViewController {
         let isTitleValid = !(goalNameTextfield.text?.isEmpty ?? true) && goalNameTextfield.text!.count <= 15
         
         // Enable the next button if both conditions are met.
-        nextBtn.isEnabled = isEmojiValid && isTitleValid
+        confirmBtn.isEnabled = isEmojiValid && isTitleValid
     }
     
     func hideKeyboard() {
@@ -485,20 +485,20 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
     }
     
     func setupNextButton(){
-        nextBtn.translatesAutoresizingMaskIntoConstraints = false
-        nextBtn.addTarget(self, action: #selector(nextButtonTapped), for: .touchUpInside)
-        view.addSubview(nextBtn)
+        confirmBtn.translatesAutoresizingMaskIntoConstraints = false
+        confirmBtn.addTarget(self, action: #selector(confirmButtonTapped), for: .touchUpInside)
+        view.addSubview(confirmBtn)
         
         NSLayoutConstraint.activate([
-            nextBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-            nextBtn.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
-            nextBtn.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
-            nextBtn.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
-            nextBtn.heightAnchor.constraint(equalToConstant: 55)
+            confirmBtn.centerXAnchor.constraint(equalTo: view.centerXAnchor),
+            confirmBtn.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: -10),
+            confirmBtn.leadingAnchor.constraint(equalTo: contentView.leadingAnchor, constant: 16),
+            confirmBtn.trailingAnchor.constraint(equalTo: contentView.trailingAnchor, constant: -16),
+            confirmBtn.heightAnchor.constraint(equalToConstant: 55)
         ])
     }
     
-    @objc func nextButtonTapped(){
+    @objc func confirmButtonTapped(){
         viewModel.updateGoalTitleAndIcon(goalId: String(goalId), newTitle: goalNameTextfield.text!, newIcon: emojiTextfield.text!)
         navigationController?.popViewController(animated: true)
     }

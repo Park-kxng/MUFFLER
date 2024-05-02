@@ -18,10 +18,12 @@ extension GoalTitleViewController {
         if textField == emojiTextField {
             if newText.unicodeScalars.allSatisfy({ $0.properties.isEmoji }) && newText.count == 1 {
                 warningLabel.isHidden = true
-                writeNameView.isUserInteractionEnabled = true
-            } else {
+                return true
+            }else if(newText.count > 1){
+                return false
+            }
+            else {
                 warningLabel.isHidden = false
-                writeNameView.isUserInteractionEnabled = false
                 if newText.unicodeScalars.allSatisfy({ $0.properties.isEmoji }) {
                     warningLabel.text = "이모지를 한 자만 입력해주세요"
                 } else {
@@ -163,6 +165,8 @@ class GoalTitleViewController : UIViewController, UITextFieldDelegate {
     // 이모지 뷰 설정
     private func setupEmojiTextField() {
         emojiTextField.translatesAutoresizingMaskIntoConstraints = false
+        emojiTextField.autocorrectionType = .no
+        emojiTextField.spellCheckingType = .no
         view.addSubview(emojiTextField)
         
         NSLayoutConstraint.activate([

@@ -17,15 +17,15 @@ extension GoalMainViewController: UIScrollViewDelegate {
         let boundsHeight = scrollView.bounds.size.height
         
         //isUpdating 쓸모 없음을 확인. => viewModel에서 처리
-        if offsetY > (contentHeight - boundsHeight - 100) && !isUpdating { // 100은 미리 로딩을 시작할 트리거 포인트
-            isUpdating = true
-            viewModel.fetchNextPageIfPossible(){ [weak self] in
-                DispatchQueue.main.async {
-                   print("추가 notNowGoals 업데이트 됨")
-                }
-            }
-            isUpdating = false
-        }
+//        if offsetY > (contentHeight - boundsHeight - 100) && !isUpdating { // 100은 미리 로딩을 시작할 트리거 포인트
+//            isUpdating = true
+//            viewModel.fetchNextPageIfPossible(){ [weak self] in
+//                DispatchQueue.main.async {
+//                   print("추가 notNowGoals 업데이트 됨")
+//                }
+//            }
+//            isUpdating = false
+//        }
         
     }
 }

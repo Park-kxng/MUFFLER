@@ -71,8 +71,6 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         
         customCalendarView.calendar.appearance.selectionColor = .clear
         customCalendarView.calendar.appearance.titleSelectionColor = .mpBlack
-//        customCalendarView.calendar.appearance.todayColor = .clear
-        customCalendarView.calendar.appearance.titleTodayColor = .mpMainColor
         
         customCalendarView.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 사용 설정
         view.addSubview(customCalendarView)

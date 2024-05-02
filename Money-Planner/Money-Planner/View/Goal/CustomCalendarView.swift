@@ -39,6 +39,10 @@ class CustomCalendarView: UIView, FSCalendarDelegate, FSCalendarDataSource, FSCa
         calendar.appearance.headerTitleColor = UIColor.black
         calendar.appearance.headerTitleFont = .mpFont20B()
         calendar.appearance.headerMinimumDissolvedAlpha = 0.0
+        calendar.appearance.todaySelectionColor = .clear
+        calendar.appearance.todayColor = .clear
+        calendar.appearance.titleTodayColor = .mpBlack
+        
         calendar.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 사용 설정
         
         addSubview(calendar)

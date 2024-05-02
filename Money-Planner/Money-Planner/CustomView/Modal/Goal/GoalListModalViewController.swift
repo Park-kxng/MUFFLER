@@ -10,6 +10,7 @@ import UIKit
 
 protocol GoalListModalViewDelegate : AnyObject{
     func changeGoal(goalId : Int)
+    func addNewGoal()
 }
 
 class GoalListModalViewController: UIViewController, UITableViewDelegate, UITableViewDataSource {
@@ -159,7 +160,8 @@ class GoalListModalViewController: UIViewController, UITableViewDelegate, UITabl
     }
     
     @objc private func onTapAddGoalLabel() {
-        print("여기!")
+        delegate?.addNewGoal()
+        dismiss(animated: true)
     }
     
     func showView(){

@@ -144,7 +144,7 @@ class GoalTitleViewController : UIViewController, UITextFieldDelegate {
         // 뒤로 가기 기능 구현
         goalCreationManager.clear() // 만들려고 했던 데이터 전부 clear
         navigationController?.popViewController(animated: true)
-        navigationController?.isNavigationBarHidden = true
+//        navigationController?.isNavigationBarHidden = true
         self.tabBarController?.tabBar.isHidden = false
         print("go Back")
     }

@@ -867,6 +867,12 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
 }
 
 extension HomeViewController : GoalListModalViewDelegate{
+    func addNewGoal() {
+        let vc = GoalTitleViewController()
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func changeGoal(goalId: Int) {
         if(collectionView.currentPage == 1){
             let indexPath = IndexPath(item: 0, section: 0)

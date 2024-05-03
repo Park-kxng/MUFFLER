@@ -10,9 +10,10 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelectionDelegate,CalendarSelectionDelegate,RepeatModalViewDelegate,AddCategoryViewDelegate, PopupViewDelegate {
-    func popupChecked(view: String) {
-        dismiss()
+class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelectionDelegate,CalendarSelectionDelegate,RepeatModalViewDelegate,AddCategoryViewDelegate, ExpensePopupDelegate {
+    func popupChecked() {
+        print("팝업 확인 완료")
+        dismissView()
     }
     
     
@@ -771,6 +772,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                                         beforeForemattedString = formattedString
                                         textField.text = beforeForemattedString
                                         amountLabel.text = "\t\(numberToKorean(Int(beforeForemattedString) ?? 0))원"
+                                        currentAmount = Int64(beforeForemattedString)! //다른 문자 입력하면 오류뜸
 
                                         return false
                                     }
@@ -943,7 +945,9 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                 print("Error encoding JSON: \(error)")
             }
 
-        
+        let alert = ExpensePopupModalView()
+        alert.delegate = self
+        self.present(alert, animated: true, completion: nil)
         viewModel.createExpense(expenseRequest: expenseRequest)
             .subscribe(
             onSuccess: { response in
@@ -953,7 +957,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                     if let alarms = expenseResponse.alarms {
                         if alarms.count == 0 {
                             print("알람이 없음")
-                            self.dismiss()
+                            self.dismissView()
                         }else{
                             for alarm in alarms {
                                 if let alarmTitle = alarm.alarmTitle, let budget = alarm.budget, let excessAmount = alarm.excessAmount {
@@ -962,16 +966,16 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                                     print(excessAmount)
                                     // 여기서 알람을 보여주는 작업을 수행합니다.
                                     let alert = ExpensePopupModalView()
-                                    if alarmTitle == "하루"{
+                                    if alarmTitle == "DAILY"{
                                         alert.changeTitle(title: "하루 목표금액을 초과했어요")
                                         alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
                                         
-                                    }else if alarmTitle == "카테고리"{
+                                    }else if alarmTitle == "CATEGORY"{
                                         let category = String(self.cateogoryTextField.text ?? "카테고리 없음")
                                         alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
                                         alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
 
-                                    } else if alarmTitle == "전체"{
+                                    } else if alarmTitle == "TOTAL"{
                                         alert.changeTitle(title: "전체 목표금액을 초과했어요")
                                         alert.changeContents(content: "목표한 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
 
@@ -991,10 +995,9 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
         
         
     }
-    private func dismiss (){
-        // 알람이 없는 경우
+    private func dismissView(){
+        print("소비등록 뷰 해제")
         self.dismiss(animated: true) {
-            print("Log")
             // 네비게이션 바 숨기기 취소
             self.tabBarController?.tabBar.isHidden = false
             // 탭 바 컨트롤러로 전환하기
@@ -1004,6 +1007,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                     tabBarVC.selectedIndex = 0 // 홈 뷰가 첫 번째 탭이라고 가정
                 }
         }
+       
     }
     
     private func sendNotificationEvent(cost : Int64) {

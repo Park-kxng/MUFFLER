@@ -7,7 +7,24 @@ import Foundation
 import UIKit
 
 
-class MyPageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ProfileViewDelegate {
+class MyPageViewController: UIViewController, UITableViewDataSource, UITableViewDelegate, ProfileViewDelegate, PopupViewDelegate {
+    func popupChecked(view: String) {
+        switch view {
+        case "logOut":
+            // 저장한 토큰 지우기 - 엑세스, 리프레쉬 토큰 삭제
+            TokenManager.shared.clearTokens()
+            // 로그인 화면으로 이동
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                sceneDelegate.moveToLogin()
+            }
+            print("로그아웃 완료")
+        case "ask":
+            print("문의하기 완료")
+        default:
+            print("작업 완료")
+        }
+    }
+    
     var tempUserName : String = ""
     var tempProfileImage: String = ""
 
@@ -143,13 +160,15 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
             print("개인정보 처리 방침 선택됨")
         case "1:1 문의하기":
             // 1:1 문의하기 뷰로 이동
-            Ask()
+            let askVC = AskViewController() // 프로필 설정 화면으로 이동
+            self.navigationController?.pushViewController(askVC, animated: true)
             print("1:1 문의하기 선택됨")
         case "로그아웃":
             // 로그아웃 처리
             print("로그아웃 선택됨")
             // 로그아웃 모달로 이동
             let logoutVC = PopupViewController() // 로그아웃 완료 팝업 띄우기
+            logoutVC.delegate = self
             present(logoutVC, animated: true)
             
             
@@ -198,13 +217,7 @@ class MyPageViewController: UIViewController, UITableViewDataSource, UITableView
         
         
     }
-    func Ask(){
-        let askVC = AskViewController() // 프로필 설정 화면으로 이동
-        askVC.modalPresentationStyle = .fullScreen
-        //askVC.delegate = self
-        present(askVC, animated: true)
-        
-    }
+
     func Unregister(){
         let unregisterVC = UnregisterViewController() // 프로필 설정 화면으로 이동
         unregisterVC.modalPresentationStyle = .fullScreen
@@ -232,6 +245,7 @@ class AppVersionViewController: UIViewController {
     override func viewDidLoad() {
         super.viewDidLoad()
         self.view.backgroundColor = .white
+        self.title = "앱 버전"
 
         let label = UILabel()
         let version = Bundle.main.object(forInfoDictionaryKey: "CFBundleShortVersionString") as? String ?? "알 수 없음"

@@ -114,8 +114,11 @@ class ExpensePopupModalView : UIViewController {
             completeButton.addTarget(self, action: #selector(complete), for: .touchUpInside)
         }
     @objc private func complete(){
-        delegate?.popupChecked()
+        print("log : 팝업해제")
         dismiss(animated: true)
+        
+        delegate?.popupChecked()
+
     }
         
         func presentCustomModal() {

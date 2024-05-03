@@ -8,7 +8,7 @@
 import Foundation
 import UIKit
 protocol PopupViewDelegate : AnyObject{
-    func popupChecked()
+    func popupChecked(view : String)
     
 }
 
@@ -112,7 +112,12 @@ class PopupViewController: UIViewController {
     }
     @objc
     func popupDismiss(){
+        
+        // 팝업창 지우기
         dismiss(animated: true)
-        delegate?.popupChecked()
+        //확인 전달
+        delegate?.popupChecked(view : "logOut")
+        
+        
     }
 }

@@ -13,13 +13,16 @@ enum LoginAPI {
     case refreshToken( refreshToken : RefreshTokenRequest)
     case login (request : LoginRequest)
     case join (request : JoinRequest)
-    case loginKakao
-    case loginApple
     case connect
 
 }
 
 extension LoginAPI: TargetType {
+    
+    var headers: [String : String]? {
+        return ["Content-type": "application/json"]
+    }
+    
     var baseURL: URL {
         return URL(string: "https://muffler.world")!
     }
@@ -33,11 +36,6 @@ extension LoginAPI: TargetType {
             return "/api/member/login"
         case .join:
             return "/api/member/join"
-            
-        case .loginKakao:
-            return "/api/member/login/kakao"
-        case .loginApple:
-            return "/api/member/login/apple"
         case .connect:
             return "/api/member/connect"
         }
@@ -46,7 +44,7 @@ extension LoginAPI: TargetType {
     var method: Moya.Method {
         switch self {
         // Define HTTP methods for each API endpoint
-        case .refreshToken, .loginKakao, .loginApple,.login:
+        case .refreshToken,.login:
             return .post
         case .join:
             return .patch
@@ -58,7 +56,7 @@ extension LoginAPI: TargetType {
     // Define request parameters for each API endpoint
     var task: Task {
         switch self {
-        case  .loginKakao, .loginApple, .connect:
+        case  .connect:
             return .requestPlain
         case .join(let request):
             return .requestJSONEncodable(request)
@@ -76,19 +74,17 @@ extension LoginAPI: TargetType {
         return Data()
     }
     
-    var headers: [String: String]? {
-        switch self {
-        case .refreshToken, .login:
-            return nil
-        default:
-            // Add access token to headers
-            if let accessToken = TokenManager.shared.accessToken {
-                return ["Authorization": "Bearer \(accessToken)"]
-            } else {
-                return nil
-            }
-        }
-    }
+    
 }
 
 
+extension LoginAPI: AuthenticatedAPI {
+    var requiresAuthentication: Bool {
+        switch self {
+        case .login, .refreshToken:
+            return false
+        default:
+            return true
+        }
+    }
+}

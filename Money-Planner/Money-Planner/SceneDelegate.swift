@@ -23,20 +23,17 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          let disposeBag = viewModel.disposeBag
 //         TokenManager.shared.clearTokens() // 토큰 삭제
          let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부
-         print(isLoggedIn)
          if isLoggedIn {
              print("로그인 한 적 있음")
-             // 가진 토큰으로 로그인 시도
+              // 가진 토큰으로 로그인 시도
              viewModel.isLoginEnabled()
                  .subscribe(onNext: { isEnabled in
                      if isEnabled {
                          print("로그인 가능 > 홈화면으로 이동")
                          // 홈화면으로 이동
-                         self.setupMainInterface()
+                          self.setupMainInterface()
                      } else {
                          print("로그인 불가능 > 토큰 갱신 시도")
-                         // 로그인 불가능한 경우의 처리를 수행합니다.
-                         viewModel.refreshAccessTokenIfNeeded()
                      }
                  })
                  .disposed(by: disposeBag)
@@ -48,6 +45,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                  
              }
          }
+         self.setupMainInterface()
          self.window?.makeKeyAndVisible()
      }
      
@@ -149,10 +147,15 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         print("로그인 화면으로 이동")
         DispatchQueue.main.async {
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
-            
-            self.window = UIWindow(windowScene: windowScene)
-            self.window?.rootViewController = LoginViewController()
-            self.window?.makeKeyAndVisible()
+            // 루트 뷰 컨트롤러를 로그인 뷰 컨트롤러로 설정하면서 애니메이션 적용
+                if let window = self.window {
+                    // 애니메이션과 함께 루트 뷰 컨트롤러 변경
+                    UIView.transition(with: window, duration: 0.2, options: .transitionCrossDissolve, animations: {
+                        window.rootViewController = LoginViewController()
+                        self.window?.makeKeyAndVisible()
+                    })
+                }
+          
         }
     }
     

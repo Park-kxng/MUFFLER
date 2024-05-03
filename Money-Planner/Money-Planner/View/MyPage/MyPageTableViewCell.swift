@@ -84,7 +84,7 @@ class MyPageTableViewCell: UITableViewCell {
             view.backgroundColor = .mpGypsumGray
             return view
         }()
-        userName.text = "\(name)님"
+        userName.text = "\(name) 님"
         userImage.image = image
         
         container.addSubview(userImage)

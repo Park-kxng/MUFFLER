@@ -20,7 +20,7 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
     private var completeButton = MainBottomBtn(title: "탈퇴하기")
     private let NameTextField : UITextField = {
         let text = UITextField()
-        text.placeholder = "조혜원" // 사용자 이름 넣기 (데이터)
+        text.placeholder = "" // 사용자 이름 넣기 (데이터)
         text.layer.cornerRadius = 8
         text.layer.borderWidth = 1.0
         text.layer.borderColor = UIColor.mpLightGray.cgColor
@@ -142,6 +142,9 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
         setupReasonTextField()
 
         //setupContentsTextField()
+        if let name = UserDefaults.standard.string(forKey: "name"){
+            NameTextField.placeholder = name
+        }
         
 
     }

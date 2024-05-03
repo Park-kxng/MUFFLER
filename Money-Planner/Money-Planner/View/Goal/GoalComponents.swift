@@ -166,8 +166,7 @@ class GoalPresentationCell: UITableViewCell {
     let containerView = UIView()
     let btn = UIButton()
     let title = MPLabel()
-    let dday = MPLabel()
-    let ddayView = UIView()
+    let ddayView = DdayBox()
     var progressBar = GoalProgressBar(goalAmt: 1, usedAmt: 0)
     let progressPercentage = MPLabel()
     let totalCost = MPLabel()
@@ -204,15 +203,7 @@ class GoalPresentationCell: UITableViewCell {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.clipsToBounds = true
         
-        ddayView.addSubview(dday) // Add dday label to ddayView
-        
         ddayView.translatesAutoresizingMaskIntoConstraints = false
-        dday.translatesAutoresizingMaskIntoConstraints = false
-        
-        NSLayoutConstraint.activate([
-            dday.centerXAnchor.constraint(equalTo: ddayView.centerXAnchor),
-            dday.centerYAnchor.constraint(equalTo: ddayView.centerYAnchor)
-        ])
         
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
@@ -263,8 +254,6 @@ class GoalPresentationCell: UITableViewCell {
         title.font = .mpFont16M()
         title.textColor = .mpBlack
         
-        // D-day
-        dday.font = .mpFont12M()
         
         //00시 00분으로 맞춰야 됨.
         let calendar = Calendar.current
@@ -275,55 +264,31 @@ class GoalPresentationCell: UITableViewCell {
         let goalEndDate = goal.endDate.toDate ?? currentDate // Fallback to current date if conversion fails
         let daysLeft = Calendar.current.dateComponents([.day], from: currentDate, to: goalEndDate).day ?? 0
         
-        // Initialize D-day text and color variables
-        var ddayText: String
-        var ddayBackgroundColor: UIColor
-        var ddayTextColor: UIColor
-        
-        let ddayViewWidthAnchor : NSLayoutConstraint?
         
         //다른 페이지를 갔다오고 나서 이상하게 이 파트가 적용이 안된다.
         if isNow {
             if daysLeft == 0 {
-                ddayText = "D-Day"
-                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
-                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
-                ddayViewWidthAnchor =  ddayView.widthAnchor.constraint(equalToConstant: CGFloat(ddayText.count * 6 + 8))
+                ddayView.textLabel.text = "D-Day"
+                ddayView.backgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayView.textLabel.textColor = UIColor.mpGoalTabDDayLabelColor
             } else {
-                ddayText = "D-\(daysLeft)"
-                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
-                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
-                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(ddayText.count * 6 + 8))
+                ddayView.textLabel.text = "D-\(daysLeft)"
+                ddayView.backgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayView.textLabel.textColor = UIColor.mpGoalTabDDayLabelColor
             }
         } else {
             if currentDate > goalEndDate {
-                ddayText = "종료"
-                ddayBackgroundColor = UIColor.mpLightGray
-                ddayTextColor = UIColor.mpDarkGray
-                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(37))
+                ddayView.textLabel.text = "종료"
+                ddayView.backgroundColor = UIColor.mpLightGray
+                ddayView.textLabel.textColor = UIColor.mpDarkGray
             } else {
-                ddayText = "진행 전"
-                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
-                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
-                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(50))
+                ddayView.textLabel.text = "진행 전"
+                ddayView.backgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayView.textLabel.textColor = UIColor.mpGoalTabDDayLabelColor
             }
         }
         
-        ddayViewWidthAnchor?.isActive = true
-        
-        
-        dday.text = ddayText
-        
-        ddayView.backgroundColor = ddayBackgroundColor
-        dday.textColor = ddayTextColor
-        ddayView.layer.cornerRadius = 6
-        
-        dday.clipsToBounds = true
-        dday.textAlignment = .center
-        
-        ddayView.heightAnchor.constraint(equalToConstant: 22).isActive = true
-        
-        
+        //progressPercentage
         //progressPercentage
         let progressPercentageValue = Double(goal.totalCost ?? 0) / Double(goal.totalBudget) * 100.0
         progressPercentage.text = String(format: "%.0f%%", progressPercentageValue)

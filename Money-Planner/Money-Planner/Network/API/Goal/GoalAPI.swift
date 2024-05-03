@@ -12,11 +12,7 @@ import RxSwift
 
 enum GoalAPI : TargetType {
     
-    //가능
-    case postGoal(request: PostGoalRequest)
-    
-    //모름
-    case deleteGoal(goalId: Int)
+    case deleteGoal(goalId: String)
     case getGoalDetail(goalId: String)
     
     //가능
@@ -28,6 +24,14 @@ enum GoalAPI : TargetType {
     //시험
     case getPreviousGoals
     case postContent(request: PostGoalRequest)
+    
+    case restoreGoals(startDate: String, endDate: String)
+    
+    //편집
+    case editTitleAndIcon(goalId: String, request: UpdateGoalRequest)
+    case editDailyGoal(goalId: String, request: UpdateDailyBudgetsRequest)
+    case editCategoryGoal(goalId: String, request: UpdateCategoryGoalsRequest)
+
 }
 
 extension GoalAPI : BaseAPI {
@@ -43,8 +47,8 @@ extension GoalAPI : BaseAPI {
     
     var path: String {
         switch self {
-        case .postGoal(let request):
-            return "/api/goal"
+//        case .postGoal(let request):
+//            return "/api/goal"
         case .deleteGoal(let goalId):
             return "/api/goal/\(goalId)"
         case .getGoalDetail(let goalId):
@@ -61,6 +65,14 @@ extension GoalAPI : BaseAPI {
             return "/api/goal/previous"
         case .postContent :
             return "/api/goal"
+        case .restoreGoals:
+            return "/api/goal/restore"
+        case .editTitleAndIcon(let goalId, _):
+            return "/api/goal/\(goalId)"
+        case .editDailyGoal(let goalId, _):
+            return "/api/goal/\(goalId)/daily-budgets"
+        case .editCategoryGoal(let goalId, _):
+            return "/api/goal/\(goalId)/category-goal"
         }
     }
     
@@ -68,8 +80,8 @@ extension GoalAPI : BaseAPI {
         switch self{
         case .now:
             return .get
-        case .postGoal:
-            return .post
+//        case .postGoal:
+//            return .post
         case .getGoalDetail:
             return .get
         case .getWeeklyExpenses:
@@ -80,6 +92,8 @@ extension GoalAPI : BaseAPI {
             return .post
         case .getGoalReport:
             return .get
+        case .editDailyGoal, .editCategoryGoal, .editTitleAndIcon:
+            return .patch
         default :
             return .get
         }
@@ -87,8 +101,8 @@ extension GoalAPI : BaseAPI {
     
     var task: Task {
         switch self {
-        case .postGoal(let request):
-            return .requestJSONEncodable(request)
+//        case .postGoal(let request):
+//            return .requestJSONEncodable(request)
         case .getGoalReport: // getGoalReport 추가
             return .requestPlain
         case .now:
@@ -115,7 +129,15 @@ extension GoalAPI : BaseAPI {
             
         case .postContent(let request):
             return .requestJSONEncodable(request)
-            
+        case .restoreGoals(let startDate, let endDate):
+            let parameters = ["startDate": startDate, "endDate": endDate]
+            return .requestParameters(parameters: parameters, encoding: URLEncoding.queryString)
+        case .editTitleAndIcon(_, let request):
+            return .requestJSONEncodable(request)
+        case .editDailyGoal(_, let request):
+            return .requestJSONEncodable(request)
+        case .editCategoryGoal(_, let request):
+            return .requestJSONEncodable(request)
         default:
             return .requestPlain
         }

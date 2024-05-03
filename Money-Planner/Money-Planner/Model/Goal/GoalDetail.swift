@@ -13,6 +13,15 @@ struct GoalDetailResponse: Decodable {
     let result: GoalDetail
 }
 
+//struct GoalDetail: Decodable {
+//    let title: String
+//    let icon: String
+//    let startDate: String
+//    let endDate: String
+//    let totalBudget: Int64
+//    let totalCost: Int64
+//}
+
 struct GoalDetail: Decodable {
     let title: String
     let icon: String
@@ -20,6 +29,8 @@ struct GoalDetail: Decodable {
     let endDate: String
     let totalBudget: Int64
     let totalCost: Int64
+    let categoryGoals: [CategoryGoal]
+    let dailyBudgets: [Int64]
 }
 
 struct GoalReportResponse: Decodable {

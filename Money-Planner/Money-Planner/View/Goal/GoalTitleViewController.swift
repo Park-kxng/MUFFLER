@@ -81,7 +81,32 @@ class GoalTitleViewController : UIViewController, UITextFieldDelegate {
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
-        setupHeader()
+        
+        navigationController?.isNavigationBarHidden = false
+        // 커스텀 뒤로 가기 버튼 생성
+        let backButton = UIButton(type: .system)
+        backButton.setImage(UINavigationBar.appearance().backIndicatorImage?.withRenderingMode(.alwaysOriginal), for: .normal)
+        backButton.addTarget(self, action: #selector(backButtonTapped), for: .touchUpInside)
+        
+        // 이미지 내부 여백을 조정하여 버튼 이미지를 왼쪽으로 옮깁니다.
+        backButton.contentHorizontalAlignment = .left
+        backButton.imageEdgeInsets = UIEdgeInsets(top: 0, left: -8, bottom: 0, right: 0)  // 필요한 만큼 왼쪽으로 조정하세요.
+        
+        // 커스텀 버튼을 UIBarButtonItem으로 설정
+        self.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
+        
+        // 커스텀 버튼의 크기 조정
+        backButton.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            backButton.widthAnchor.constraint(equalToConstant: 36), // 너비가 충분히 있어야 내부 여백 조정이 가능합니다.
+            backButton.heightAnchor.constraint(equalToConstant: 36) // 실제 버튼 크기에 맞게 조정하세요.
+        ])
+        
+        /*
+         self.navigationItem.backBarButtonItem = UIBarButtonItem(image: UINavigationBar.appearance().backIndicatorImage, style: .plain, target: self, action: #selector(backButtonTapped))
+         */
+        
+        
         setupDescriptionView()
         setupEmojiTextField()
         setupWarningLabel()
@@ -90,10 +115,6 @@ class GoalTitleViewController : UIViewController, UITextFieldDelegate {
         
         emojiTextField.delegate = self
         writeNameView.textField.delegate = self
-        
-        // 기본 네비게이션 바의 뒤로 가기 버튼 숨기기
-        navigationItem.hidesBackButton = true
-        navigationItem.leftBarButtonItem = nil
         
         btmbtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
         btmbtn.isEnabled = false
@@ -117,25 +138,15 @@ class GoalTitleViewController : UIViewController, UITextFieldDelegate {
         super.viewDidAppear(animated)
         
     }
-    
-    private func setupHeader() {
-        header.translatesAutoresizingMaskIntoConstraints = false
-        header.addBackButtonTarget(target: self, action: #selector(backButtonTapped), for: .touchUpInside)
-        view.addSubview(header)
-        
-        NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            header.heightAnchor.constraint(equalToConstant: 60) // 예시 높이값
-        ])
-    }
+
     
     @objc private func backButtonTapped() {
         // 뒤로 가기 기능 구현
         goalCreationManager.clear() // 만들려고 했던 데이터 전부 clear
         navigationController?.popViewController(animated: true)
+        navigationController?.isNavigationBarHidden = true
         self.tabBarController?.tabBar.isHidden = false
+        print("go Back")
     }
     
     private func setupDescriptionView() {
@@ -143,7 +154,7 @@ class GoalTitleViewController : UIViewController, UITextFieldDelegate {
         view.addSubview(descriptionView)
         
         NSLayoutConstraint.activate([
-            descriptionView.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 30),
+            descriptionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             descriptionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             descriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])

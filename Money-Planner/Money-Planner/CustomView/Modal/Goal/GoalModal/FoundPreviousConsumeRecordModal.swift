@@ -10,7 +10,7 @@ import UIKit
 import Lottie
 
 protocol FoundPreviousConsumeRecordModalDelegate: AnyObject {
-    func modalGoToGoalAmountVC()
+    func modalGoToGoalAmountVC(canRestore : Bool, restore : Bool?)
 }
 
 class FoundPreviousConsumeRecordModal : UIViewController {
@@ -151,14 +151,14 @@ class FoundPreviousConsumeRecordModal : UIViewController {
     
     @objc private func skipAction() {
             self.dismiss(animated: true) {
-            self.delegate?.modalGoToGoalAmountVC()
+                self.delegate?.modalGoToGoalAmountVC(canRestore: true, restore: false)
         }
     }
     
     @objc private func acceptAction() {
         restoreConsumeRecords(startDate: startDate, endDate: endDate)
         self.dismiss(animated: true) {
-            self.delegate!.modalGoToGoalAmountVC()
+            self.delegate!.modalGoToGoalAmountVC(canRestore: true, restore: true)
         }
     }
     

@@ -167,6 +167,7 @@ class GoalPresentationCell: UITableViewCell {
     let btn = UIButton()
     let title = MPLabel()
     let dday = MPLabel()
+    let ddayView = UIView()
     var progressBar = GoalProgressBar(goalAmt: 1, usedAmt: 0)
     let progressPercentage = MPLabel()
     let totalCost = MPLabel()
@@ -203,6 +204,16 @@ class GoalPresentationCell: UITableViewCell {
         btn.translatesAutoresizingMaskIntoConstraints = false
         btn.clipsToBounds = true
         
+        ddayView.addSubview(dday) // Add dday label to ddayView
+        
+        ddayView.translatesAutoresizingMaskIntoConstraints = false
+        dday.translatesAutoresizingMaskIntoConstraints = false
+        
+        NSLayoutConstraint.activate([
+            dday.centerXAnchor.constraint(equalTo: ddayView.centerXAnchor),
+            dday.centerYAnchor.constraint(equalTo: ddayView.centerYAnchor)
+        ])
+        
         NSLayoutConstraint.activate([
             containerView.topAnchor.constraint(equalTo: topAnchor, constant: 10),
             containerView.bottomAnchor.constraint(equalTo: bottomAnchor, constant: -10),
@@ -214,7 +225,8 @@ class GoalPresentationCell: UITableViewCell {
             btn.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
         ])
         
-        let horizontalStackView1 = UIStackView(arrangedSubviews: [title, dday])
+        //let horizontalStackView1 = UIStackView(arrangedSubviews: [title, dday])
+        let horizontalStackView1 = UIStackView(arrangedSubviews: [title, ddayView])
         let horizontalStackView2 = UIStackView(arrangedSubviews: [progressBar])
         let horizontalStackView3 = UIStackView(arrangedSubviews: [progressPercentage, totalCost])
         let verticalStackView = UIStackView(arrangedSubviews: [horizontalStackView1, horizontalStackView2, horizontalStackView3])
@@ -268,37 +280,49 @@ class GoalPresentationCell: UITableViewCell {
         var ddayBackgroundColor: UIColor
         var ddayTextColor: UIColor
         
+        let ddayViewWidthAnchor : NSLayoutConstraint?
+        
+        //다른 페이지를 갔다오고 나서 이상하게 이 파트가 적용이 안된다.
         if isNow {
             if daysLeft == 0 {
                 ddayText = "D-Day"
-                ddayBackgroundColor = UIColor.mpCalendarHighLight
-                ddayTextColor = UIColor.mpMainColor
+                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
+                ddayViewWidthAnchor =  ddayView.widthAnchor.constraint(equalToConstant: CGFloat(ddayText.count * 6 + 8))
             } else {
                 ddayText = "D-\(daysLeft)"
-                ddayBackgroundColor = UIColor.mpCalendarHighLight
-                ddayTextColor = UIColor.mpMainColor
+                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
+                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(ddayText.count * 6 + 8))
             }
         } else {
             if currentDate > goalEndDate {
                 ddayText = "종료"
                 ddayBackgroundColor = UIColor.mpLightGray
                 ddayTextColor = UIColor.mpDarkGray
+                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(37))
             } else {
                 ddayText = "진행 전"
-                ddayBackgroundColor = UIColor.mpMainColorA30
-                ddayTextColor = UIColor.mpMainColor
+                ddayBackgroundColor = UIColor.mpGoalTabDDayBackgroundColor
+                ddayTextColor = UIColor.mpGoalTabDDayLabelColor
+                ddayViewWidthAnchor = ddayView.widthAnchor.constraint(equalToConstant: CGFloat(50))
             }
         }
         
+        ddayViewWidthAnchor?.isActive = true
+        
         
         dday.text = ddayText
-        dday.backgroundColor = ddayBackgroundColor
+        
+        ddayView.backgroundColor = ddayBackgroundColor
         dday.textColor = ddayTextColor
-        dday.layer.cornerRadius = 6
+        ddayView.layer.cornerRadius = 6
+        
         dday.clipsToBounds = true
         dday.textAlignment = .center
-        dday.widthAnchor.constraint(equalToConstant: 37).isActive = true
-        dday.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        
+        ddayView.heightAnchor.constraint(equalToConstant: 22).isActive = true
+        
         
         //progressPercentage
         let progressPercentageValue = Double(goal.totalCost ?? 0) / Double(goal.totalBudget) * 100.0
@@ -736,7 +760,7 @@ class MoneyAmountTextCell: UITableViewCell, UITextFieldDelegate {
         
         // 숫자 길이 제한
         if digitsOnly.count > 12 {
-            amountLabel.text = "12자리 이상 입력하실 수 없습니다."
+            amountLabel.text = "입력할 수 있는 범위를 초과했습니다."
             amountLabel.textColor = .mpRed
             self.contentView.layer.borderWidth = 1
             self.contentView.layer.borderColor = UIColor.mpRed.cgColor

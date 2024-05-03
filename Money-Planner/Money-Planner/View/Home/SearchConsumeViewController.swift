@@ -187,3 +187,33 @@ extension SearchConsumeViewController : OrderModalDelegate{
         fetchData()
     }
 }
+
+extension SearchConsumeViewController : UIScrollViewDelegate {
+    func scrollViewDidScroll(_ scrollView: UIScrollView) {
+        
+        // delegate 추가 안해줘도 될지 확인해보기
+        // &lastDate=2024-01-16&lastExpenseId=16 이것도 같이 보내줘야함
+        
+        if(self.loading){
+            return
+        }
+        
+        // MARK: - 무한스크롤
+        
+        // 테이블 뷰의 컨텐츠 크기
+        let contentHeight = consumeView.tableView.contentSize.height
+        
+        // 테이블 뷰의 현재 위치
+        let offsetY =  consumeView.tableView.contentOffset.y
+        
+        // 테이블 뷰의 높이
+        let tableViewHeight =  consumeView.tableView.bounds.size.height
+        
+        // 만약 스크롤이 테이블 뷰의 맨 아래에 도달했을 때
+        if offsetY > contentHeight - tableViewHeight {
+            if self.hasNext {
+                fetchData()
+            }
+        }
+    }
+}

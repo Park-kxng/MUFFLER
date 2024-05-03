@@ -31,6 +31,7 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
     }
     
     var viewModel = GoalDetailViewModel.shared
+    
     var disposeBag = DisposeBag()
     
     let goalId : Int
@@ -40,6 +41,8 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
     var goalExpense : WeeklyExpenseResult?
     
     private var isFetchingMore = false
+    
+    var selectedCategory : [String:Bool] = [:]
     
     private lazy var expenseView: ExpenseView = {
         let view = ExpenseView()
@@ -61,6 +64,13 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
     
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidAppear(_ animated: Bool) {
+        super.viewDidAppear(animated)
+        viewModel.fetchGoal(goalId: String(goalId))
+        viewModel.fetchGoalReport(goalId: String(goalId))
+        viewModel.fetchExpensesUsingGoalDetail(goalId: String(goalId), forceRefresh: true)
     }
     
     override func viewDidLoad() {
@@ -94,15 +104,30 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
             .disposed(by: disposeBag)
         
         // WeeklyExpenses 데이터 수신
+//        viewModel.dailyExpenseListRelay
+//            .subscribe(onNext: { [weak self] dailyExpenseList in
+//                // reportView에 WeeklyExpenses 데이터 전달 및 업데이트
+//                self?.expenseView.update(with: dailyExpenseList)
+//                print(dailyExpenseList)
+//            })
+//            .disposed(by: disposeBag)
+        
         viewModel.dailyExpenseListRelay
-            .subscribe(onNext: { [weak self] dailyExpenseList in
-                // reportView에 WeeklyExpenses 데이터 전달 및 업데이트
-                self?.expenseView.update(with: dailyExpenseList)
-            })
-            .disposed(by: disposeBag)
+                .subscribe(onNext: { [weak self] dailyExpenseList in
+                    self?.expenseView.update(with: dailyExpenseList, filteringBy: self?.selectedCategory)
+                })
+                .disposed(by: disposeBag)
+        
+        viewModel.selectedCategoryRelay
+                .subscribe(onNext: { [weak self] selected in
+                    self?.selectedCategory = selected
+                    self?.expenseView.applyFilteringBySelectedCategory(selected)
+                })
+                .disposed(by: disposeBag)
         
         setupNavigationBar()
         setupLayout()
+        editBtn.addTarget(self, action: #selector(editButtonTapped), for: .touchUpInside)
         setupTabButtons()
         setuplineViews()
         setupExpenseView()
@@ -340,11 +365,11 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
         self.tabBarController?.tabBar.isHidden = true
     }
     
-    override func viewWillDisappear(_ animated: Bool) {
-        super.viewWillDisappear(animated)
-        // 뷰 컨트롤러가 사라질 때 탭 바를 다시 표시
-        self.tabBarController?.tabBar.isHidden = false
-    }
+//    override func viewWillDisappear(_ animated: Bool) {
+//        super.viewWillDisappear(animated)
+//        // 뷰 컨트롤러가 사라질 때 탭 바를 다시 표시
+////        self.tabBarController?.tabBar.isHidden = false
+//    }
     
     private func setupExpenseView() {
         view.addSubview(expenseView)
@@ -373,9 +398,18 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
     //navigation 설정
     @objc private func backButtonTapped() {
         navigationController?.popViewController(animated: true)
+        tabBarController?.tabBar.isHidden = false
+    }
+    
+    @objc private func editButtonTapped(){
+        let vc = EditGoalViewController(goalId: Int64(self.goalId))
+        tabBarController?.tabBar.isHidden = true
+        navigationController?.pushViewController(vc, animated: true)
     }
     
     private func setupNavigationBar() {
+        
+        navigationController?.isNavigationBarHidden = false
         let backButton = UIBarButtonItem(title: "", style: .plain, target: self, action: #selector(backButtonTapped))
         let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium, scale: .medium)
         backButton.image = UIImage(systemName: "chevron.left", withConfiguration: config)
@@ -419,21 +453,72 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
 extension GoalDetailsViewController {
     
     @objc func showModal() {
-        let modal = ShowingPeriodSelectionModal(startDate: (goalDetail!.startDate.toDate) ?? Date(), endDate: (goalDetail!.endDate.toDate) ?? Date())
-        modal.modalPresentationStyle = .popover
-        modal.delegate = self
-        present(modal, animated: true)
+        let modalVC = GoalExpenseFilterModal()
+        modalVC.delegate = self
+        let navController = UINavigationController(rootViewController: modalVC)
+        navController.modalPresentationStyle = .popover // 또는 .fullScreen 등 적절한 스타일 선택
+        present(navController, animated: true)
     }
+
     
     func configureExpenseViews() {
         expenseView.tapFilterBtn = { [weak self] in
             self?.showModal()
         }
+        expenseView.tapPeriodFilterBtn = selectPeriod
+        expenseView.tapFilterCancelBtn1 = cancelFilter1
+        expenseView.tapCategoryFilterBtn = selectCategory
+        expenseView.tapFilterCancelBtn2 = cancelFilter2
+    }
+}
+
+extension GoalDetailsViewController: GoalExpenseFilterDelegate {
+    
+    func selectPeriod() {
+        // 현재 모달을 닫고, 날짜 선택 모달을 띄우는 코드
+        dismiss(animated: true) {
+            let modal = ShowingPeriodSelectionModal(startDate: self.goalDetail?.startDate.toDate ?? Date(), endDate: self.goalDetail?.endDate.toDate ?? Date())
+            modal.modalPresentationStyle = .popover
+            modal.delegate = self // Ensure this modal's delegate is set if needed
+            self.present(modal, animated: true)
+        }
+    }
+    
+    func selectCategory() {
+        // 현재 모달을 닫고, 카테고리 선택 모달을 띄우는 코드
+        dismiss(animated: true) {
+            let categorySelectionPage = ShowingCategorySelectionModal()
+            categorySelectionPage.categoryFilterTableView.applySelections(self.selectedCategory)
+//            categorySelectionPage.modalPresentationStyle = .fullScreen
+            categorySelectionPage.delegate = self // 필요한 경우 Delegate 설정
+//            self.present(categorySelectionPage, animated: true)
+            self.navigationController?.pushViewController(categorySelectionPage, animated: true)
+        }
     }
 }
 
 
+
 extension GoalDetailsViewController: PeriodSelectionDelegate {
+    
+    func cancelFilter1() {
+        let formatter = DateFormatter()
+        formatter.dateFormat = "yyyy-MM-dd"
+        let startDateString = self.goalDetail?.startDate
+        let endDateString = self.goalDetail?.endDate
+        
+        // viewModel 선택 날짜로 갱신 with completion
+        viewModel.fetchBySelectedDates(goalId: String(goalId), startDate: startDateString!, endDate: endDateString!, forceRefresh: true) { [weak self] in
+            DispatchQueue.main.async { [self] in
+                // Ensure UI updates are on the main thread
+                self?.expenseView.filterCancelBtn1.isHidden = true
+                self?.expenseView.periodFilterBtn.isHidden = true
+                self?.expenseView.setFilterBtnViewHeight(to: (self?.expenseView.categoryFilterBtn.isHidden)! ? 60 : 85)
+                self?.expenseView.adjustFilterButtonPositions()
+            }
+        }
+    }
+    
     func periodSelectionDidSelectDates(startDate: Date, endDate: Date) {
         let formatter = DateFormatter()
         formatter.dateFormat = "yyyy-MM-dd"
@@ -443,22 +528,99 @@ extension GoalDetailsViewController: PeriodSelectionDelegate {
         // viewModel 선택 날짜로 갱신 with completion
         viewModel.fetchBySelectedDates(goalId: String(goalId), startDate: startDateString, endDate: endDateString, forceRefresh: true) { [weak self] in
             DispatchQueue.main.async {
+                
                 // Ensure UI updates are on the main thread
-                if startDateString == self?.goalDetail?.startDate && endDateString == self?.goalDetail?.endDate {
-                    self?.expenseView.filterBtn.setTitle("전체 기간 조회", for: .normal)
-                } else {
-                    // Update the button title to reflect the selected period
-                    formatter.dateFormat = "yyyy.MM.dd"
-                    let formattedStartDate = formatter.string(from: startDate)
-                    let formattedEndDate = formatter.string(from: endDate)
-                    self?.expenseView.filterBtn.setTitle("\(formattedStartDate) - \(formattedEndDate)", for: .normal)
+                
+                if let flag1 = self?.expenseView.periodFilterBtn.isHidden, let flag2 = self?.expenseView.categoryFilterBtn.isHidden{
+                    if flag1 && flag2 { //filterBtn 만 드러나 있는 초기 상태
+                        //전체 기간인지 확인해서 전체 기간이면 처음과 다를게 없다.
+                        if startDateString == self?.goalDetail?.startDate && endDateString == self?.goalDetail?.endDate {
+                            self?.expenseView.periodFilterBtn.setTitle("전체 기간 조회", for: .normal)
+                            self?.expenseView.periodFilterBtn.titleLabel?.textColor = .mpCharcoal
+                            self?.expenseView.periodFilterBtn.isHidden = true
+                            self?.expenseView.filterCancelBtn1.isHidden = true
+                            self?.expenseView.setFilterBtnViewHeight(to: 60)
+                        } else {
+                            self?.expenseView.periodFilterBtn.isHidden = false
+                            // Update the button title to reflect the selected period
+                            formatter.dateFormat = "yyyy.MM.dd"
+                            let formattedStartDate = formatter.string(from: startDate)
+                            let formattedEndDate = formatter.string(from: endDate)
+                            self?.expenseView.periodFilterBtn.setTitle(formattedStartDate + "-" + formattedEndDate, for: .normal)
+                            self?.expenseView.periodFilterBtn.titleLabel?.textColor = .mpMainColor
+                            self?.expenseView.filterCancelBtn1.isHidden = false
+                            self?.expenseView.adjustFilterButtonPositions()
+                            self?.expenseView.setFilterBtnViewHeight(to: 85)
+                        }
+                    }else if flag1 {
+                        if startDateString == self?.goalDetail?.startDate && endDateString == self?.goalDetail?.endDate {
+                            self?.expenseView.periodFilterBtn.setTitle("전체 기간 조회", for: .normal)
+                            self?.expenseView.periodFilterBtn.titleLabel?.textColor = .mpCharcoal
+                            self?.expenseView.periodFilterBtn.isHidden = true
+                            self?.expenseView.filterCancelBtn1.isHidden = true
+//                            self?.expenseView.setFilterBtnViewHeight(to: 60)
+                        } else {
+                            self?.expenseView.periodFilterBtn.isHidden = false
+                            // Update the button title to reflect the selected period
+                            formatter.dateFormat = "yyyy.MM.dd"
+                            let formattedStartDate = formatter.string(from: startDate)
+                            let formattedEndDate = formatter.string(from: endDate)
+                            self?.expenseView.periodFilterBtn.setTitle(formattedStartDate + "-" + formattedEndDate, for: .normal)
+                            self?.expenseView.periodFilterBtn.titleLabel?.textColor = .mpMainColor
+                            self?.expenseView.filterCancelBtn1.isHidden = false
+                            self?.expenseView.adjustFilterButtonPositions()
+                            self?.expenseView.setFilterBtnViewHeight(to: 85)
+                        }
+                    }
+                    
                 }
+            
             }
         }
         
         print("보여지는 period 변경 실행")
     }
+    
 }
 
 
-
+extension GoalDetailsViewController : CategoryFilterDelegate{
+    
+    func cancelFilter2() {
+        self.expenseView.filterCancelBtn2.isHidden = true
+        self.expenseView.categoryFilterBtn.isHidden = true
+        self.viewModel.selectedCategoryRelay.accept([:])
+        self.expenseView.update(with: viewModel.dailyExpenseListRelay.value, filteringBy: [:])
+        self.expenseView.setFilterBtnViewHeight(to: self.expenseView.periodFilterBtn.isHidden ? 60 : 85)
+        expenseView.adjustFilterButtonPositions()
+    }
+    
+    func categorySelection(checkedCategory: [String: Bool], selectedKey : String) {
+        viewModel.selectedCategoryRelay.accept(checkedCategory)
+        
+        let selectedKeys = checkedCategory.filter { $0.value }.map { $0.key }
+        let displayText: String
+        if selectedKeys.isEmpty {
+            displayText = "전체 카테고리 조회"
+            expenseView.categoryFilterBtn.isHidden = true
+            expenseView.filterCancelBtn2.isHidden = true
+        } else if selectedKeys.count == 1 {
+            displayText = "\(selectedKey) 카테고리"
+            expenseView.categoryFilterBtn.isHidden = false
+            expenseView.filterCancelBtn2.isHidden = false
+        } else {
+            displayText = "\(selectedKey) 외 \(selectedKeys.count - 1)개"
+            expenseView.categoryFilterBtn.isHidden = false
+            expenseView.filterCancelBtn2.isHidden = false
+        }
+        
+        expenseView.categoryFilterBtn.setTitle(displayText, for: .normal)
+        
+        if expenseView.periodFilterBtn.isHidden {
+            expenseView.setFilterBtnViewHeight(to: selectedKeys.isEmpty ? 60 : 85)
+        }
+        
+        expenseView.adjustFilterButtonPositions()
+    }
+    
+}

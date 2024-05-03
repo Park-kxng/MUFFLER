@@ -358,11 +358,23 @@ class ReportSummaryCell : UITableViewCell {
             
             var span : Int?
             
+            //아래 조건문의 방식에다가 1을 더하는 이유 : 당일도 있음.
             if goal.endDate.toDate! < Date.todayAtMidnight { //과거
-                span = Calendar.current.dateComponents([.day], from: goal.startDate.toDate!, to: goal.endDate.toDate!).day
+                span = (Calendar.current.dateComponents([.day], from: goal.startDate.toDate!, to: goal.endDate.toDate!).day ?? 0) + 1
             }else {
-                span = Calendar.current.dateComponents([.day], from: goal.startDate.toDate!, to: Date.todayAtMidnight).day
+                span = (Calendar.current.dateComponents([.day], from: goal.startDate.toDate!, to: Date.todayAtMidnight).day ?? 0) + 1
             }
+            
+//            print(goal.startDate)
+//            print(goal.endDate)
+////            print(Date())
+//            print("startDate : \(goal.startDate.toDate!)")
+//            print("todayAtMidnight :  \(Date.todayAtMidnight)")
+//            
+//            let midnightInSeoul = Date.todayAtMidnight
+//            let formattedDate = Date.formatDate(midnightInSeoul, timeZoneIdentifier: "Asia/Seoul")
+//            print("Midnight in Seoul: \(formattedDate)")
+            
             
             //card
             //cardLabel
@@ -567,7 +579,7 @@ class ReportGraphCell: UITableViewCell {
         
         // 각각의 CategoryConsumeRatioGraphTextView 구성
         let views = [firstCat, secondCat, thirdCat, othersCat]
-        let colors = [UIColor.mpMainColor, UIColor.mpRed, UIColor.yellow, UIColor.mpGray] // 색상 설정
+        let colors = [UIColor.mpMainColor, UIColor.mpRed, UIColor.mpYellow, UIColor.mpGray] // 색상 설정
         
         for (index, view) in views.enumerated() {
             view.isHidden = true // 기본적으로 모든 뷰를 숨깁니다.
@@ -644,6 +656,10 @@ class CategoryConsumeRatioGraph : UIView {
     var secondBarWidthConstraint: NSLayoutConstraint?
     var thirdBarWidthConstraint: NSLayoutConstraint?
     var othersBarWidthConstraint: NSLayoutConstraint?
+    var secondBarLeadingConstraint: NSLayoutConstraint?
+    var thirdBarLeadingConstraint: NSLayoutConstraint?
+    var othersBarLeadingConstraint: NSLayoutConstraint?
+
     
     override init(frame: CGRect) {
         super.init(frame: frame)
@@ -679,6 +695,8 @@ class CategoryConsumeRatioGraph : UIView {
             graphView.heightAnchor.constraint(equalToConstant: 8)
         ])
         
+//        graphView.backgroundColor = .mpMainColor
+        
         firstBarWidthConstraint = firstBar.widthAnchor.constraint(equalToConstant: 0)
         firstBarWidthConstraint?.isActive = true
 
@@ -691,6 +709,10 @@ class CategoryConsumeRatioGraph : UIView {
         othersBarWidthConstraint = secondBar.widthAnchor.constraint(equalToConstant: 0)
         othersBarWidthConstraint?.isActive = true
         
+        secondBarLeadingConstraint = secondBar.leadingAnchor.constraint(equalTo: firstBar.trailingAnchor, constant: 0) // Initial constant will be adjusted
+        thirdBarLeadingConstraint = thirdBar.leadingAnchor.constraint(equalTo: secondBar.trailingAnchor, constant: 0)
+        othersBarLeadingConstraint = othersBar.leadingAnchor.constraint(equalTo: thirdBar.trailingAnchor, constant: 0)
+        
         NSLayoutConstraint.activate([
             firstBar.heightAnchor.constraint(equalToConstant: 8),
             firstBar.leadingAnchor.constraint(equalTo: graphView.leadingAnchor),
@@ -700,20 +722,20 @@ class CategoryConsumeRatioGraph : UIView {
         //secondBar
         NSLayoutConstraint.activate([
             secondBar.heightAnchor.constraint(equalToConstant: 8),
-            secondBar.leadingAnchor.constraint(equalTo: firstBar.trailingAnchor),
+//            secondBar.leadingAnchor.constraint(equalTo: firstBar.trailingAnchor),
             secondBar.topAnchor.constraint(equalTo: graphView.topAnchor),
         ])
         //thirdBar
         NSLayoutConstraint.activate([
             thirdBar.heightAnchor.constraint(equalToConstant: 8),
-            thirdBar.leadingAnchor.constraint(equalTo: secondBar.trailingAnchor),
+//            thirdBar.leadingAnchor.constraint(equalTo: secondBar.trailingAnchor),
             thirdBar.topAnchor.constraint(equalTo: graphView.topAnchor),
         ])
         //othersBar
         NSLayoutConstraint.activate([
 //            othersBar.trailingAnchor.constraint(equalTo: graphView.trailingAnchor),
             othersBar.heightAnchor.constraint(equalToConstant: 8),
-            othersBar.leadingAnchor.constraint(equalTo: thirdBar.trailingAnchor),
+//            othersBar.leadingAnchor.constraint(equalTo: thirdBar.trailingAnchor),
             othersBar.topAnchor.constraint(equalTo: graphView.topAnchor),
         ])
         
@@ -750,11 +772,49 @@ class CategoryConsumeRatioGraph : UIView {
         return result.isEmpty ? "0" : result
     }
     
+//    func configure(with reportData: [CategoryTotalCost], goal: GoalDetail) {
+//        // Update leftAmountLabel based on goal status
+//        leftAmountLabel.text = goal.totalBudget >= goal.totalCost ? "남은 금액 " + numberToKorean(goal.totalBudget - goal.totalCost) + "원" : "초과 금액 " + numberToKorean(goal.totalCost - goal.totalBudget)
+//        leftAmountLabel.textColor = .mpCharcoal
+////        leftAmountLabel.textColor = goal.totalBudget >= goal.totalCost ? .mpCharcoal : .mpRed
+//
+//        // Calculate total cost from reportData
+//        let totalCost = reportData.reduce(0) { $0 + $1.totalCost }
+//
+//        // Calculate proportions for each category
+//        let proportions = reportData.map { CGFloat($0.totalCost) / CGFloat(totalCost) }
+//
+//        // Reset constraints before setting new values
+//        firstBarWidthConstraint?.isActive = false
+//        secondBarWidthConstraint?.isActive = false
+//        thirdBarWidthConstraint?.isActive = false
+//        othersBarWidthConstraint?.isActive = false
+//
+//        // Assign calculated width to each bar based on its proportion
+//        if !proportions.isEmpty { // Ensure there is at least one proportion
+//            firstBarWidthConstraint = firstBar.widthAnchor.constraint(equalTo: graphView.widthAnchor, multiplier: proportions.count > 0 ? proportions[0] : 0)
+//            secondBarWidthConstraint = secondBar.widthAnchor.constraint(equalTo: graphView.widthAnchor, multiplier: proportions.count > 1 ? proportions[1] : 0)
+//            thirdBarWidthConstraint = thirdBar.widthAnchor.constraint(equalTo: graphView.widthAnchor, multiplier: proportions.count > 2 ? proportions[2] : 0)
+//            let othersProportion = proportions.dropFirst(3).reduce(0, +)
+//            othersBarWidthConstraint = othersBar.widthAnchor.constraint(equalTo: graphView.widthAnchor, multiplier: othersProportion)
+//        }
+//
+//        // Activate new constraints
+//        firstBarWidthConstraint?.isActive = true
+//        secondBarWidthConstraint?.isActive = true
+//        thirdBarWidthConstraint?.isActive = true
+//        othersBarWidthConstraint?.isActive = true
+//
+//        // Animate changes
+//        UIView.animate(withDuration: 0.3) {
+//            self.layoutIfNeeded() // Animates the constraint changes
+//        }
+//    }
+    
     func configure(with reportData: [CategoryTotalCost], goal: GoalDetail) {
         // Update leftAmountLabel based on goal status
         leftAmountLabel.text = goal.totalBudget >= goal.totalCost ? "남은 금액 " + numberToKorean(goal.totalBudget - goal.totalCost) + "원" : "초과 금액 " + numberToKorean(goal.totalCost - goal.totalBudget)
         leftAmountLabel.textColor = .mpCharcoal
-//        leftAmountLabel.textColor = goal.totalBudget >= goal.totalCost ? .mpCharcoal : .mpRed
 
         // Calculate total cost from reportData
         let totalCost = reportData.reduce(0) { $0 + $1.totalCost }
@@ -762,32 +822,60 @@ class CategoryConsumeRatioGraph : UIView {
         // Calculate proportions for each category
         let proportions = reportData.map { CGFloat($0.totalCost) / CGFloat(totalCost) }
 
-        // Reset constraints before setting new values
-        firstBarWidthConstraint?.isActive = false
-        secondBarWidthConstraint?.isActive = false
-        thirdBarWidthConstraint?.isActive = false
-        othersBarWidthConstraint?.isActive = false
-
-        // Assign calculated width to each bar based on its proportion
-        if !proportions.isEmpty { // Ensure there is at least one proportion
-            firstBarWidthConstraint = firstBar.widthAnchor.constraint(equalTo: graphView.widthAnchor, multiplier: proportions.count > 0 ? proportions[0] : 0)
-            secondBarWidthConstraint = secondBar.widthAnchor.constraint(equalTo: graphView.widthAnchor, multiplier: proportions.count > 1 ? proportions[1] : 0)
-            thirdBarWidthConstraint = thirdBar.widthAnchor.constraint(equalTo: graphView.widthAnchor, multiplier: proportions.count > 2 ? proportions[2] : 0)
-            let othersProportion = proportions.dropFirst(3).reduce(0, +)
-            othersBarWidthConstraint = othersBar.widthAnchor.constraint(equalTo: graphView.widthAnchor, multiplier: othersProportion)
+        // Determine available width by accounting for spacing between bars
+        let spaceWidth: CGFloat = 4 // Space width in points
+        let totalSpacesWidth = CGFloat(max(0, proportions.count - 1)) * spaceWidth
+        let availableWidthForBars = graphView.bounds.width - totalSpacesWidth // Adjusted for spaces
+        
+        // Calculate the width for each bar
+        let barWidths = proportions.map { proportion -> CGFloat in
+            return (proportion * availableWidthForBars)
         }
 
-        // Activate new constraints
+        // Adjust leading constraints and width constraints for each bar
+        firstBarWidthConstraint?.isActive = false
+        secondBarLeadingConstraint?.isActive = false
+        secondBarWidthConstraint?.isActive = false
+        thirdBarLeadingConstraint?.isActive = false
+        thirdBarWidthConstraint?.isActive = false
+        othersBarLeadingConstraint?.isActive = false
+        othersBarWidthConstraint?.isActive = false
+
+        // Update constraints based on available data
+        firstBarWidthConstraint = firstBar.widthAnchor.constraint(equalToConstant: barWidths.count > 0 ? barWidths[0] : 0)
         firstBarWidthConstraint?.isActive = true
-        secondBarWidthConstraint?.isActive = true
-        thirdBarWidthConstraint?.isActive = true
-        othersBarWidthConstraint?.isActive = true
+        
+        if barWidths.count > 1 {
+            secondBarLeadingConstraint = secondBar.leadingAnchor.constraint(equalTo: firstBar.trailingAnchor, constant: spaceWidth)
+            secondBarWidthConstraint = secondBar.widthAnchor.constraint(equalToConstant: barWidths[1])
+            secondBarLeadingConstraint?.constant = 4
+            secondBarLeadingConstraint?.isActive = true
+            secondBarWidthConstraint?.isActive = true
+        }
+        
+        if barWidths.count > 2 {
+            thirdBarLeadingConstraint = thirdBar.leadingAnchor.constraint(equalTo: secondBar.trailingAnchor, constant: spaceWidth)
+            thirdBarWidthConstraint = thirdBar.widthAnchor.constraint(equalToConstant: barWidths[2])
+            thirdBarLeadingConstraint?.constant = 4
+            thirdBarLeadingConstraint?.isActive = true
+            thirdBarWidthConstraint?.isActive = true
+        }
+        
+        if barWidths.count > 3 {
+            let othersWidth = barWidths.dropFirst(3).reduce(0, +)
+            othersBarLeadingConstraint = othersBar.leadingAnchor.constraint(equalTo: thirdBar.trailingAnchor, constant: spaceWidth)
+            othersBarWidthConstraint = othersBar.widthAnchor.constraint(equalToConstant: othersWidth)
+            othersBarLeadingConstraint?.constant = 4
+            othersBarLeadingConstraint?.isActive = true
+            othersBarWidthConstraint?.isActive = true
+        }
 
         // Animate changes
         UIView.animate(withDuration: 0.3) {
             self.layoutIfNeeded() // Animates the constraint changes
         }
     }
+
 
 }
 
@@ -831,8 +919,8 @@ class CategoryConsumeRatioGraphTextView : UIView {
         NSLayoutConstraint.activate([
             circle.leadingAnchor.constraint(equalTo: leadingAnchor),
             circle.centerYAnchor.constraint(equalTo: centerYAnchor),
-            circle.widthAnchor.constraint(equalToConstant: 24),
-            circle.heightAnchor.constraint(equalToConstant: 24)
+            circle.widthAnchor.constraint(equalToConstant: 12),
+            circle.heightAnchor.constraint(equalToConstant: 12)
         ])
         
         categoryName.translatesAutoresizingMaskIntoConstraints = false

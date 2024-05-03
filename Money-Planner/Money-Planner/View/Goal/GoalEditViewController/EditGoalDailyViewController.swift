@@ -1,16 +1,15 @@
 //
-//  GoalDailyViewController.swift
+//  EditDailyGoalViewController.swift
 //  Money-Planner
 //
-//  Created by 유철민 on 1/26/24.
+//  Created by 유철민 on 3/22/24.
 //
-
 
 import Foundation
 import UIKit
 import FSCalendar
 
-extension GoalDailyViewController: GoalAmountModalViewControllerDelegate {
+extension EditGoalDailyViewController: GoalAmountModalViewControllerDelegate {
     func didChangeAmount(to newAmount: String, for date: Date) {
         let dateFormatter = DateFormatter()
         dateFormatter.dateFormat = "yyyy/MM/dd"
@@ -21,11 +20,11 @@ extension GoalDailyViewController: GoalAmountModalViewControllerDelegate {
         isEdited[dateKey] = true
         sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
         
-        refreshAmountInfo(startDate: goalCreationManager.startDate!.toDate ?? Date(), endDate: goalCreationManager.endDate!.toDate ?? Date())
+        refreshAmountInfo(startDate: goalEditionManager.startDate!.toDate ?? Date(), endDate: goalEditionManager.endDate!.toDate ?? Date())
         
         customCalendarView.calendar.reloadData()
         
-        if calculateTotalAmount(from: goalCreationManager.startDate!.toDate ?? Date(), to: goalCreationManager.endDate?.toDate ?? Date()) == goalCreationManager.goalBudget {
+        if calculateTotalAmount(from: goalEditionManager.startDate!.toDate ?? Date(), to: goalEditionManager.endDate?.toDate ?? Date()) == goalEditionManager.goalBudget {
             btmBtn.isEnabled = true
         }else{
             btmBtn.isEnabled = false
@@ -33,27 +32,28 @@ extension GoalDailyViewController: GoalAmountModalViewControllerDelegate {
     }
 }
 
-class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource {
+class EditGoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarDataSource {
     
     private let descriptionView = DescriptionView(text: "하루하루의 목표금액을\n조정해주세요", alignToCenter: false)
-    
-//    private let subdescriptionView = SubDescriptionView(text: "일정에 맞게 일일 목표 금액을 변경하면\n나머지 금액은 1/n 해드릴게요", alignToCenter: false)
     
     var progressBar = GoalProgressBar(goalAmt: 300000, usedAmt: 0) // 임시 값으로 초기화
     let totalCostLabel = MPLabel() //progressBar 안에
     let leftAmountLabel = MPLabel() //progressBar 안에
     var verticalStack = UIStackView()
     
-    private let btmBtn = MainBottomBtn(title: "다음")
+//    private let subdescriptionView = SubDescriptionView(text: "일정에 맞게 일일 목표 금액을 변경하면\n나머지 금액은 1/n 해드릴게요", alignToCenter: false)
     
-    private let goalCreationManager = GoalCreationManager.shared
+    
+    private let btmBtn = MainBottomBtn(title: "완료")
+    
+    private let goalEditionManager = GoalEditViewModel.shared
     
     var isEdited: [String: Bool] = [:]
     var amountInfo: [String: String] = [:]
     
     var sumAmount : Int64 = 0 {
         didSet{
-            progressBar.changeUsedAmt(usedAmt: sumAmount, goalAmt: goalCreationManager.goalBudget!)
+            progressBar.changeUsedAmt(usedAmt: sumAmount, goalAmt: goalEditionManager.goalBudget!)
             updateSumAmountDisplay()
         }
     }
@@ -68,44 +68,43 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         customCalendarView = CustomCalendarView()
         customCalendarView.calendar.delegate = self
         customCalendarView.calendar.dataSource = self
-        
+        customCalendarView.calendar.appearance.todaySelectionColor = .mpMainColor
+        customCalendarView.calendar.appearance.todayColor = .clear
         customCalendarView.calendar.appearance.selectionColor = .clear
         customCalendarView.calendar.appearance.titleSelectionColor = .mpBlack
-//        customCalendarView.calendar.appearance.todayColor = .clear
-        customCalendarView.calendar.appearance.titleTodayColor = .mpMainColor
-        
         customCalendarView.translatesAutoresizingMaskIntoConstraints = false // Auto Layout 사용 설정
         view.addSubview(customCalendarView)
         
-        if let start = goalCreationManager.startDate?.toDate, let end = goalCreationManager.endDate?.toDate {
+        if let start = goalEditionManager.startDate?.toDate, let end = goalEditionManager.endDate?.toDate {
             customCalendarView.setPeriod(startDate: start, endDate: end)
             initializeArray(start: start, end: end)
         }
-    
+        
+        setupNavigationBar()
         setupViews()
         setupConstraints()
         setupWeekdayLabels()
         
         btmBtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
-//        btmBtn.isEnabled = false
+        btmBtn.isEnabled = false
         
         self.tabBarController?.tabBar.isHidden = true
-        
-        sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
     }
     
-//    private func setupNavigationBar() {
-//        let backButton = UIBarButtonItem(title: "", style: .plain, target: self, action: #selector(backButtonTapped))
-//        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium, scale: .medium)
-//        backButton.image = UIImage(systemName: "chevron.left", withConfiguration: config)
-//        backButton.tintColor = .mpBlack
-//        
-//        navigationItem.leftBarButtonItem = backButton
-//    }
+    private func setupNavigationBar() {
+        let backButton = UIBarButtonItem(title: "", style: .plain, target: self, action: #selector(backButtonTapped))
+        let config = UIImage.SymbolConfiguration(pointSize: 20, weight: .medium, scale: .medium)
+        backButton.image = UIImage(systemName: "chevron.left", withConfiguration: config)
+        backButton.tintColor = .mpBlack
+        
+        navigationItem.leftBarButtonItem = backButton
+    }
     
     private func setupViews() {
         view.addSubview(descriptionView)
-//        view.addSubview(subdescriptionView)
+        view.addSubview(progressBar)
+        view.addSubview(totalCostLabel)
+        view.addSubview(leftAmountLabel)
         view.addSubview(customCalendarView)
         view.addSubview(btmBtn)
     }
@@ -170,7 +169,7 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
     
     private func updateSumAmountDisplay() {
         let formattedSumAmount = setComma(cash: sumAmount)
-        let goalBudget = goalCreationManager.goalBudget ?? 0
+        let goalBudget = goalEditionManager.goalBudget ?? 0
         let formattedGoalAmount = setComma(cash: goalBudget)
         
         let text = "\(formattedSumAmount)원 / \(formattedGoalAmount)원"
@@ -209,144 +208,41 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
     }
     
     @objc private func btmButtonTapped() {
-        let goalFinalVC = GoalFinalViewController()
         let budgets = convertToInt64Array(from: amountInfo)
-        goalCreationManager.addDailyBudgets(budgets: budgets)
-        navigationController?.pushViewController(goalFinalVC, animated: true)
+        goalEditionManager.updateGoalDailyBudgets(goalId: goalEditionManager.goalId!, newDailyBudgets: budgets)
+        navigationController?.popViewController(animated: true)
     }
-    
     
     ///calendar관련
     func calendar(_ calendar: FSCalendar, didSelect date: Date, at monthPosition: FSCalendarMonthPosition) {
         // 예를 들어, 선택된 날짜에 대한 현재 금액을 가져옵니다. 실제 구현에서는 모델 또는 데이터 소스에서 이 값을 조회해야 합니다.
-        //        let currentTotalAmount = calculateEditedAmount(from: goalCreationManager.startDate?.toDate ?? Date(), to: goalCreationManager.endDate?.toDate ?? Date()),
-        let currentTotalAmount = calculateTotalAmount(from: (goalCreationManager.startDate?.toDate)!, to: (goalCreationManager.endDate?.toDate)!)
+//        let currentTotalAmount = calculateEditedAmount(from: goalEditionManager.startDate?.toDate ?? Date(), to: goalEditionManager.endDate?.toDate ?? Date()),
+        let currentTotalAmount = calculateTotalAmount(from: (goalEditionManager.startDate?.toDate)!, to: (goalEditionManager.endDate?.toDate)!)
         
-//        let todayYear = Calendar.current.component(.year, from: Date())
-//        let todayMonth = Calendar.current.component(.month, from: Date())
-//        let dateYear = Calendar.current.component(.year, from: date)
-//        let dateMonth = Calendar.current.component(.month, from: date)
-        
-        CATransaction.begin()
-        CATransaction.setAnimationDuration(2)
-        
-//        calendar.appearance.titleTodayColor = (todayYear == dateYear && todayMonth == dateMonth) ? .mpBlack : .mpGray
-        calendar.setCurrentPage(date, animated: true)
-        
-        CATransaction.setCompletionBlock {
-            // 애니메이션 완료 후에 실행할 작업을 여기에 추가합니다.
-            self.presentEditModal(for: date, with: currentTotalAmount)
-        }
-        
-        CATransaction.commit()
-        
+        presentEditModal(for: date, with: currentTotalAmount)
+ 
     }
     
-//    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-//        print("calendarCurrentPageDidChange")
-//        let currentPageDate = calendar.currentPage
-//        let today = Date()
-//        
-//        let todayYear = Calendar.current.component(.year, from: today)
-//        let todayMonth = Calendar.current.component(.month, from: today)
-//        let currentPageYear = Calendar.current.component(.year, from: currentPageDate)
-//        let currentPageMonth = Calendar.current.component(.month, from: currentPageDate)
-//        
-//        // 현재 페이지가 오늘 날짜의 월과 동일한 경우 오늘의 타이틀 색상을 변경합니다.
-//        if todayYear == currentPageYear && todayMonth == currentPageMonth {
-//            calendar.appearance.titleTodayColor = .mpBlack
-//        } else {
-//            calendar.appearance.titleTodayColor = .mpGray
-//        }
-//    }
-    
-//    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
-//        let dateString = formatDate(date)
-//        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
-//           date >= startDate && date <= endDate {
-//            
-//            
-//            let currentYear = Calendar.current.component(.year, from: calendar.currentPage)
-//            let currentMonth = Calendar.current.component(.month, from: calendar.currentPage)
-//            let dateYear = Calendar.current.component(.year, from: date)
-//            let dateMonth = Calendar.current.component(.month, from: date)
-//            
-//            if currentMonth == dateMonth && currentYear == dateYear {
-//                return .mpRed// Dates in the current month
-//            }else {
-//                return .mpBlack // Your custom color for edited dates
-//            }
-//            
-//        }
-//        return .mpMidGray
-//    }
-    // FSCalendarDelegateAppearance 프로토콜 메소드
-//    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
-//
-//        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
-//           date >= startDate && date <= endDate {
-//            
-//            let todayYear = Calendar.current.component(.year, from: Date())
-//            let todayMonth = Calendar.current.component(.month, from: Date())
-//            let dateYear = Calendar.current.component(.year, from: date)
-//            let dateMonth = Calendar.current.component(.month, from: date)
-//            
-//            if todayYear == dateYear && todayMonth == dateMonth {
-//                return .mpBlack
-//            }else{
-//                return .mpGray
-//            }
-//                
-//        } else {
-//            return .mpGray
-//        }
-//    }
-//
-//    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleFontFor date: Date) -> UIFont? {
-//        // 특정 조건에 따라 날짜의 글꼴을 결정
-//        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
-//           date >= startDate && date <= endDate {
-//            
-//            let todayYear = Calendar.current.component(.year, from: Date())
-//            let todayMonth = Calendar.current.component(.month, from: Date())
-//            let dateYear = Calendar.current.component(.year, from: date)
-//            let dateMonth = Calendar.current.component(.month, from: date)
-//            
-//            if todayYear == dateYear && todayMonth == dateMonth {
-//                return .mpFont18B()
-//            }else{
-//                return .mpFont18R()
-//            }
-//                
-//        } else {
-//            return .mpFont18R()
-//        }
-//    }
-//
-//    func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
-//        let cell = calendar.dequeueReusableCell(withIdentifier: "customCell", for: date, at: position) as! CustomFSCalendarCell
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "yyyy/MM/dd"
-//        let dateKey = dateFormatter.string(from: date)
-//        
-//        // startDate와 endDate 사이의 날짜에 대해서만 금액 정보 표시 및 이미지 설정
-//        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
-//           date >= startDate && date <= endDate {
-//            cell.configureBackgroundImage(image: UIImage(named: "btn_date_off"))
-//            cell.configureImageSize(CGSize(width: 30, height: 30)) // 이미지 크기 조정
-//            // 금액 정보가 있는 경우 해당 금액을 표시
-//            if let amount = amountInfo[dateKey] {
-//                cell.configureAmountText(amount)
-//            } else {
-//                // 금액 정보가 없는 경우 빈 문자열로 설정
-//                cell.configureAmountText("")
-//            }
-//        } else {
-//            cell.configureBackgroundImage(image: nil)
-//            cell.configureAmountText("") // 금액 정보 없는 경우 빈 문자열로 설정
-//        }
-//        return cell
-//    }
+    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
+        let dateString = formatDate(date)
+        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
+           date >= startDate && date <= endDate {
+            
+            
+            let currentYear = Calendar.current.component(.year, from: calendar.currentPage)
+            let currentMonth = Calendar.current.component(.month, from: calendar.currentPage)
+            let dateYear = Calendar.current.component(.year, from: date)
+            let dateMonth = Calendar.current.component(.month, from: date)
+            
+            if currentMonth == dateMonth && currentYear == dateYear {
+                return .mpGray // Dates in the current month
+            }else {
+                return .mpBlack // Your custom color for edited dates
+            }
+            
+        }
+        return .mpMidGray
+    }
     
     func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
         let cell = calendar.dequeueReusableCell(withIdentifier: "customCell", for: date, at: position) as! CustomFSCalendarCell
@@ -354,46 +250,25 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         dateFormatter.dateFormat = "yyyy/MM/dd"
         let dateKey = dateFormatter.string(from: date)
         
-        // Determine if the date is within the start and end date range.
-        let isDateInRange = customCalendarView.startDate.flatMap { startDate in
-            customCalendarView.endDate.map { endDate in
-                date >= startDate && date <= endDate
-            }
-        } ?? false
-        
-        // Configure the appearance based on whether the date is in the range.
-        if isDateInRange {
-            let todayYear = Calendar.current.component(.year, from: Date())
-            let todayMonth = Calendar.current.component(.month, from: Date())
-            let dateYear = Calendar.current.component(.year, from: date)
-            let dateMonth = Calendar.current.component(.month, from: date)
-            
-            if todayYear == dateYear && todayMonth == dateMonth {
-                cell.titleLabel.textColor = .mpBlack
-                cell.titleLabel.font = .mpFont18B()
-            } else {
-                cell.titleLabel.textColor = .mpGray
-                cell.titleLabel.font = .mpFont18R()
-            }
-            
-            // Configure background image and amount text if the date is in range.
-            cell.configureBackgroundImage(image: UIImage(named: "btn_date_off"))
-            cell.configureImageSize(CGSize(width: 30, height: 30)) // Adjust image size
-            // If there is an amount info for the date, display it; otherwise, set to empty string.
+        // startDate와 endDate 사이의 날짜에 대해서만 금액 정보 표시 및 이미지 설정
+        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
+           date >= startDate && date <= endDate {
+            cell.configureBackgroundImage(image: UIImage(named: "btn_date_on"))
+            cell.configureImageSize(CGSize(width: 30, height: 30)) // 이미지 크기 조정
+            // 금액 정보가 있는 경우 해당 금액을 표시
             if let amount = amountInfo[dateKey] {
                 cell.configureAmountText(amount)
             } else {
+                // 금액 정보가 없는 경우 빈 문자열로 설정
                 cell.configureAmountText("")
             }
         } else {
-            cell.titleLabel.textColor = .mpGray
-            cell.titleLabel.font = .mpFont18R()
             cell.configureBackgroundImage(image: nil)
-            cell.configureAmountText("") // Set to empty string if there's no amount info.
+            cell.configureAmountText("") // 금액 정보 없는 경우 빈 문자열로 설정
         }
+        
         return cell
     }
-
     
     func calendar(_ calendar: FSCalendar, shouldSelect date: Date, at monthPosition: FSCalendarMonthPosition) -> Bool {
         guard let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate else {
@@ -404,7 +279,6 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         return date >= startDate && date <= endDate
     }
 
-    
     private func setupWeekdayLabels() {
         let calendarWeekdayView = customCalendarView.calendar.calendarWeekdayView
         let weekdays = ["일", "월", "화", "수", "목", "금", "토"]
@@ -413,7 +287,6 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
             label.font = .mpFont14B()
         }
     }
-
     
     private func formatDate(_ date: Date) -> String {
         let dateFormatter = DateFormatter()
@@ -421,16 +294,39 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         return dateFormatter.string(from: date)
     }
     
+    func numberToKorean(_ number: Int64) -> String {
+        let unitLarge = ["", "만", "억", "조"]
+        
+        var result = ""
+        var num = number
+        var unitIndex = 0
+        
+        while num > 0 {
+            let segment = num % 10000
+            if segment != 0 {
+                result = "\((segment))\(unitLarge[unitIndex]) \(result)"
+            }
+            num /= 10000
+            unitIndex += 1
+        }
+        
+        return result.isEmpty ? "0" : result
+    }
+    
     private func initializeArray(start: Date, end: Date) {
         var currentDate = start
+        var idx = 0
         let calendar = Calendar.current
+        let arr : [Int64] = goalEditionManager.dailyBudgets!
         while currentDate <= end {
             let dateString = formatDate(currentDate)
-            isEdited[dateString] = false
-            amountInfo[dateString] = "0"
+            isEdited[dateString] = true
+            amountInfo[dateString] = setComma(cash: arr[idx])
+            idx+=1
             currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
         }
-        refreshAmountInfo(startDate: start, endDate: end)
+        sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
+//        refreshAmountInfo(startDate: start, endDate: end)
     }
     
     func presentEditModal(for date: Date, with currentAmount: Int64) {
@@ -439,7 +335,7 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         
         // Configure the properties of the modal
         goalAmountModalVC.modalPresentationStyle = .pageSheet
-        goalAmountModalVC.modalTransitionStyle = .coverVertical
+        goalAmountModalVC.modalTransitionStyle = .crossDissolve
         goalAmountModalVC.delegate = self
         goalAmountModalVC.date = date
         goalAmountModalVC.currentTotalAmount = currentAmount
@@ -447,11 +343,10 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         // Present the modal
         self.present(goalAmountModalVC, animated: true, completion: nil)
     }
-
     
     private func refreshAmountInfo(startDate : Date, endDate : Date) {
         
-        let goalBudget = GoalCreationManager.shared.goalBudget
+        let goalBudget = GoalEditViewModel.shared.goalBudget
         let unedited = findAllTheUneditedDays()
         let editedsum = calculateEditedAmount(from: startDate, to: endDate)
         let distributingBudget = goalBudget! - editedsum
@@ -581,6 +476,7 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         }
     }
     
+    
     func findAllTheUneditedDays() -> [String] {
         var uneditedDays: [String] = []
         // amountInfo 딕셔너리의 키들을 반복하여 uneditedDays 배열에 편집되지 않은 날짜를 추가합니다.
@@ -672,25 +568,4 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         formatter.numberStyle = .decimal
         return formatter.string(from: NSNumber(value: cash)) ?? ""
     }
-    
-    func numberToKorean(_ number: Int64) -> String {
-        let unitLarge = ["", "만", "억", "조"]
-        
-        var result = ""
-        var num = number
-        var unitIndex = 0
-        
-        while num > 0 {
-            let segment = num % 10000
-            if segment != 0 {
-                result = "\((segment))\(unitLarge[unitIndex]) \(result)"
-            }
-            num /= 10000
-            unitIndex += 1
-        }
-        
-        return result.isEmpty ? "0" : result
-    }
 }
-
-

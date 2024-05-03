@@ -679,9 +679,11 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
             completeButton.heightAnchor.constraint(equalToConstant: 56)
         ])
         completeButton.addTarget(self, action: #selector(completeButtonTapped), for: .touchUpInside)    }
+    
     // UITextFieldDelegate 메서드 구현
     func textField(_ textField: UITextField, shouldChangeCharactersIn range: NSRange, replacementString string: String) -> Bool {
         // Check if the current text field is amountTextField
+
         if textField == amountTextField {
             let formatter = NumberFormatter()
             formatter.numberStyle = .decimal // 1,000,000
@@ -697,6 +699,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
             print(newText)
             amountTextField.layer.borderColor = UIColor.clear.cgColor
             amountTextField.layer.borderWidth = 0.0
+            
             // 입력된 것이 없는 경우
             if newText.isEmpty{
                 StackView.removeArrangedSubview(amountLabel)
@@ -760,10 +763,15 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                                 }
                             }else{ // 숫자가 아닐 때먽
                                 if string == "" { // 백스페이스일때
+                
                                     let lastIndex = beforeForemattedString.index(beforeForemattedString.endIndex, offsetBy: -1)
                                     beforeForemattedString = String(beforeForemattedString[..<lastIndex])
-                                    if let formattedNumber = formatter.number(from: beforeForemattedString), let formattedString = formatter.string(from: formattedNumber){
-                                        textField.text = formattedString
+                                    if let formattedNumber = formatter.number(from: beforeForemattedString), 
+                                        let formattedString = formatter.string(from: formattedNumber){
+                                        beforeForemattedString = formattedString
+                                        textField.text = beforeForemattedString
+                                        amountLabel.text = "\t\(numberToKorean(Int(beforeForemattedString) ?? 0))원"
+
                                         return false
                                     }
                                 }else{ // 문자일 때
@@ -895,9 +903,8 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     private func checkAndEnableCompleteButton() {
         let enableButton = amountAdd && catAdd && titleAdd
         completeButton.isEnabled = enableButton
-        print("\(enableButton)")
-        print("\(amountAdd)\(catAdd)\(titleAdd)")
-        
+//        print("\(enableButton)")
+//        print("\(amountAdd)\(catAdd)\(titleAdd)")
     }
     
     

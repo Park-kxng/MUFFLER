@@ -23,21 +23,20 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          let disposeBag = viewModel.disposeBag
 //         TokenManager.shared.clearTokens() // 토큰 삭제
          let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부
-         print(isLoggedIn)
          if isLoggedIn {
              print("로그인 한 적 있음")
               // 가진 토큰으로 로그인 시도
-//             viewModel.isLoginEnabled()
-//                 .subscribe(onNext: { isEnabled in
-//                     if isEnabled {
-//                         print("로그인 가능 > 홈화면으로 이동")
-//                         // 홈화면으로 이동
-//                          self.setupMainInterface()
-//                     } else {
-//                         print("로그인 불가능 > 토큰 갱신 시도")
-//                     }
-//                 })
-//                 .disposed(by: disposeBag)
+             viewModel.isLoginEnabled()
+                 .subscribe(onNext: { isEnabled in
+                     if isEnabled {
+                         print("로그인 가능 > 홈화면으로 이동")
+                         // 홈화면으로 이동
+                          self.setupMainInterface()
+                     } else {
+                         print("로그인 불가능 > 토큰 갱신 시도")
+                     }
+                 })
+                 .disposed(by: disposeBag)
          } else {
              print("토큰 없음")
              // 로그인 화면으로 이동

@@ -76,6 +76,8 @@
 		38A55ED02BE9C97E0086C75B /* NotificationAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A55ECF2BE9C97E0086C75B /* NotificationAPI.swift */; };
 		38A55ED22BE9C9880086C75B /* NotificationRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A55ED12BE9C9880086C75B /* NotificationRepository.swift */; };
 		38A55ED42BE9C9AC0086C75B /* Notification.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A55ED32BE9C9AC0086C75B /* Notification.swift */; };
+		38A55ED62BE9D0700086C75B /* OnboardingNotificationViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A55ED52BE9D0700086C75B /* OnboardingNotificationViewController.swift */; };
+		38A55ED82BE9D0870086C75B /* OnboardingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A55ED72BE9D0870086C75B /* OnboardingViewController.swift */; };
 		551E8B742B7D10050008476B /* NotificationSettingViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551E8B732B7D10050008476B /* NotificationSettingViewController.swift */; };
 		551E8B762B7D13490008476B /* zeroModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551E8B752B7D13490008476B /* zeroModalView.swift */; };
 		551E8B782B7D135E0008476B /* evaluationModalView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 551E8B772B7D135E0008476B /* evaluationModalView.swift */; };
@@ -300,6 +302,8 @@
 		38A55ECF2BE9C97E0086C75B /* NotificationAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAPI.swift; sourceTree = "<group>"; };
 		38A55ED12BE9C9880086C75B /* NotificationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRepository.swift; sourceTree = "<group>"; };
 		38A55ED32BE9C9AC0086C75B /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
+		38A55ED52BE9D0700086C75B /* OnboardingNotificationViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingNotificationViewController.swift; sourceTree = "<group>"; };
+		38A55ED72BE9D0870086C75B /* OnboardingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnboardingViewController.swift; sourceTree = "<group>"; };
 		551E8B732B7D10050008476B /* NotificationSettingViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationSettingViewController.swift; sourceTree = "<group>"; };
 		551E8B752B7D13490008476B /* zeroModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = zeroModalView.swift; sourceTree = "<group>"; };
 		551E8B772B7D135E0008476B /* evaluationModalView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = evaluationModalView.swift; sourceTree = "<group>"; };
@@ -961,6 +965,8 @@
 				7A610AF12B49421F00D3096F /* KakaoLogin.swift */,
 				7A610AF32B49422E00D3096F /* AppleLogin.swift */,
 				7A610AEF2B49414100D3096F /* RegisterProfileViewController.swift */,
+				38A55ED52BE9D0700086C75B /* OnboardingNotificationViewController.swift */,
+				38A55ED72BE9D0870086C75B /* OnboardingViewController.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -1295,6 +1301,7 @@
 				D20D701A2B664996006D6762 /* UICollectionView.swift in Sources */,
 				208F5E7B2B80BA0B00107735 /* ExpensePopupModalView.swift in Sources */,
 				208C90D12B7BD33300C67960 /* UpdateExpenseRequest.swift in Sources */,
+				38A55ED82BE9D0870086C75B /* OnboardingViewController.swift in Sources */,
 				D253EEB32B7A5E6D00A4FC1C /* DayGoalCalendarView.swift in Sources */,
 				208C90C72B7BB06800C67960 /* ConsumeDetailViewController.swift in Sources */,
 				38A55ED22BE9C9880086C75B /* NotificationRepository.swift in Sources */,
@@ -1375,6 +1382,7 @@
 				7A4C67392B5A4A49008BCAC9 /* MPLabel.swift in Sources */,
 				7A8F3EF42B85059D00480902 /* GoalTitleViewController.swift in Sources */,
 				20E63BDB2BBAF90900A71DBA /* LoginRequest.swift in Sources */,
+				38A55ED62BE9D0700086C75B /* OnboardingNotificationViewController.swift in Sources */,
 				7A3069922B8C5D5400CD331D /* Example.swift in Sources */,
 				7A610AE52B491ED600D3096F /* Dummy.swift in Sources */,
 				7A8F3F0D2B8524B100480902 /* GoalMainViewModel.swift in Sources */,

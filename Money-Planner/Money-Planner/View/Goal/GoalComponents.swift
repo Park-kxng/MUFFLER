@@ -213,7 +213,9 @@ class GoalPresentationCell: UITableViewCell {
             btn.topAnchor.constraint(equalTo: containerView.topAnchor),
             btn.bottomAnchor.constraint(equalTo: containerView.bottomAnchor),
             btn.leadingAnchor.constraint(equalTo: containerView.leadingAnchor),
-            btn.trailingAnchor.constraint(equalTo: containerView.trailingAnchor)
+            btn.trailingAnchor.constraint(equalTo: containerView.trailingAnchor),
+            
+            ddayView.heightAnchor.constraint(equalToConstant: 22),
         ])
         
         //let horizontalStackView1 = UIStackView(arrangedSubviews: [title, dday])
@@ -282,7 +284,7 @@ class GoalPresentationCell: UITableViewCell {
                 ddayView.backgroundColor = UIColor.mpLightGray
                 ddayView.textLabel.textColor = UIColor.mpDarkGray
             } else {
-                ddayView.textLabel.text = "진행 전"
+                ddayView.textLabel.text = "시작 전"
                 ddayView.backgroundColor = UIColor.mpGoalTabDDayBackgroundColor
                 ddayView.textLabel.textColor = UIColor.mpGoalTabDDayLabelColor
             }

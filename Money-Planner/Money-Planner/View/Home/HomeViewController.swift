@@ -108,8 +108,7 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
     var statisticsData : Statistics?
     
     // 전체 탭 통계 저장해놓는 변수
-    var 
-    allStatisticsData : Statistics?
+    var allStatisticsData : Statistics?
     
     var hasNext : Bool = false
     var loading : Bool = false
@@ -404,6 +403,7 @@ extension HomeViewController{
                 if(goal != nil){
                     self.nowGoal = goal
                     
+                    self.allStatisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
                     self.statisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
                     
                     self.monthView.updateYearAndMonth(to: self.nowGoal!.startDate!.toDate!)

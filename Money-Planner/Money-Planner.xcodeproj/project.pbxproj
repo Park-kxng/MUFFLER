@@ -70,7 +70,6 @@
 		20E63BDD2BBAF9A400A71DBA /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */; };
 		20EF782D2B68CEA700AA135E /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */; };
 		20EF78312B68E3AD00AA135E /* MyPageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EF78302B68E3AD00AA135E /* MyPageTableViewCell.swift */; };
-		38A55EC82BE9C8070086C75B /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 38A55EC72BE9C8070086C75B /* GoogleService-Info.plist */; };
 		38A55ECB2BE9C9170086C75B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 38A55ECA2BE9C9170086C75B /* FirebaseAnalytics */; };
 		38A55ECD2BE9C9170086C75B /* FirebaseMessaging in Frameworks */ = {isa = PBXBuildFile; productRef = 38A55ECC2BE9C9170086C75B /* FirebaseMessaging */; };
 		38A55ED02BE9C97E0086C75B /* NotificationAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 38A55ECF2BE9C97E0086C75B /* NotificationAPI.swift */; };
@@ -142,7 +141,6 @@
 		7A8F3ED62B85055D00480902 /* ShowingPeriodSelectionModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3ED12B85055D00480902 /* ShowingPeriodSelectionModal.swift */; };
 		7A8F3ED72B85055D00480902 /* FoundPreviousConsumeRecordModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3ED22B85055D00480902 /* FoundPreviousConsumeRecordModal.swift */; };
 		7A8F3ED82B85055D00480902 /* WarnAboutUneditableModal.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3ED32B85055D00480902 /* WarnAboutUneditableModal.swift */; };
-		7A8F3EDA2B85057000480902 /* DdayLabel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3ED92B85057000480902 /* DdayLabel.swift */; };
 		7A8F3EDC2B85057700480902 /* LabelAndImageBtn.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3EDB2B85057700480902 /* LabelAndImageBtn.swift */; };
 		7A8F3EE12B85058400480902 /* GoalMain.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3EDE2B85058400480902 /* GoalMain.swift */; };
 		7A8F3EE32B85058400480902 /* GoalDetail.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3EE02B85058400480902 /* GoalDetail.swift */; };
@@ -165,6 +163,7 @@
 		7A8F3F192B85259400480902 /* GoalConnectionTestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3F162B85259400480902 /* GoalConnectionTestVC.swift */; };
 		7A8F3F1A2B85259400480902 /* GoalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3F172B85259400480902 /* GoalRepository.swift */; };
 		7AC060FF2B4C5D78008C0E63 /* Design.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC060FE2B4C5D78008C0E63 /* Design.swift */; };
+		D2099E792BEBC54E00C8D0F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D2099E782BEBC54E00C8D0F1 /* GoogleService-Info.plist */; };
 		D20D6FDA2B581A05006D6762 /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20D6FD92B581A05006D6762 /* CustomTabBarController.swift */; };
 		D20D6FDC2B581A5A006D6762 /* UITabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20D6FDB2B581A5A006D6762 /* UITabBar.swift */; };
 		D20D6FDE2B581B20006D6762 /* CALayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20D6FDD2B581B20006D6762 /* CALayer.swift */; };
@@ -298,7 +297,6 @@
 		20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
 		20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
 		20EF78302B68E3AD00AA135E /* MyPageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageTableViewCell.swift; sourceTree = "<group>"; };
-		38A55EC72BE9C8070086C75B /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../Desktop/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		38A55ECF2BE9C97E0086C75B /* NotificationAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAPI.swift; sourceTree = "<group>"; };
 		38A55ED12BE9C9880086C75B /* NotificationRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationRepository.swift; sourceTree = "<group>"; };
 		38A55ED32BE9C9AC0086C75B /* Notification.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Notification.swift; sourceTree = "<group>"; };
@@ -359,7 +357,6 @@
 		7A8F3ED12B85055D00480902 /* ShowingPeriodSelectionModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ShowingPeriodSelectionModal.swift; sourceTree = "<group>"; };
 		7A8F3ED22B85055D00480902 /* FoundPreviousConsumeRecordModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = FoundPreviousConsumeRecordModal.swift; sourceTree = "<group>"; };
 		7A8F3ED32B85055D00480902 /* WarnAboutUneditableModal.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = WarnAboutUneditableModal.swift; sourceTree = "<group>"; };
-		7A8F3ED92B85057000480902 /* DdayLabel.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = DdayLabel.swift; sourceTree = "<group>"; };
 		7A8F3EDB2B85057700480902 /* LabelAndImageBtn.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = LabelAndImageBtn.swift; sourceTree = "<group>"; };
 		7A8F3EDE2B85058400480902 /* GoalMain.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalMain.swift; sourceTree = "<group>"; };
 		7A8F3EE02B85058400480902 /* GoalDetail.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalDetail.swift; sourceTree = "<group>"; };
@@ -382,6 +379,7 @@
 		7A8F3F162B85259400480902 /* GoalConnectionTestVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalConnectionTestVC.swift; sourceTree = "<group>"; };
 		7A8F3F172B85259400480902 /* GoalRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalRepository.swift; sourceTree = "<group>"; };
 		7AC060FE2B4C5D78008C0E63 /* Design.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Design.swift; sourceTree = "<group>"; };
+		D2099E782BEBC54E00C8D0F1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D20D6FD92B581A05006D6762 /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
 		D20D6FDB2B581A5A006D6762 /* UITabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBar.swift; sourceTree = "<group>"; };
 		D20D6FDD2B581B20006D6762 /* CALayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayer.swift; sourceTree = "<group>"; };
@@ -434,7 +432,6 @@
 		D2D0B72A2B6A704B003B6B5E /* BaseResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseResponse.swift; sourceTree = "<group>"; };
 		D2D0B72C2B6A7067003B6B5E /* BaseAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseAPI.swift; sourceTree = "<group>"; };
 		D2D0B72E2B6A70A1003B6B5E /* BaseRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = BaseRepository.swift; sourceTree = "<group>"; };
-		D2D0B7322B6A74CD003B6B5E /* Config.xcconfig */ = {isa = PBXFileReference; lastKnownFileType = text.xcconfig; path = Config.xcconfig; sourceTree = "<group>"; };
 		D2D0B7352B6BA83E003B6B5E /* HomeRepository.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeRepository.swift; sourceTree = "<group>"; };
 		D2D0B7372B6BA845003B6B5E /* HomeAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeAPI.swift; sourceTree = "<group>"; };
 		D2D0B7392B6BAB02003B6B5E /* Goal.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Goal.swift; sourceTree = "<group>"; };
@@ -750,7 +747,6 @@
 			isa = PBXGroup;
 			children = (
 				208C90B92B6FE45B00C67960 /* UnregisterTitleLabel.swift */,
-				7A8F3ED92B85057000480902 /* DdayLabel.swift */,
 				7A4C67382B5A4A49008BCAC9 /* MPLabel.swift */,
 				7A4C673A2B5A4A8D008BCAC9 /* DescriptionView.swift */,
 				7A4C673C2B5A4AAF008BCAC9 /* SubDescriptionView.swift */,
@@ -823,6 +819,7 @@
 		7A610AB62B47FA8E00D3096F /* Money-Planner */ = {
 			isa = PBXGroup;
 			children = (
+				D2099E782BEBC54E00C8D0F1 /* GoogleService-Info.plist */,
 				7A3069862B8C5A0900CD331D /* PopupJson */,
 				205E232D2B83524A00E55412 /* Money-PlannerRelease.entitlements */,
 				D29536EF2B4C091400EEA81F /* Money-Planner.entitlements */,
@@ -838,9 +835,7 @@
 				7A610AC02B47FA8F00D3096F /* Assets.xcassets */,
 				7A610AC22B47FA8F00D3096F /* LaunchScreen.storyboard */,
 				7A610AC52B47FA8F00D3096F /* Info.plist */,
-				38A55EC72BE9C8070086C75B /* GoogleService-Info.plist */,
 				7A8F3EF82B8506A600480902 /* Config.xcconfig */,
-				D2D0B7322B6A74CD003B6B5E /* Config.xcconfig */,
 			);
 			path = "Money-Planner";
 			sourceTree = "<group>";
@@ -1264,7 +1259,7 @@
 				7A8F3EF92B8506A600480902 /* Config.xcconfig in Resources */,
 				7A610AC12B47FA8F00D3096F /* Assets.xcassets in Resources */,
 				7A30698F2B8C5C9700CD331D /* muffler_money.json in Resources */,
-				38A55EC82BE9C8070086C75B /* GoogleService-Info.plist in Resources */,
+				D2099E792BEBC54E00C8D0F1 /* GoogleService-Info.plist in Resources */,
 				7A3069902B8C5C9700CD331D /* muffler_zero.json in Resources */,
 				D20D701E2B668800006D6762 /* Home.json in Resources */,
 				7A3069882B8C5A0900CD331D /* muffler_delete.json in Resources */,
@@ -1365,7 +1360,6 @@
 				D2D0B72F2B6A70A1003B6B5E /* BaseRepository.swift in Sources */,
 				D253EEB72B7B505B00A4FC1C /* HomeMoreModalViewController.swift in Sources */,
 				7A610AEA2B493EC900D3096F /* MakeGoalViewController.swift in Sources */,
-				7A8F3EDA2B85057000480902 /* DdayLabel.swift in Sources */,
 				208C90932B6AB7DA00C67960 /* ConnectModel.swift in Sources */,
 				552A42672B72200E007AEAAD /* DailyConsumeViewController.swift in Sources */,
 				D20D6FF32B5D67B1006D6762 /* Category.swift in Sources */,
@@ -1608,7 +1602,7 @@
 		};
 		7A610AC92B47FA8F00D3096F /* Debug */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D2D0B7322B6A74CD003B6B5E /* Config.xcconfig */;
+			baseConfigurationReference = 7A8F3EF82B8506A600480902 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1616,12 +1610,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10002;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 387JTQ5ATJ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Money-Planner/Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = UIUserInterfaceStyle;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";
@@ -1646,7 +1640,7 @@
 		};
 		7A610ACA2B47FA8F00D3096F /* Release */ = {
 			isa = XCBuildConfiguration;
-			baseConfigurationReference = D2D0B7322B6A74CD003B6B5E /* Config.xcconfig */;
+			baseConfigurationReference = 7A8F3EF82B8506A600480902 /* Config.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -1654,12 +1648,12 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 1;
+				CURRENT_PROJECT_VERSION = 10002;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 387JTQ5ATJ;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_FILE = "Money-Planner/Info.plist";
-				INFOPLIST_KEY_LSApplicationCategoryType = UIUserInterfaceStyle;
+				INFOPLIST_KEY_LSApplicationCategoryType = "public.app-category.lifestyle";
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
 				INFOPLIST_KEY_UILaunchStoryboardName = LaunchScreen;
 				INFOPLIST_KEY_UIMainStoryboardFile = "";

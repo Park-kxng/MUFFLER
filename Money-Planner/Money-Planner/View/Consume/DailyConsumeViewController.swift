@@ -334,6 +334,7 @@ extension DailyConsumeViewController {
     @objc func addConsumeViewTapped() {
         let addConsumeVC = ConsumeViewController()
         addConsumeVC.modalPresentationStyle = .fullScreen
+        addConsumeVC.currentDate = dateText.toDate ?? Date()
         self.present(addConsumeVC, animated: true) {
             self.navigationController?.popToRootViewController(animated: true)
         }

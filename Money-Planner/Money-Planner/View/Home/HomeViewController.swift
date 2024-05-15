@@ -429,7 +429,6 @@ extension HomeViewController{
                 self.loading = false
             }
         }
-        
     }
     
     // 소비 데이터 불러오기
@@ -980,10 +979,11 @@ extension HomeViewController : OrderModalDelegate {
 // notification 기능 등록 함수
 extension HomeViewController {
     @objc func getNotificationConsumeView(_ notification: Notification){
-        
         if let userInfo = notification.userInfo {
             let cost = userInfo["cost"] as? Int64
-            self.allStatisticsData = Statistics(totalCost: self.allStatisticsData!.totalCost + cost!, goalBudget: self.allStatisticsData!.goalBudget)
+            if(self.allStatisticsData != nil){
+                self.allStatisticsData = Statistics(totalCost: self.allStatisticsData!.totalCost + cost!, goalBudget: self.allStatisticsData!.goalBudget)
+            }
         }
         
         if(collectionView.currentPage == 0){

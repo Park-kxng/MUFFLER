@@ -528,7 +528,7 @@ class ConsumeRecordPagingCell: UITableViewCell {
         if isEnabled {
             moreButton.setTitle("아래로 스와이프하여 더보기", for: .normal)
         } else {
-            moreButton.setTitle("마지막입니다", for: .disabled)
+            moreButton.setTitle("더 이상 소비내역이 없어요", for: .disabled)
         }
     }
 }

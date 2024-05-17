@@ -117,7 +117,8 @@ extension GoalCategoryViewController: MoneyAmountTextCellDelegate {
 // 카테고리별 목표 금액 입력 화면
 class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITableViewDataSource, AddCategoryViewDelegate{
     
-    
+    var bottomConstraint: NSLayoutConstraint?
+
     func AddCategoryCompleted(_ name: String, iconName: String) {
         // 직접 추가 완료 후
     }
@@ -266,19 +267,18 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     // setUpBtmBtn 메소드 구현
     private func setupBtmBtn() {
         btmBtn.translatesAutoresizingMaskIntoConstraints = false
-        view.addSubview(btmBtn)
-        btmBtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
-        
-        let guide = view.safeAreaLayoutGuide
-        let bottomConstraint = btmBtn.bottomAnchor.constraint(equalTo: guide.bottomAnchor)
-        bottomConstraint.isActive = true // 키보드에 의해 변경될 수 있는 제약 조건
-        
-        NSLayoutConstraint.activate([
-            btmBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
-            btmBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
-            btmBtn.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
-            btmBtn.heightAnchor.constraint(equalToConstant: 50)
-        ])
+           view.addSubview(btmBtn)
+           btmBtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
+
+           let guide = view.safeAreaLayoutGuide
+           bottomConstraint = btmBtn.bottomAnchor.constraint(equalTo: guide.bottomAnchor, constant: -30)
+           bottomConstraint?.isActive = true
+
+           NSLayoutConstraint.activate([
+               btmBtn.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
+               btmBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20),
+               btmBtn.heightAnchor.constraint(equalToConstant: 50)
+           ])
         
         // 키보드 알림 구독
         NotificationCenter.default.addObserver(self, selector: #selector(keyboardWillShow), name: UIResponder.keyboardWillShowNotification, object: nil)
@@ -289,6 +289,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     // 키보드가 나타날 때 호출되는 메소드
     @objc func keyboardWillShow(notification: NSNotification) {
         adjustForKeyboard(notification: notification, show: true)
+        
     }
     
     // 키보드가 사라질 때 호출되는 메소드
@@ -299,17 +300,18 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     // 키보드 나타남/사라짐에 따른 뷰 조정 메소드
     private func adjustForKeyboard(notification: NSNotification, show: Bool) {
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
-        
+
         let keyboardHeight = keyboardFrame.cgRectValue.height
         let adjustmentHeight = show ? -keyboardHeight : 0
-        
+
         if let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
             UIView.animate(withDuration: animationDuration) {
-                self.btmBtn.bottomAnchor.constraint(equalTo: self.view.safeAreaLayoutGuide.bottomAnchor, constant: adjustmentHeight).isActive = true
+                self.bottomConstraint?.constant = adjustmentHeight - 30 // 기존 offset을 고려합니다.
                 self.view.layoutIfNeeded()
             }
         }
     }
+
 
     
     private func setupTableView() {
@@ -383,10 +385,12 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
             
             // 섹션 삭제 후 테이블 뷰 업데이트
             tableView.performBatchUpdates({
-                tableView.deleteSections([section], with: .automatic)
+                self.tableView.deleteSections([section], with: .automatic)
             }) { completed in
                 // 삭제 완료 후 필요한 경우 추가 작업 수행
-                tableView.reloadData() // 전체 테이블 뷰를 새로고침하여 헤더 타이틀 업데이트
+                self.tableView.reloadData() // 전체 테이블 뷰를 새로고침하여 헤더 타이틀 업데이트
+                self.view.layoutIfNeeded() // 뷰 업데이트
+
             }
             
             updateSumAmountDisplay()
@@ -399,6 +403,8 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         if section == categoryCount - 1 {
             headerView.disableDeleteBtn()
         }else {
+            
+            
             headerView.ableDeleteBtn()
         }
         
@@ -415,44 +421,47 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         print(currentCellIndex)
         currentCellIndex = indexPath.section
         print(data)
-        if indexPath.section == categoryCount - 1 {
+        print(categoryCount, indexPath.section)
+        if indexPath.section == categoryCount - 1  {
             // 마지막 섹션에 GoalCreateCategoryBtnCell 배치
             let cell = tableView.dequeueReusableCell(withIdentifier: "GoalCreateCategoryBtnCell", for: indexPath) as! GoalCreateCategoryBtnCell
             cell.onAddButtonTapped = { [weak self] in
                 guard let self = self else { return }
-                self.categoryCount += 1
-                // 마지막 섹션 바로 앞에 새로운 GoalCategoryTableViewCell 섹션 추가
-                self.tableView.insertSections([self.categoryCount - 2], with: .automatic)
-                let newCategory = Category(id: 0, name: "")// TODO : id는 나중에
-                self.categoryGoalMaker.append(newCategory)
                 
-                // 빈 데이터 넣기
-                let add = GoalCategory(categoryName: "", categoryIcon: "", categoryId: 0, cost: 0)
-                data.append(add)
+                self.categoryCount += 1  // 카테고리 수 증가
+                
+                let newCategory = Category(id: -1, name: "")// TODO : id는 나중에
+                self.categoryGoalMaker.append(newCategory)
+
+                // 새로운 카테고리 정보 초기화
+                let add = GoalCategory(categoryName: "카테고리 선택", categoryIcon: "icon_category", categoryId: -1, cost: nil)
+                self.data.append(add)
+                
+                // 새로운 섹션을 삽입
+                self.tableView.beginUpdates()
+                self.tableView.insertSections([self.categoryCount - 2], with: .automatic)
+                self.tableView.endUpdates()
+
+                // 전체 테이블 뷰를 리로드하여 헤더를 업데이트
+                self.tableView.reloadData()
+                
+        
+                
                 //btmBtn 체크
                 //checkForDuplicateCategoriesAndUpdateUI()
             }
             return cell
         } else {
             if indexPath.row == 0 {
-                // "GoalCategoryTableViewCell" 식별자를 사용하여 셀을 재사용 대기열에서 가져옴
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GoalCategoryTableViewCell", for: indexPath) as! GoalCategoryTableViewCell
-                
-                // 현재 섹션의 인덱스가 data 리스트의 크기보다 작은 경우, 즉 선택된 카테고리 정보가 있는 경우
-                if indexPath.section < data.count {
-                    let category = data[indexPath.section]
-                    cell.configureCell(categoryId: category.categoryId, text: category.categoryName, iconName: category.categoryIcon)
-                    cell.isModified = true
-                } else {
-                    // data 리스트에 해당 섹션에 대한 정보가 없는 경우, 기본 셀을 구성
-                    cell.configureCell(categoryId: -1, text: "카테고리 선택", iconName: "icon_category")
-                    cell.isModified = false
-                }
-                
-                cell.isModified = false
+                // 현재 섹션의 데이터를 가져옴
+                let category = data[indexPath.section]
+                cell.configureCell(categoryId: category.categoryId, text: category.categoryName, iconName: category.categoryIcon)
+                cell.isModified = category.categoryId != -1 // categoryId가 -1이 아니면 수정된 것으로 간주
                 cell.categoryModalBtn.addTarget(self, action: #selector(categoryModalButtonTapped), for: .touchUpInside)
                 return cell
-            } else {
+            }
+            else {
             }
                 // Dequeue MoneyAmountTextCell for amount input
                 let cell = tableView.dequeueReusableCell(withIdentifier: "MoneyAmountTextCell", for: indexPath) as! MoneyAmountTextCell

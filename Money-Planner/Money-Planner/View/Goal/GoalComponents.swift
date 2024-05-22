@@ -651,7 +651,7 @@ class WriteNameView: UIView {
         textField.translatesAutoresizingMaskIntoConstraints = false
         addSubview(textField)
         
-        textField.textColor = UIColor.mpGray
+        textField.textColor = UIColor.mpBlack
         textField.textAlignment = .left
         textField.placeholder = "목표 이름"
         

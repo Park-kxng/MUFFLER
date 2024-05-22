@@ -950,9 +950,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                 print("Error encoding JSON: \(error)")
             }
 
-        let alert = ExpensePopupModalView()
-        alert.delegate = self
-        self.present(alert, animated: true, completion: nil)
+
         viewModel.createExpense(expenseRequest: expenseRequest)
             .subscribe(
             onSuccess: { response in
@@ -1000,20 +998,20 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
         
         
     }
-    private func dismissView(){
-        print("소비등록 뷰 해제")
-        self.dismiss(animated: true) {
-            // 네비게이션 바 숨기기 취소
-            self.tabBarController?.tabBar.isHidden = false
-            // 탭 바 컨트롤러로 전환하기
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let sceneDelegate = windowScene.delegate as? SceneDelegate,
-                   let tabBarVC = sceneDelegate.window?.rootViewController as? UITabBarController {
-                    tabBarVC.selectedIndex = 0 // 홈 뷰가 첫 번째 탭이라고 가정
-                }
-        }
-       
-    }
+    private func dismissView() {
+           print("소비등록 뷰 해제")
+           self.dismiss(animated: true) {
+               // 네비게이션 바 숨기기 취소
+               self.tabBarController?.tabBar.isHidden = false
+
+               // SceneDelegate의 setupMainInterface 메서드를 호출하여 홈 화면으로 이동
+               if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let sceneDelegate = windowScene.delegate as? SceneDelegate {
+                   sceneDelegate.setupMainInterface()
+               }
+           }
+       }
+
     
     private func sendNotificationEvent(cost : Int64) {
         NotificationCenter.default.post(name: Notification.Name("addConsume"), object: nil, userInfo: [

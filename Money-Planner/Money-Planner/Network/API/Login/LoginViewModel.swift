@@ -19,12 +19,12 @@ class LoginViewModel {
         return loginRepository.connect()
             .map { response -> Bool in
                 // 성공적인 응답 처리
-                print("success - \(response)")
+                print("[ 로그인 시도 ] success - \(response)")
                 return response.isSuccess
             }
             .catch { error -> Observable<Bool> in
                 // 오류 발생 시 로깅
-                print("Login error: \(error.localizedDescription)")
+                print("[ 로그인 시도 ] Login error: \(error.localizedDescription)")
                 // 오류 유형에 따른 분기 처리가 필요한 경우 여기서 수행
                 // 예: if error is SomeSpecificError { ... }
                 return Observable.just(false) // 일반적으로 로그인 불가능으로 처리

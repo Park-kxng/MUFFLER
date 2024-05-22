@@ -19,6 +19,7 @@
 		206C58D42B623C43008410C1 /* CategoryCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206C58D32B623C43008410C1 /* CategoryCell.swift */; };
 		206C58D82B626465008410C1 /* CategoryModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206C58D72B626465008410C1 /* CategoryModalViewController.swift */; };
 		206C58DF2B6306FE008410C1 /* CalendartModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 206C58DE2B6306FE008410C1 /* CalendartModalViewController.swift */; };
+		206D9F502BEBF650000DE2B9 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 206D9F4F2BEBF650000DE2B9 /* GoogleService-Info.plist */; };
 		208C908F2B6AB78900C67960 /* MufflerAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C908E2B6AB78900C67960 /* MufflerAPI.swift */; };
 		208C90912B6AB7A200C67960 /* MufflerViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C90902B6AB7A200C67960 /* MufflerViewModel.swift */; };
 		208C90932B6AB7DA00C67960 /* ConnectModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 208C90922B6AB7DA00C67960 /* ConnectModel.swift */; };
@@ -60,6 +61,7 @@
 		20AFDD912B656034008F8AB9 /* OneDayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD902B656034008F8AB9 /* OneDayButton.swift */; };
 		20AFDD932B659779008F8AB9 /* RepeatIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD922B659779008F8AB9 /* RepeatIntervalViewController.swift */; };
 		20AFDD952B65B882008F8AB9 /* ChooseDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD942B65B882008F8AB9 /* ChooseDateView.swift */; };
+		20B464332BFE4B450083ACE1 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B464322BFE4B450083ACE1 /* AuthService.swift */; };
 		20C040FC2BBD397200D715F8 /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C040FB2BBD397200D715F8 /* TokenManager.swift */; };
 		20C040FF2BBD96E300D715F8 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 20C040FE2BBD96E300D715F8 /* KeychainAccess */; };
 		20C041032BBEA18700D715F8 /* OnBoardingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */; };
@@ -250,6 +252,7 @@
 		206C58D32B623C43008410C1 /* CategoryCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryCell.swift; sourceTree = "<group>"; };
 		206C58D72B626465008410C1 /* CategoryModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryModalViewController.swift; sourceTree = "<group>"; };
 		206C58DE2B6306FE008410C1 /* CalendartModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendartModalViewController.swift; sourceTree = "<group>"; };
+		206D9F4F2BEBF650000DE2B9 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; name = "GoogleService-Info.plist"; path = "../../../../../Downloads/GoogleService-Info.plist"; sourceTree = "<group>"; };
 		208C908E2B6AB78900C67960 /* MufflerAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MufflerAPI.swift; sourceTree = "<group>"; };
 		208C90902B6AB7A200C67960 /* MufflerViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MufflerViewModel.swift; sourceTree = "<group>"; };
 		208C90922B6AB7DA00C67960 /* ConnectModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConnectModel.swift; sourceTree = "<group>"; };
@@ -288,6 +291,7 @@
 		20AFDD902B656034008F8AB9 /* OneDayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneDayButton.swift; sourceTree = "<group>"; };
 		20AFDD922B659779008F8AB9 /* RepeatIntervalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatIntervalViewController.swift; sourceTree = "<group>"; };
 		20AFDD942B65B882008F8AB9 /* ChooseDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseDateView.swift; sourceTree = "<group>"; };
+		20B464322BFE4B450083ACE1 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		20C040FB2BBD397200D715F8 /* TokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenManager.swift; sourceTree = "<group>"; };
 		20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingProfileViewController.swift; sourceTree = "<group>"; };
 		20C041072BBEF0E000D715F8 /* JoinRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinRequest.swift; sourceTree = "<group>"; };
@@ -835,6 +839,7 @@
 				7A610AC02B47FA8F00D3096F /* Assets.xcassets */,
 				7A610AC22B47FA8F00D3096F /* LaunchScreen.storyboard */,
 				7A610AC52B47FA8F00D3096F /* Info.plist */,
+				206D9F4F2BEBF650000DE2B9 /* Develop : GoogleService-Info.plist */,
 				7A8F3EF82B8506A600480902 /* Config.xcconfig */,
 			);
 			path = "Money-Planner";
@@ -843,6 +848,7 @@
 		7A610ACB2B480AFF00D3096F /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				20B464322BFE4B450083ACE1 /* AuthService.swift */,
 				20545A8F2BBFEDF80024B1E5 /* TokenAuthPlugin.swift */,
 				20545A912BBFEFB10024B1E5 /* AuthenticatedAPI.swift */,
 				D20D702A2B68BB81006D6762 /* API */,
@@ -1259,7 +1265,8 @@
 				7A8F3EF92B8506A600480902 /* Config.xcconfig in Resources */,
 				7A610AC12B47FA8F00D3096F /* Assets.xcassets in Resources */,
 				7A30698F2B8C5C9700CD331D /* muffler_money.json in Resources */,
-				D2099E792BEBC54E00C8D0F1 /* GoogleService-Info.plist in Resources */,
+				206D9F502BEBF650000DE2B9 /* Develop  : GoogleService-Info.plist in Resources */,
+				D2099E792BEBC54E00C8D0F1 /* fix-park : GoogleService-Info.plist in Resources */,
 				7A3069902B8C5C9700CD331D /* muffler_zero.json in Resources */,
 				D20D701E2B668800006D6762 /* Home.json in Resources */,
 				7A3069882B8C5A0900CD331D /* muffler_delete.json in Resources */,
@@ -1434,6 +1441,7 @@
 				D253EEAF2B7A0CA500A4FC1C /* MainNoGoal.swift in Sources */,
 				D20D6FE92B5AF1E9006D6762 /* MainMonthView.swift in Sources */,
 				7A4C673D2B5A4AAF008BCAC9 /* SubDescriptionView.swift in Sources */,
+				20B464332BFE4B450083ACE1 /* AuthService.swift in Sources */,
 				7A8F3EE12B85058400480902 /* GoalMain.swift in Sources */,
 				7A8F3EF72B85059D00480902 /* GoalMainViewController.swift in Sources */,
 				D253EEBD2B7B652300A4FC1C /* ExpenseAPI.swift in Sources */,

@@ -949,8 +949,13 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
             } catch {
                 print("Error encoding JSON: \(error)")
             }
-
-
+        // 모달 뷰 테스트
+//        let alert = ExpensePopupModalView()
+//        self.present(alert, animated: true) {
+//                alert.changeTitle(title: "하루 목표금액을 초과했어요")
+//                alert.changeContents(content: "목표한 소비 금액 \(2000)원보다 \n \(20000)원 더 썼어요!")
+//          
+//        }
         viewModel.createExpense(expenseRequest: expenseRequest)
             .subscribe(
             onSuccess: { response in
@@ -968,21 +973,26 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                                     print(budget)
                                     print(excessAmount)
                                     // 여기서 알람을 보여주는 작업을 수행합니다.
+                                    
                                     let alert = ExpensePopupModalView()
-                                    if alarmTitle == "DAILY"{
-                                        alert.changeTitle(title: "하루 목표금액을 초과했어요")
-                                        alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
-                                        
-                                    }else if alarmTitle == "CATEGORY"{
-                                        let category = String(self.cateogoryTextField.text ?? "카테고리 없음")
-                                        alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
-                                        alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
+                                    self.present(alert, animated: true) {
+                                        if alarmTitle == "DAILY"{
+                                            alert.changeTitle(title: "하루 목표금액을 초과했어요")
+                                            alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
+                                            
+                                        }else if alarmTitle == "CATEGORY"{
+                                            let category = String(self.cateogoryTextField.text ?? "카테고리 없음")
+                                            alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
+                                            alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
 
-                                    } else if alarmTitle == "TOTAL"{
-                                        alert.changeTitle(title: "전체 목표금액을 초과했어요")
-                                        alert.changeContents(content: "목표한 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
+                                        } else if alarmTitle == "TOTAL"{
+                                            alert.changeTitle(title: "전체 목표금액을 초과했어요")
+                                            alert.changeContents(content: "목표한 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
 
+                                        }
+                                      
                                     }
+                                    
                                     self.present(alert, animated: true, completion: nil)
                                 }
                             }

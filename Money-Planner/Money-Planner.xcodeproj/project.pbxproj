@@ -165,7 +165,6 @@
 		7A8F3F192B85259400480902 /* GoalConnectionTestVC.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3F162B85259400480902 /* GoalConnectionTestVC.swift */; };
 		7A8F3F1A2B85259400480902 /* GoalRepository.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A8F3F172B85259400480902 /* GoalRepository.swift */; };
 		7AC060FF2B4C5D78008C0E63 /* Design.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7AC060FE2B4C5D78008C0E63 /* Design.swift */; };
-		D2099E792BEBC54E00C8D0F1 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = D2099E782BEBC54E00C8D0F1 /* GoogleService-Info.plist */; };
 		D20D6FDA2B581A05006D6762 /* CustomTabBarController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20D6FD92B581A05006D6762 /* CustomTabBarController.swift */; };
 		D20D6FDC2B581A5A006D6762 /* UITabBar.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20D6FDB2B581A5A006D6762 /* UITabBar.swift */; };
 		D20D6FDE2B581B20006D6762 /* CALayer.swift in Sources */ = {isa = PBXBuildFile; fileRef = D20D6FDD2B581B20006D6762 /* CALayer.swift */; };
@@ -383,7 +382,6 @@
 		7A8F3F162B85259400480902 /* GoalConnectionTestVC.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalConnectionTestVC.swift; sourceTree = "<group>"; };
 		7A8F3F172B85259400480902 /* GoalRepository.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = GoalRepository.swift; sourceTree = "<group>"; };
 		7AC060FE2B4C5D78008C0E63 /* Design.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Design.swift; sourceTree = "<group>"; };
-		D2099E782BEBC54E00C8D0F1 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		D20D6FD92B581A05006D6762 /* CustomTabBarController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CustomTabBarController.swift; sourceTree = "<group>"; };
 		D20D6FDB2B581A5A006D6762 /* UITabBar.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UITabBar.swift; sourceTree = "<group>"; };
 		D20D6FDD2B581B20006D6762 /* CALayer.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CALayer.swift; sourceTree = "<group>"; };
@@ -823,7 +821,6 @@
 		7A610AB62B47FA8E00D3096F /* Money-Planner */ = {
 			isa = PBXGroup;
 			children = (
-				D2099E782BEBC54E00C8D0F1 /* GoogleService-Info.plist */,
 				7A3069862B8C5A0900CD331D /* PopupJson */,
 				205E232D2B83524A00E55412 /* Money-PlannerRelease.entitlements */,
 				D29536EF2B4C091400EEA81F /* Money-Planner.entitlements */,
@@ -839,7 +836,7 @@
 				7A610AC02B47FA8F00D3096F /* Assets.xcassets */,
 				7A610AC22B47FA8F00D3096F /* LaunchScreen.storyboard */,
 				7A610AC52B47FA8F00D3096F /* Info.plist */,
-				206D9F4F2BEBF650000DE2B9 /* Develop : GoogleService-Info.plist */,
+				206D9F4F2BEBF650000DE2B9 /* GoogleService-Info.plist */,
 				7A8F3EF82B8506A600480902 /* Config.xcconfig */,
 			);
 			path = "Money-Planner";
@@ -1265,8 +1262,7 @@
 				7A8F3EF92B8506A600480902 /* Config.xcconfig in Resources */,
 				7A610AC12B47FA8F00D3096F /* Assets.xcassets in Resources */,
 				7A30698F2B8C5C9700CD331D /* muffler_money.json in Resources */,
-				206D9F502BEBF650000DE2B9 /* Develop  : GoogleService-Info.plist in Resources */,
-				D2099E792BEBC54E00C8D0F1 /* fix-park : GoogleService-Info.plist in Resources */,
+				206D9F502BEBF650000DE2B9 /* GoogleService-Info.plist in Resources */,
 				7A3069902B8C5C9700CD331D /* muffler_zero.json in Resources */,
 				D20D701E2B668800006D6762 /* Home.json in Resources */,
 				7A3069882B8C5A0900CD331D /* muffler_delete.json in Resources */,

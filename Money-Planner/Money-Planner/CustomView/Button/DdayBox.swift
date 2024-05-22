@@ -49,8 +49,6 @@ class DdayBox: UIView {
         addSubview(stackView)
         
         NSLayoutConstraint.activate([
-            heightAnchor.constraint(equalToConstant: 22),
-            
             // StackView의 제약 설정
             stackView.centerYAnchor.constraint(equalTo: centerYAnchor),
             stackView.leadingAnchor.constraint(equalTo: leadingAnchor, constant: 8),

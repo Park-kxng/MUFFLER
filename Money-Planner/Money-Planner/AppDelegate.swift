@@ -49,6 +49,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
             }
             else if let token = token {
                 print("FCM registration token: \(token)")
+                
             }
         }
         
@@ -103,6 +104,8 @@ extension AppDelegate: MessagingDelegate {
     func messaging(_ messaging: Messaging, didReceiveRegistrationToken fcmToken: String?) {
         print("토큰: \(fcmToken)")
         
+        UserDefaults.standard.set(fcmToken, forKey: "fcmToken")
+        
         let dataDict: [String: String] = ["token": fcmToken ?? ""]
         NotificationCenter.default.post(
           name: Notification.Name("FCMToken"),
@@ -110,7 +113,6 @@ extension AppDelegate: MessagingDelegate {
           userInfo: dataDict
         )
         
-        // 서버로 fcm 토큰 보내기
         if let fcmToken = fcmToken {
             print("\n\nUnwrapped token: \(fcmToken)")
             UserDefaults.standard.set(fcmToken, forKey: "fcmToken")

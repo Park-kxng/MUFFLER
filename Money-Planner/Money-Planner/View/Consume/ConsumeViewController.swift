@@ -70,7 +70,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     var catAdd = false
     var titleAdd = false
     
-    let currentDate = Date()
+    var currentDate = Date()
     let dateFormatter = DateFormatter()
     lazy var todayDate: String = {
         dateFormatter.dateFormat = "yyyy년 MM월 dd일"
@@ -208,7 +208,12 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     lazy var calChooseButton: UIButton = {
         let button = UIButton()
         
-        button.setTitle("오늘", for: .normal)
+        if currentDate == Date(){
+            button.setTitle("오늘", for: .normal)
+        }else{
+            button.setTitle("선택", for: .normal)
+        }
+        
         button.titleLabel?.font = UIFont.mpFont20M()
         button.setTitleColor(UIColor.mpMainColor, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false

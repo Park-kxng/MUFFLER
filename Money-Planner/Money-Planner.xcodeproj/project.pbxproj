@@ -61,6 +61,7 @@
 		20AFDD912B656034008F8AB9 /* OneDayButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD902B656034008F8AB9 /* OneDayButton.swift */; };
 		20AFDD932B659779008F8AB9 /* RepeatIntervalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD922B659779008F8AB9 /* RepeatIntervalViewController.swift */; };
 		20AFDD952B65B882008F8AB9 /* ChooseDateView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20AFDD942B65B882008F8AB9 /* ChooseDateView.swift */; };
+		20B464332BFE4B450083ACE1 /* AuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20B464322BFE4B450083ACE1 /* AuthService.swift */; };
 		20C040FC2BBD397200D715F8 /* TokenManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C040FB2BBD397200D715F8 /* TokenManager.swift */; };
 		20C040FF2BBD96E300D715F8 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 20C040FE2BBD96E300D715F8 /* KeychainAccess */; };
 		20C041032BBEA18700D715F8 /* OnBoardingProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */; };
@@ -290,6 +291,7 @@
 		20AFDD902B656034008F8AB9 /* OneDayButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OneDayButton.swift; sourceTree = "<group>"; };
 		20AFDD922B659779008F8AB9 /* RepeatIntervalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RepeatIntervalViewController.swift; sourceTree = "<group>"; };
 		20AFDD942B65B882008F8AB9 /* ChooseDateView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ChooseDateView.swift; sourceTree = "<group>"; };
+		20B464322BFE4B450083ACE1 /* AuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthService.swift; sourceTree = "<group>"; };
 		20C040FB2BBD397200D715F8 /* TokenManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenManager.swift; sourceTree = "<group>"; };
 		20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = OnBoardingProfileViewController.swift; sourceTree = "<group>"; };
 		20C041072BBEF0E000D715F8 /* JoinRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = JoinRequest.swift; sourceTree = "<group>"; };
@@ -848,6 +850,7 @@
 		7A610ACB2B480AFF00D3096F /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				20B464322BFE4B450083ACE1 /* AuthService.swift */,
 				20545A8F2BBFEDF80024B1E5 /* TokenAuthPlugin.swift */,
 				20545A912BBFEFB10024B1E5 /* AuthenticatedAPI.swift */,
 				D20D702A2B68BB81006D6762 /* API */,
@@ -1440,6 +1443,7 @@
 				D253EEAF2B7A0CA500A4FC1C /* MainNoGoal.swift in Sources */,
 				D20D6FE92B5AF1E9006D6762 /* MainMonthView.swift in Sources */,
 				7A4C673D2B5A4AAF008BCAC9 /* SubDescriptionView.swift in Sources */,
+				20B464332BFE4B450083ACE1 /* AuthService.swift in Sources */,
 				7A8F3EE12B85058400480902 /* GoalMain.swift in Sources */,
 				7A8F3EF72B85059D00480902 /* GoalMainViewController.swift in Sources */,
 				D253EEBD2B7B652300A4FC1C /* ExpenseAPI.swift in Sources */,

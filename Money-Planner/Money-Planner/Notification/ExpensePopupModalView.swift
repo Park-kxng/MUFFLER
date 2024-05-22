@@ -93,11 +93,15 @@ class ExpensePopupModalView : UIViewController {
         // 모달 제목 바꾸는 함수
         func changeTitle(title : String){
             titleLabel.text = title
+            titleLabel.setNeedsLayout()
+            titleLabel.layoutIfNeeded()
         }
     
         // 모달 내용 바꾸는 함수
         func changeContents (content : String){
             contentLabel.text = content
+            contentLabel.setNeedsLayout()
+            contentLabel.layoutIfNeeded()
         }
         
         override func viewDidLoad() {

@@ -35,7 +35,7 @@ class UnregisterPopupViewController: UIViewController {
     }()
     var contentLabel : UILabel = {
         let label = UILabel()
-        label.text = "그 동안의 소비 기록이 모두 사라져요."
+        label.text = "그 동안의 소중한 소비 기록이 모두 사라져요."
         label.textAlignment = .left
         label.font = UIFont.mpFont16M()
         label.textColor  = .mpBlack

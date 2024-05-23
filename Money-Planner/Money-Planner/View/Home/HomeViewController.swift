@@ -981,9 +981,11 @@ extension HomeViewController {
     @objc func getNotificationConsumeView(_ notification: Notification){
         if let userInfo = notification.userInfo {
             let cost = userInfo["cost"] as? Int64
+            
             if(self.allStatisticsData != nil){
                 self.allStatisticsData = Statistics(totalCost: self.allStatisticsData!.totalCost + cost!, goalBudget: self.allStatisticsData!.goalBudget)
             }
+
         }
         
         if(collectionView.currentPage == 0){

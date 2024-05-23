@@ -69,6 +69,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     var amountAdd = false
     var catAdd = false
     var titleAdd = false
+    var dateAdd = false
     
     var currentDate = Date()
     let dateFormatter = DateFormatter()
@@ -292,6 +293,8 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     
     func didSelectCalendarDate(_ date: String , api : String) {
         print("Selected Date in YourPresentingViewController: \(date)")
+        dateAdd = true // 데이트가 선택 되는 경우
+        checkAndEnableCompleteButton() // 완료 버튼 활성화 확인
         calTextField.text = date
         currnetCal = api
         // 선택한 날짜가 오늘이 아닌 경우, 선택으로 달력 버튼 텍스트 변경
@@ -908,7 +911,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     
     
     private func checkAndEnableCompleteButton() {
-        let enableButton = amountAdd && catAdd && titleAdd
+        let enableButton = amountAdd && catAdd && titleAdd && dateAdd
         completeButton.isEnabled = enableButton
 //        print("\(enableButton)")
 //        print("\(amountAdd)\(catAdd)\(titleAdd)")

@@ -921,6 +921,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     @objc
     private func completeButtonTapped(){
         print("소비등록을 완료하였습니다")
+        
         // 옵셔널 바인딩을 사용하여 메모 필드를 처리
         if !checkButton.isChecked{
             routineRequest = nil
@@ -929,7 +930,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
             currnetCal = todayDateJson
         }
         if routineRequest?.monthlyRepeatType == nil {
-            
+            // Do something if needed
         }
         expenseRequest = ExpenseCreateRequest(
             expenseCost: currentAmount,
@@ -940,25 +941,19 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
             routineRequest: routineRequest,
             isRoutine: checkButton.isChecked
         )
-    
+
         print(expenseRequest)
         do {
-                let encoder = JSONEncoder()
-                encoder.outputFormatting = .prettyPrinted // JSON을 읽기 쉽게 출력하기 위해 prettyPrinted를 사용합니다.
-                let jsonData = try encoder.encode(expenseRequest)
-                if let jsonString = String(data: jsonData, encoding: .utf8) {
-                    print(jsonString)
-                }
-            } catch {
-                print("Error encoding JSON: \(error)")
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted // JSON을 읽기 쉽게 출력하기 위해 prettyPrinted를 사용합니다.
+            let jsonData = try encoder.encode(expenseRequest)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print(jsonString)
             }
-        // 모달 뷰 테스트
-//        let alert = ExpensePopupModalView()
-//        self.present(alert, animated: true) {
-//                alert.changeTitle(title: "하루 목표금액을 초과했어요")
-//                alert.changeContents(content: "목표한 소비 금액 \(2000)원보다 \n \(20000)원 더 썼어요!")
-//          
-//        }
+        } catch {
+            print("Error encoding JSON: \(error)")
+        }
+
         viewModel.createExpense(expenseRequest: expenseRequest)
             .subscribe(
             onSuccess: { response in
@@ -969,7 +964,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                         if alarms.count == 0 {
                             print("알람이 없음")
                             self.dismissView()
-                        }else{
+                        } else {
                             for alarm in alarms {
                                 if let alarmTitle = alarm.alarmTitle, let budget = alarm.budget, let excessAmount = alarm.excessAmount {
                                     print(alarmTitle)
@@ -977,40 +972,37 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                                     print(excessAmount)
                                     // 여기서 알람을 보여주는 작업을 수행합니다.
                                     
-                                    let alert = ExpensePopupModalView()
-                                    self.present(alert, animated: true) {
-                                        if alarmTitle == "DAILY"{
-                                            alert.changeTitle(title: "하루 목표금액을 초과했어요")
-                                            alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
-                                            
-                                        }else if alarmTitle == "CATEGORY"{
-                                            let category = String(self.cateogoryTextField.text ?? "카테고리 없음")
-                                            alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
-                                            alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
-
-                                        } else if alarmTitle == "TOTAL"{
-                                            alert.changeTitle(title: "전체 목표금액을 초과했어요")
-                                            alert.changeContents(content: "목표한 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
-
+                                    if self.presentedViewController == nil {
+                                        let alert = ExpensePopupModalView()
+                                        alert.delegate = self
+                                        self.present(alert, animated: true) {
+                                            if alarmTitle == "DAILY" {
+                                                alert.changeTitle(title: "하루 목표금액을 초과했어요")
+                                                alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
+                                            } else if alarmTitle == "CATEGORY" {
+                                                let category = self.cateogoryTextField.text ?? "카테고리 없음"
+                                                alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
+                                                alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
+                                            } else if alarmTitle == "TOTAL" {
+                                                alert.changeTitle(title: "전체 목표금액을 초과했어요")
+                                                alert.changeContents(content: "목표한 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
+                                            }
                                         }
-                                      
+                                    } else {
+                                        // Handle the case where a view is already presented
+                                        print("A view is already being presented. Skipping presentation.")
                                     }
-                                    
-                                    self.present(alert, animated: true, completion: nil)
                                 }
                             }
                         }
-                        
-                     
                     }
                 }
                 self.sendNotificationEvent(cost: self.expenseRequest.expenseCost)
             }, onFailure: {error in
                 print(error)
             }).disposed(by: disposeBag)
-        
-        
     }
+
     private func dismissView() {
            print("소비등록 뷰 해제")
            self.dismiss(animated: true) {

@@ -175,7 +175,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         setupBtmBtn()
         setupTableView()
         
-        btmBtn.isEnabled = false
+        btmBtn.isEnabled = true
     }
     
     // 여기서부터 setup 메서드들을 정의합니다.

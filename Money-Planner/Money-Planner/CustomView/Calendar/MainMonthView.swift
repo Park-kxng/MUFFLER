@@ -10,6 +10,7 @@ import UIKit
 
 protocol MainMonthViewDelegate{
     func didChangeMonth(monthIndex: Int, year: Int)
+    func onTapMonthLabel()
 }
 
 class MainMonthView: UIView {
@@ -36,7 +37,6 @@ class MainMonthView: UIView {
         }
         btn.tintColor = .mpBlack
         btn.translatesAutoresizingMaskIntoConstraints=false
-        btn.addTarget(self, action: #selector(btnLeftRightAction(sender:)), for: .touchUpInside)
         return btn
     }()
     
@@ -45,13 +45,20 @@ class MainMonthView: UIView {
         btn.setImage(UIImage(named: "btn_date_next"), for: .normal)
         btn.tintColor = .mpBlack
         btn.translatesAutoresizingMaskIntoConstraints=false
-        btn.addTarget(self, action: #selector(btnLeftRightAction(sender:)), for: .touchUpInside)
         btn.setTitleColor(UIColor.lightGray, for: .disabled)
         return btn
     }()
     
     override init(frame: CGRect) {
         super.init(frame: frame)
+        
+        btnRight.addTarget(self, action: #selector(btnLeftRightAction(sender:)), for: .touchUpInside)
+        btnLeft.addTarget(self, action: #selector(btnLeftRightAction(sender:)), for: .touchUpInside)
+        
+        let tapGesture = UITapGestureRecognizer(target: self, action: #selector(tapMonthLabel))
+        monthLabel.isUserInteractionEnabled = true
+        monthLabel.addGestureRecognizer(tapGesture)
+        
         currentYear = Calendar.current.component (.year, from: Date())
         currentMonth = Calendar.current.component (.month, from: Date ())
         setUpViews()
@@ -71,14 +78,16 @@ class MainMonthView: UIView {
         
         self.addSubview(btnLeft)
         btnLeft.topAnchor.constraint(equalTo: topAnchor).isActive=true
-        btnLeft.rightAnchor.constraint(equalTo: monthLabel.leftAnchor, constant: -10).isActive = true
+        btnLeft.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        btnLeft.rightAnchor.constraint(equalTo: monthLabel.leftAnchor, constant: 0).isActive = true
         
         btnLeft.heightAnchor.constraint(equalTo: monthLabel.heightAnchor, constant: -3).isActive=true
     
         
         self.addSubview(btnRight)
         btnRight.topAnchor.constraint(equalTo: topAnchor).isActive=true
-        btnRight.leftAnchor.constraint(equalTo: monthLabel.rightAnchor, constant: 10).isActive = true
+        btnRight.widthAnchor.constraint(equalToConstant: 28).isActive = true
+        btnRight.leftAnchor.constraint(equalTo: monthLabel.rightAnchor, constant: 0).isActive = true
         btnRight.heightAnchor.constraint(equalTo: monthLabel.heightAnchor, constant: -3).isActive=true
         
     }
@@ -99,6 +108,10 @@ class MainMonthView: UIView {
         }
         monthLabel.text="\(currentYear)년 \(currentMonth)월"
         delegate?.didChangeMonth(monthIndex: currentMonth, year: currentYear)
+    }
+    
+    @objc func tapMonthLabel(){
+        delegate?.onTapMonthLabel()
     }
     
     func updateYearAndMonth (to date: Date) {

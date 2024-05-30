@@ -179,8 +179,11 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
     
     // MainMonthView의 delegate
     func didChangeMonth(monthIndex: Int, year: Int) {
-        // 값 있을 때는 넘겨주고 없으면 초기화 하기
-        calendarView.changeMonth(monthIndex: monthIndex, year: year)
+        changeCalendarDate(month: monthIndex, year: year)
+    }
+    
+    func changeCalendarDate(month : Int, year : Int){
+        calendarView.changeMonth(monthIndex: month, year: year)
         categoryScrollView.changeSelectedButton(index: -1)
         
         if(collectionView.currentPage == 0){
@@ -190,7 +193,14 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
             self.hasNext = false
             fetchConsumeData(lastDate: nil, lastExpenseId: nil)
         }
-        
+    }
+    
+    func onTapMonthLabel() {
+        let vc = SelectModalViewController()
+        vc.currentYear = monthView.currentYear
+        vc.currentMonth = monthView.currentMonth
+        vc.delegate = self
+        self.present(vc, animated: true)
     }
     
     // ConsumeRecordCell의 delegate
@@ -972,6 +982,16 @@ extension HomeViewController : OrderModalDelegate {
         self.hasNext = false
         
         fetchConsumeData(lastDate: nil, lastExpenseId: nil)
+    }
+}
+
+extension HomeViewController : SelectModalDelegate {
+    func changeDate(year: Int, month: Int) {
+        monthView.currentMonth = month
+        monthView.currentYear = year
+        monthView.monthLabel.text="\(monthView.currentYear)년 \(monthView.currentMonth)월"
+        
+        changeCalendarDate(month: month, year: year)
     }
 }
 

@@ -21,31 +21,43 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          // login api 연결
          let viewModel = LoginViewModel()
          let disposeBag = viewModel.disposeBag
-//         TokenManager.shared.clearTokens() // 토큰 삭제
-         print("토큰 확인", TokenManager.shared.accessToken, TokenManager.shared.refreshToken)
-         let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부
+         
+         
+//         TokenManager.shared.handleLoginSuccess(accessToken: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI0NjEzNzk1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTY1NzIxMDh9.Vb0JSZPhaTuLs7JqoSlBkOSuAc-9BLj0065XnzD13hI", refreshToken: "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTkwNzc3MDh9.W3WkUHWtETcBl_wXUUXGqJWsKLvojwRHK-cN1163F-Q")
+////         TokenManager.shared.clearTokens() // 토큰 삭제
+//         print("토큰 확인", TokenManager.shared.accessToken, TokenManager.shared.refreshToken)
+         
+         
+         let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부 (있으면 Ture, 없으면 False)
          if isLoggedIn {
-             print("로그인 한 적 있음")
-              // 가진 토큰으로 로그인 시도
-             viewModel.isLoginEnabled()
-                 .subscribe(onNext: { isEnabled in
-                     if isEnabled {
-                         print("로그인 가능 > 홈화면으로 이동")
-                         // 홈화면으로 이동
-                          self.setupMainInterface()
-                     } else {
-                         print("로그인 불가능 > 토큰 갱신 시도")
-                     }
-                 })
-                 .disposed(by: disposeBag)
-         } else {
-             print("토큰 없음")
-             // 로그인 화면으로 이동
-             DispatchQueue.main.async {
-                 self.window?.rootViewController = LoginViewController()
-                 
-             }
+             print("저장된 토큰이 있습니다 --> 홈화면으로 이동합니다")
+             self.setupMainInterface()
+         }else{
+             
+             print("저장된 토큰이 없습니다 --> 로그인 화면으로 이동")
+             self.window?.rootViewController = LoginViewController()
          }
+         
+//             print("로그인 한 적 있음 -> 엑세스 토큰 확인 중")
+//              // 가진 토큰으로 로그인 시도
+//             viewModel.isLoginEnabled()
+//                 .subscribe(onNext: { isEnabled in
+//                     if isEnabled {
+//                         print("로그인 가능 > 홈화면으로 이동")
+//                         // 홈화면으로 이동
+//                         self.setupMainInterface()
+//
+//                     } else {
+//                         print("로그인 불가능 > 토큰 갱신 시도")
+//                     }
+//                 })
+//                 .disposed(by: disposeBag)
+//         } else {
+//             print("토큰 없음")
+//
+//                 
+//             }
+//         }
          self.setupMainInterface()
          self.window?.makeKeyAndVisible()
      }

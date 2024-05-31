@@ -16,6 +16,7 @@ class LoginViewModel {
     let disposeBag = DisposeBag()
     
     func isLoginEnabled() -> Observable<Bool> {
+        print("log : 로그인 확인 중입니다.----------------------")
         return loginRepository.connect()
             .map { response -> Bool in
                 // 성공적인 응답 처리
@@ -33,52 +34,49 @@ class LoginViewModel {
 
 
 
-    func refreshAccessTokenIfNeeded() {
-        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-           let topViewController = windowScene.windows.first?.rootViewController {
-            let alertController = UIAlertController(title: "로그인 세션 만료", message: "보안상의 이유로 다시 로그인이 필요합니다. 자동으로 로그인을 시도합니다.", preferredStyle: .alert)
-            alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-            topViewController.present(alertController, animated: true, completion: nil)
-        }
-        print("log: 엑세스 토큰 갱신 시도")
-        // 이미 저장된 리프레시 토큰이 있는 경우
-        if let refreshToken = TokenManager.shared.refreshToken {
-            //print("refreshToken-\(refreshToken)")
-            // 리프레시 토큰을 사용하여 새로운 액세스 토큰을 가져오는 요청을 수행합니다.
-            
-            let refreshTokenRequest = RefreshTokenRequest(refreshToken: refreshToken)
-            loginRepository.refreshToken(refreshToken: refreshTokenRequest)
-                .subscribe(on: ConcurrentDispatchQueueScheduler(qos: .background))
-                .observe(on: MainScheduler.instance)  // 메인 스레드에서 결과를 관찰하도록 설정
-                .subscribe(onNext: { [weak self] response in
-                    guard let self = self else { return }
+   
+//        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+//           let topViewController = windowScene.windows.first?.rootViewController {
+//            let alertController = UIAlertController(title: "로그인 세션 만료", message: "보안상의 이유로 다시 로그인이 필요합니다. 자동으로 로그인을 시도합니다.", preferredStyle: .alert)
+//            alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+//            topViewController.present(alertController, animated: true, completion: nil)
+//        }
+    func refreshAccessTokenIfNeeded() -> Observable<Bool> {
+            print("log: 엑세스 토큰 갱신 시도")
 
-                    print(response)
-                    print("엑세스 결과 확인 중..")
-                    
-                    // 새로운 액세스 토큰이 성공적으로 갱신된 경우
+            guard let refreshToken = TokenManager.shared.refreshToken else {
+                print("log: 리프레시 토큰이 없음")
+                handleFailedTokenRefresh(message: "리프레시 토큰이 없습니다.")
+                return Observable.just(false)
+            }
+
+            let refreshTokenRequest = RefreshTokenRequest(refreshToken: refreshToken)
+            return loginRepository.refreshToken(refreshToken: refreshTokenRequest)
+                .map { response in
                     if response.isSuccess {
                         print("결과 : 성공 - 엑세스 토큰 갱신 ")
-                        // 갱신된 액세스 토큰을 저장하거나, 필요한 처리를 수행합니다.
                         if let result = response.result {
-                            let accessToken  = result.accessToken
+                            let accessToken = result.accessToken
                             let refreshToken = result.refreshToken
                             self.handleSuccessfulTokenRefresh(accessToken: accessToken, refreshToken: refreshToken)
                         }
-
+                        return true
                     } else {
                         print("결과 : 실패 - 엑세스 토큰 갱신 실패 > 리프레쉬 토큰 갱신 필요 ")
                         self.handleFailedTokenRefresh(message: response.message)
-                        
+                        return false
                     }
+                }
+                .do(onNext: { response in
+                    print("log: 토큰 갱신 응답 수신, 응답: \(response)")
                 }, onError: { error in
-                    // 오류가 발생한 경우에 대한 처리를 수행합니다.
-//                    print("log 네트워크 연결 실패",error)
-                    self.handleError(error: error)
+                    print("log: 토큰 갱신 요청 실패, 에러: \(error)")
+                    self.handleFailedTokenRefresh(message: error.localizedDescription)
                 })
-                .disposed(by: disposeBag)
+                .catchAndReturn(false)
         }
-    }
+
+
     private func handleSuccessfulTokenRefresh(accessToken : String, refreshToken:String) {
         print("Successfully refreshed token")
         TokenManager.shared.handleLoginSuccess(accessToken: accessToken, refreshToken: refreshToken)

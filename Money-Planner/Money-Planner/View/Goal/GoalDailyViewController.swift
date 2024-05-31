@@ -25,7 +25,7 @@ extension GoalDailyViewController: GoalAmountModalViewControllerDelegate {
         
         customCalendarView.calendar.reloadData()
         
-        if calculateTotalAmount(from: goalCreationManager.startDate!.toDate ?? Date(), to: goalCreationManager.endDate?.toDate ?? Date()) == goalCreationManager.goalBudget {
+        if calculateTotalAmount(from: goalCreationManager.startDate!.toDate ?? Date(), to: goalCreationManager.endDate?.toDate ?? Date()) <= goalCreationManager.goalBudget ?? 0 {
             btmBtn.isEnabled = true
         }else{
             btmBtn.isEnabled = false
@@ -85,8 +85,8 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         setupWeekdayLabels()
         
         btmBtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
-//        btmBtn.isEnabled = false
-        
+//        btmBtn.isEnabled = true
+         
         self.tabBarController?.tabBar.isHidden = true
         
         sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
@@ -199,7 +199,7 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         leftAmountLabel.textColor = goalBudget == sumAmount ? .mpBlack : .mpRed
         progressBar.usedAmtBar.backgroundColor = goalBudget == sumAmount ? .mpMainColor : .mpRed
         
-        btmBtn.isEnabled = (sumAmount == goalBudget) // 사실 모든 카테고리가 다 선택되었는지 점검하는 기능도 추가해야함.
+        btmBtn.isEnabled = (sumAmount <= goalBudget) // 사실 모든 카테고리가 다 선택되었는지 점검하는 기능도 추가해야함.
     }
     
     @objc private func backButtonTapped() {

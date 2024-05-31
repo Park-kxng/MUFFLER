@@ -11,7 +11,7 @@ import RxMoya
 import Moya
 
 class LoginRepository {
-    private let provider = MoyaProvider<LoginAPI>(plugins: [TokenAuthPlugin()]).rx
+    private let provider = MoyaProvider<LoginAPI>().rx
     let disposeBag = DisposeBag()
     
     // member controller
@@ -26,12 +26,23 @@ class LoginRepository {
                         throw error // 또는 사용자 정의 오류를 Observable로 반환
                     }
     }
+    // 엑세스 토큰 갱신
+    func refreshToken(refreshToken: RefreshTokenRequest) -> Observable<RefreshTokenResponse> {
+            return provider.request(.refreshToken(refreshToken: refreshToken))
+                .map { response in
+                    do {
+                        let decodedResponse = try JSONDecoder().decode(RefreshTokenResponse.self, from: response.data)
+                        print("log: 토큰 갱신 응답 수신, 응답: \(decodedResponse)")
+                        return decodedResponse
+                    } catch {
+                        print("log: 디코딩 오류, 에러: \(error), 응답 데이터: \(String(data: response.data, encoding: .utf8) ?? "nil")")
+                        throw error
+                    }
+                }
+                .asObservable()
+        }
 
-    func refreshToken(refreshToken : RefreshTokenRequest)-> Observable<RefreshTokenResponse> {
-        return provider.request(.refreshToken(refreshToken: refreshToken))
-            .map(RefreshTokenResponse.self)
-            .asObservable()
-    }
+    
     func login(request : LoginRequest)-> Observable<LoginResponse> {
         return provider.request(.login(request: request))
             .map(LoginResponse.self)

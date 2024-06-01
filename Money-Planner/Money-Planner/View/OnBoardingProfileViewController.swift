@@ -355,9 +355,12 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
 
                 // 온보딩 화면으로 이동하기 - 윤진
                 // 홈 화면으로 이동(임시)
-                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                    sceneDelegate.moveToHome()
-                }
+//                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+//                    sceneDelegate.moveToHome()
+//                }
+                let vc = OnboardingViewController()
+                vc.hidesBottomBarWhenPushed = true
+                self.navigationController?.pushViewController(vc, animated: true)
             }else{
                 print("결과 : 프로필 설정 실패")
             }

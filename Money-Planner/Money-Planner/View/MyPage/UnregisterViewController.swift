@@ -64,10 +64,19 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
     private let titleLabel : UnregisterTitleLabel = {
         let label = UnregisterTitleLabel()
         label.font = .mpFont26B()
-        label.text = "머플러를 탈퇴하기 전에\n확인해주세요"
+        label.text = "님이 떠나신다니\n정말 아쉬워요"
         label.numberOfLines = 2
         label.lineSpacing = 8.0
         label.textColor = .mpBlack
+        return label
+    }()
+    private let subTitleLabel : UnregisterTitleLabel = {
+        let label = UnregisterTitleLabel()
+        label.font = .mpFont16M()
+        label.text = "탈퇴 사유를 공유해주시면 반영하여\n더 좋은 서비스를 제공하기 위해 노력할게요."
+        label.numberOfLines = 2
+        label.lineSpacing = 8.0
+        label.textColor = .mpDarkGray
         return label
     }()
     private let nameLabel : MPLabel = {
@@ -136,6 +145,7 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
         // 완료 버튼 추가
         setupCompleteButton()
         setupTitleLabel()
+        setupSubtitleLabel()
         setupNameLabel()
         setupNameTextField()
         setupReasonLabel()
@@ -144,6 +154,8 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
         //setupContentsTextField()
         if let name = UserDefaults.standard.string(forKey: "name"){
             NameTextField.placeholder = name
+            let temp  = titleLabel.text
+            titleLabel.text = name + (temp ?? "")
         }
         
 
@@ -175,12 +187,22 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
             
         ])
     }
+    private func setupSubtitleLabel(){
+        view.addSubview(subTitleLabel)
+        subTitleLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            subTitleLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 12),
+            subTitleLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            subTitleLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
+            
+        ])
+    }
                                              
     private func setupNameLabel(){
         view.addSubview(nameLabel)
         nameLabel.translatesAutoresizingMaskIntoConstraints = false
         NSLayoutConstraint.activate([
-            nameLabel.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 36),
+            nameLabel.topAnchor.constraint(equalTo: subTitleLabel.bottomAnchor, constant: 36),
             nameLabel.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             nameLabel.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             

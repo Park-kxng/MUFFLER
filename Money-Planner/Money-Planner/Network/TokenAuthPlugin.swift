@@ -1,82 +1,100 @@
-//
-//  TokenAuthPlugin.swift
-//  Money-Planner
-//
-//  Created by p_kxn_g on 4/5/24.
-//
-
-import Foundation
 import Moya
-import UIKit
-
+import RxSwift
+import Foundation
 
 final class TokenAuthPlugin: PluginType {
+    private let tokenManager = TokenManager.shared
+    private let lock = NSLock()
+    private var isRefreshing = false
+    private var requestsToRetry: [(TargetType, (Result<Moya.Response, MoyaError>) -> Void)] = []
+
     func prepare(_ request: URLRequest, target: TargetType) -> URLRequest {
-        guard let authTarget = target as? AuthenticatedAPI, authTarget.requiresAuthentication,
-              let accessToken = TokenManager.shared.accessToken else {
-            print("헤더에 엑세스 토큰 추가")
-            
-            return request
-        }
-        //        // AuthenticatedAPI로 캐스팅이 가능하고, 인증이 필요한 경우에만
-        //           guard let authTarget = target as? AuthenticatedAPI, authTarget.requiresAuthentication else {
-        //               print("인증이 필요하지 않는 요청")
-        //               return request
-        //           }
-        //
-        //           // 엑세스 토큰을 가져올 수 있는 경우에만
-        //           guard let accessToken = TokenManager.shared.accessToken else {
-        //               print("엑세스 토큰을 가져올 수 없음")
-        //               return request
-        //           }
         var request = request
-        print("헤더에 엑세스 토큰 추가 - 토큰 \(accessToken)")
-        request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+        if let accessToken = tokenManager.accessToken {
+            request.addValue("Bearer \(accessToken)", forHTTPHeaderField: "Authorization")
+            print("[TokenAuthPlugin] Added access token to request: \(accessToken)")
+        } else {
+            print("[TokenAuthPlugin] No access token available")
+        }
         return request
     }
-    
-    func didReceive(_ result: Result<Response, MoyaError>, target: TargetType) {
+
+    func didReceive(_ result: Result<Moya.Response, MoyaError>, target: TargetType) {
+        print("[TokenAuthPlugin] didReceive called with result: \(result)")
+
         switch result {
         case .success(let response):
-            print("response.statuscode -\(response.statusCode)")
-            
-            let error = response.statusCode
-            
-            if  error == 401 {
-                print("401 - 엑세스 토큰 갱신 필요")
-                DispatchQueue.main.async {
-                    let viewModel = LoginViewModel()
-                    viewModel.refreshAccessTokenIfNeeded()
-                }
-            }
-            break
-        case .failure(let error):
-            print("error-\(String(describing: error))")
-            if let response = error.response {
-                // HTTP 상태 코드를 확인
-                if response.statusCode == 401 {
-                    print("엑세스 토큰 갱신 필요")
-                    DispatchQueue.main.async {
-                        let viewModel = LoginViewModel()
-                        viewModel.refreshAccessTokenIfNeeded()
-                    }
-                    
-                }
+            if response.statusCode == 401 {
+                print("[TokenAuthPlugin] Received 401 error, need to refresh token")
+                handleTokenRefresh(target: target, error: .statusCode(response))
             } else {
-                // 오류가 발생했지만, response 객체가 없는 경우 (예: 네트워크 연결 오류)
-                // 알림 띄우기
-                print("결과 : 실패 - api 연결")
-                //                DispatchQueue.main.async {
-                //                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                //                       let topViewController = windowScene.windows.first?.rootViewController {
-                //                        let alertController = UIAlertController(title: "네트워크 연결 오류", message: "네트워크 연결을 실패했습니다. 다시 시도해주세요.", preferredStyle: .alert)
-                //                        alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-                //                        topViewController.present(alertController, animated: true, completion: nil)
-                //                    }
-                //                }
+                print("[TokenAuthPlugin] Request succeeded with status code: \(response.statusCode)")
             }
+        case .failure(let error):
+            if let response = error.response, response.statusCode == 401 {
+                print("[TokenAuthPlugin] Received 401 error, need to refresh token")
+                handleTokenRefresh(target: target, error: error)
+            } else {
+                print("[TokenAuthPlugin] Request failed with error: \(error)")
+            }
+        }
+    }
+
+    private func handleTokenRefresh(target: TargetType, error: MoyaError) {
+        print("[TokenAuthPlugin - 토큰 갱신")
+        lock.lock()
+        defer { lock.unlock() }
+        
+        requestsToRetry.append((target, { result in
+            // 재요청 로직
+            let provider = MoyaProvider<MultiTarget>(plugins: [TokenAuthPlugin()])
+            provider.request(MultiTarget(target)) { result in
+                print("[TokenAuthPlugin] Retrying original request")
+            }
+        }))
+
+        if !isRefreshing {
+            isRefreshing = true
+            print("[TokenAuthPlugin] Refreshing token...")
+
+            // LoginViewModel 인스턴스를 통해 refreshAccessTokenIfNeeded 호출
+            let loginViewModel = LoginViewModel()
+            loginViewModel.refreshAccessTokenIfNeeded()
+                .subscribe(onNext: { [weak self] success in
+                    guard let self = self else { return }
+                    self.lock.lock()
+                    defer { self.lock.unlock() }
+                    
+                    self.isRefreshing = false
+                    if success {
+                        print("[TokenAuthPlugin] Token refreshed successfully")
+                    } else {
+                        print("[TokenAuthPlugin] Failed to refresh token")
+                    }
+                    self.requestsToRetry.forEach { target, completion in
+                        if success {
+                            let provider = MoyaProvider<MultiTarget>(plugins: [TokenAuthPlugin()])
+                            provider.request(MultiTarget(target)) { result in
+                                print("[TokenAuthPlugin] Retrying original request")
+                                completion(result)
+                            }
+                        } else {
+                            completion(.failure(error))
+                        }
+                    }
+                    self.requestsToRetry.removeAll()
+                }, onError: { error in
+                    self.isRefreshing = false
+                    print("[TokenAuthPlugin] Error refreshing token: \(error)")
+                    self.requestsToRetry.forEach { _, completion in
+                        completion(.failure(error as! MoyaError))
+                    }
+                    self.requestsToRetry.removeAll()
+                })
+                .disposed(by: DisposeBag())
+        } else {
+            print("[TokenAuthPlugin] Token is already being refreshed, appending request to queue")
         }
     }
 }
 
- 

@@ -108,8 +108,7 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
     var statisticsData : Statistics?
     
     // 전체 탭 통계 저장해놓는 변수
-    var 
-    allStatisticsData : Statistics?
+    var allStatisticsData : Statistics?
     
     var hasNext : Bool = false
     var loading : Bool = false
@@ -180,8 +179,11 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
     
     // MainMonthView의 delegate
     func didChangeMonth(monthIndex: Int, year: Int) {
-        // 값 있을 때는 넘겨주고 없으면 초기화 하기
-        calendarView.changeMonth(monthIndex: monthIndex, year: year)
+        changeCalendarDate(month: monthIndex, year: year)
+    }
+    
+    func changeCalendarDate(month : Int, year : Int){
+        calendarView.changeMonth(monthIndex: month, year: year)
         categoryScrollView.changeSelectedButton(index: -1)
         
         if(collectionView.currentPage == 0){
@@ -191,7 +193,14 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
             self.hasNext = false
             fetchConsumeData(lastDate: nil, lastExpenseId: nil)
         }
-        
+    }
+    
+    func onTapMonthLabel() {
+        let vc = SelectModalViewController()
+        vc.currentYear = monthView.currentYear
+        vc.currentMonth = monthView.currentMonth
+        vc.delegate = self
+        self.present(vc, animated: true)
     }
     
     // ConsumeRecordCell의 delegate
@@ -404,6 +413,7 @@ extension HomeViewController{
                 if(goal != nil){
                     self.nowGoal = goal
                     
+                    self.allStatisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
                     self.statisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
                     
                     self.monthView.updateYearAndMonth(to: self.nowGoal!.startDate!.toDate!)
@@ -429,7 +439,6 @@ extension HomeViewController{
                 self.loading = false
             }
         }
-        
     }
     
     // 소비 데이터 불러오기
@@ -976,14 +985,27 @@ extension HomeViewController : OrderModalDelegate {
     }
 }
 
+extension HomeViewController : SelectModalDelegate {
+    func changeDate(year: Int, month: Int) {
+        monthView.currentMonth = month
+        monthView.currentYear = year
+        monthView.monthLabel.text="\(monthView.currentYear)년 \(monthView.currentMonth)월"
+        
+        changeCalendarDate(month: month, year: year)
+    }
+}
+
 
 // notification 기능 등록 함수
 extension HomeViewController {
     @objc func getNotificationConsumeView(_ notification: Notification){
-        
         if let userInfo = notification.userInfo {
             let cost = userInfo["cost"] as? Int64
-            self.allStatisticsData = Statistics(totalCost: self.allStatisticsData!.totalCost + cost!, goalBudget: self.allStatisticsData!.goalBudget)
+            
+            if(self.allStatisticsData != nil){
+                self.allStatisticsData = Statistics(totalCost: self.allStatisticsData!.totalCost + cost!, goalBudget: self.allStatisticsData!.goalBudget)
+            }
+
         }
         
         if(collectionView.currentPage == 0){

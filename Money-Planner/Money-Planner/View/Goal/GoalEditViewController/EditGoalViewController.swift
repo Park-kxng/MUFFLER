@@ -162,6 +162,7 @@ class EditGoalViewController : UIViewController {
 extension EditGoalViewController : goalDeleteModalDelegate {
     
     func deleteGoal() {
+        // 삭제 api 연결
         viewModel.deleteGoalByGoalID(goalId: self.goalId)
         self.tabBarController?.tabBar.isHidden = false
         self.navigationController?.popToRootViewController(animated: true)
@@ -196,7 +197,7 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
         print("삭제버튼 클릭")
         presentCustomModal()
     }
-    
+    // 목표 삭제 모달
     func presentCustomModal() {
         let customModalVC = goalDeleteModalView(goalName: goalNameTextfield.text!)
         customModalVC.modalPresentationStyle = .overFullScreen
@@ -205,8 +206,10 @@ extension EditGoalViewController : UIScrollViewDelegate, UITextFieldDelegate {
         present(customModalVC, animated: true, completion: nil)
         customModalVC.deleteButton.addTarget(self, action: #selector(deleteAndReturnByCustomModal), for: .touchUpInside)
     }
-    
+    // 목표 삭제 진행 함수
     @objc private func deleteAndReturnByCustomModal() {
+        // 목표 데이터 삭제 진행
+        
         dismiss(animated: true, completion: nil)
         tabBarController?.tabBar.isHidden = false
         self.navigationController?.popViewController(animated: true)

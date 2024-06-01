@@ -14,6 +14,6 @@ typealias DictionaryType = [String: Any]
 
 class BaseRepository<API: TargetType> {
     let disposeBag = DisposeBag()
-    let provider = MoyaProvider<API>(plugins: [TokenAuthPlugin()])
+    var provider = MoyaProvider<API>(plugins: [TokenAuthPlugin()])
     lazy var rx = provider.rx
 }

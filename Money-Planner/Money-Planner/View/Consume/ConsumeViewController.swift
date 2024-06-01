@@ -69,8 +69,9 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     var amountAdd = false
     var catAdd = false
     var titleAdd = false
+    var dateAdd = false
     
-    let currentDate = Date()
+    var currentDate = Date()
     let dateFormatter = DateFormatter()
     lazy var todayDate: String = {
         dateFormatter.dateFormat = "yyyy년 MM월 dd일"
@@ -208,7 +209,12 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     lazy var calChooseButton: UIButton = {
         let button = UIButton()
         
-        button.setTitle("오늘", for: .normal)
+        if currentDate == Date(){
+            button.setTitle("오늘", for: .normal)
+        }else{
+            button.setTitle("선택", for: .normal)
+        }
+        
         button.titleLabel?.font = UIFont.mpFont20M()
         button.setTitleColor(UIColor.mpMainColor, for: .normal)
         button.translatesAutoresizingMaskIntoConstraints = false
@@ -287,6 +293,8 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     
     func didSelectCalendarDate(_ date: String , api : String) {
         print("Selected Date in YourPresentingViewController: \(date)")
+        dateAdd = true // 데이트가 선택 되는 경우
+        checkAndEnableCompleteButton() // 완료 버튼 활성화 확인
         calTextField.text = date
         currnetCal = api
         // 선택한 날짜가 오늘이 아닌 경우, 선택으로 달력 버튼 텍스트 변경
@@ -903,7 +911,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     
     
     private func checkAndEnableCompleteButton() {
-        let enableButton = amountAdd && catAdd && titleAdd
+        let enableButton = amountAdd && catAdd && titleAdd && dateAdd
         completeButton.isEnabled = enableButton
 //        print("\(enableButton)")
 //        print("\(amountAdd)\(catAdd)\(titleAdd)")
@@ -913,6 +921,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
     @objc
     private func completeButtonTapped(){
         print("소비등록을 완료하였습니다")
+        
         // 옵셔널 바인딩을 사용하여 메모 필드를 처리
         if !checkButton.isChecked{
             routineRequest = nil
@@ -921,7 +930,7 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
             currnetCal = todayDateJson
         }
         if routineRequest?.monthlyRepeatType == nil {
-            
+            // Do something if needed
         }
         expenseRequest = ExpenseCreateRequest(
             expenseCost: currentAmount,
@@ -932,22 +941,19 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
             routineRequest: routineRequest,
             isRoutine: checkButton.isChecked
         )
-    
+
         print(expenseRequest)
         do {
-                let encoder = JSONEncoder()
-                encoder.outputFormatting = .prettyPrinted // JSON을 읽기 쉽게 출력하기 위해 prettyPrinted를 사용합니다.
-                let jsonData = try encoder.encode(expenseRequest)
-                if let jsonString = String(data: jsonData, encoding: .utf8) {
-                    print(jsonString)
-                }
-            } catch {
-                print("Error encoding JSON: \(error)")
+            let encoder = JSONEncoder()
+            encoder.outputFormatting = .prettyPrinted // JSON을 읽기 쉽게 출력하기 위해 prettyPrinted를 사용합니다.
+            let jsonData = try encoder.encode(expenseRequest)
+            if let jsonString = String(data: jsonData, encoding: .utf8) {
+                print(jsonString)
             }
+        } catch {
+            print("Error encoding JSON: \(error)")
+        }
 
-        let alert = ExpensePopupModalView()
-        alert.delegate = self
-        self.present(alert, animated: true, completion: nil)
         viewModel.createExpense(expenseRequest: expenseRequest)
             .subscribe(
             onSuccess: { response in
@@ -958,57 +964,59 @@ class ConsumeViewController: UIViewController,UITextFieldDelegate, CategorySelec
                         if alarms.count == 0 {
                             print("알람이 없음")
                             self.dismissView()
-                        }else{
+                        } else {
                             for alarm in alarms {
                                 if let alarmTitle = alarm.alarmTitle, let budget = alarm.budget, let excessAmount = alarm.excessAmount {
                                     print(alarmTitle)
                                     print(budget)
                                     print(excessAmount)
                                     // 여기서 알람을 보여주는 작업을 수행합니다.
-                                    let alert = ExpensePopupModalView()
-                                    if alarmTitle == "DAILY"{
-                                        alert.changeTitle(title: "하루 목표금액을 초과했어요")
-                                        alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
-                                        
-                                    }else if alarmTitle == "CATEGORY"{
-                                        let category = String(self.cateogoryTextField.text ?? "카테고리 없음")
-                                        alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
-                                        alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
-
-                                    } else if alarmTitle == "TOTAL"{
-                                        alert.changeTitle(title: "전체 목표금액을 초과했어요")
-                                        alert.changeContents(content: "목표한 금액 \(budget)원보다 \(excessAmount)원 더 썼어요!")
-
+                                    
+                                    if self.presentedViewController == nil {
+                                        let alert = ExpensePopupModalView()
+                                        alert.delegate = self
+                                        self.present(alert, animated: true) {
+                                            if alarmTitle == "DAILY" {
+                                                alert.changeTitle(title: "하루 목표금액을 초과했어요")
+                                                alert.changeContents(content: "목표한 소비 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
+                                            } else if alarmTitle == "CATEGORY" {
+                                                let category = self.cateogoryTextField.text ?? "카테고리 없음"
+                                                alert.changeTitle(title: "\(category) 목표금액을 초과했어요")
+                                                alert.changeContents(content: "목표한 \(category) 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
+                                            } else if alarmTitle == "TOTAL" {
+                                                alert.changeTitle(title: "전체 목표금액을 초과했어요")
+                                                alert.changeContents(content: "목표한 금액 \(budget)원보다 \n \(excessAmount)원 더 썼어요!")
+                                            }
+                                        }
+                                    } else {
+                                        // Handle the case where a view is already presented
+                                        print("A view is already being presented. Skipping presentation.")
                                     }
-                                    self.present(alert, animated: true, completion: nil)
                                 }
                             }
                         }
-                        
-                     
                     }
                 }
                 self.sendNotificationEvent(cost: self.expenseRequest.expenseCost)
             }, onFailure: {error in
                 print(error)
             }).disposed(by: disposeBag)
-        
-        
     }
-    private func dismissView(){
-        print("소비등록 뷰 해제")
-        self.dismiss(animated: true) {
-            // 네비게이션 바 숨기기 취소
-            self.tabBarController?.tabBar.isHidden = false
-            // 탭 바 컨트롤러로 전환하기
-                if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                   let sceneDelegate = windowScene.delegate as? SceneDelegate,
-                   let tabBarVC = sceneDelegate.window?.rootViewController as? UITabBarController {
-                    tabBarVC.selectedIndex = 0 // 홈 뷰가 첫 번째 탭이라고 가정
-                }
-        }
-       
-    }
+
+    private func dismissView() {
+           print("소비등록 뷰 해제")
+           self.dismiss(animated: true) {
+               // 네비게이션 바 숨기기 취소
+               self.tabBarController?.tabBar.isHidden = false
+
+               // SceneDelegate의 setupMainInterface 메서드를 호출하여 홈 화면으로 이동
+               if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                  let sceneDelegate = windowScene.delegate as? SceneDelegate {
+                   sceneDelegate.setupMainInterface()
+               }
+           }
+       }
+
     
     private func sendNotificationEvent(cost : Int64) {
         NotificationCenter.default.post(name: Notification.Name("addConsume"), object: nil, userInfo: [

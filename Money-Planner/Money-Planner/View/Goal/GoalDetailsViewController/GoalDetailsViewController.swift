@@ -138,7 +138,7 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
     }
     
     //layer1
-    let dday = DdayLabel()
+    let ddayView = DdayBox()
     let spanNDuration : MPLabel = {
         let label = MPLabel()
         label.text = ""
@@ -171,13 +171,13 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
     
     func setupLayout(){
         
-        view.addSubview(dday)
+        view.addSubview(ddayView)
         view.addSubview(spanNDuration)
         view.addSubview(editBtn)
         view.addSubview(label1)
         view.addSubview(label2)
         
-        dday.translatesAutoresizingMaskIntoConstraints = false
+        ddayView.translatesAutoresizingMaskIntoConstraints = false
         spanNDuration.translatesAutoresizingMaskIntoConstraints = false
         editBtn.translatesAutoresizingMaskIntoConstraints = false
         label1.translatesAutoresizingMaskIntoConstraints = false
@@ -185,20 +185,20 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
         
         // dday 제약 조건
         NSLayoutConstraint.activate([
-            dday.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
-            dday.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
-            dday.widthAnchor.constraint(equalToConstant: 39)
+            ddayView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 20),
+            ddayView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
+            ddayView.heightAnchor.constraint(equalToConstant: 25),
         ])
         
         // spanNDuration 제약 조건
         NSLayoutConstraint.activate([
-            spanNDuration.centerYAnchor.constraint(equalTo: dday.centerYAnchor),
-            spanNDuration.leadingAnchor.constraint(equalTo: dday.trailingAnchor, constant: 10),
+            spanNDuration.centerYAnchor.constraint(equalTo: ddayView.centerYAnchor),
+            spanNDuration.leadingAnchor.constraint(equalTo: ddayView.trailingAnchor, constant: 10),
         ])
         
         // editBtn 제약 조건
         NSLayoutConstraint.activate([
-            editBtn.centerYAnchor.constraint(equalTo: dday.centerYAnchor),
+            editBtn.centerYAnchor.constraint(equalTo: ddayView.centerYAnchor),
             editBtn.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
             editBtn.widthAnchor.constraint(equalToConstant: 40),
             editBtn.heightAnchor.constraint(equalToConstant: 40)
@@ -206,7 +206,7 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
         
         // label1 제약 조건
         NSLayoutConstraint.activate([
-            label1.topAnchor.constraint(equalTo: dday.bottomAnchor, constant: 24),
+            label1.topAnchor.constraint(equalTo: ddayView.bottomAnchor, constant: 24),
             label1.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
             label1.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16)
         ])
@@ -312,10 +312,40 @@ class GoalDetailsViewController: UIViewController, ExpenseViewDelegate {
         return formatter.string(from: NSNumber(value: cash)) ?? ""
     }
     
+    func configureDdayLabel(goal : GoalDetail){
+        self.ddayView.textLabel.font = .mpFont14B()
+
+        let currentDate = Date.todayAtMidnight
+        let isPastGoal = currentDate > goal.endDate.toDate ?? Date.todayAtMidnight
+        let isFutureGoal = currentDate < goal.startDate.toDate ?? Date.todayAtMidnight
+
+        let daysLeft = isPastGoal ? 0 : Calendar.current.dateComponents([.day], from: currentDate, to: goal.endDate.toDate ?? Date.todayAtMidnight).day ?? 0
+
+        var ddayText = "D-\(daysLeft)"
+        self.ddayView.backgroundColor = UIColor.mpGypsumGray
+        self.ddayView.textLabel.textColor = UIColor.mpMainColor
+
+        if isPastGoal {
+            ddayText = "종료"
+            self.ddayView.textLabel.textColor = UIColor.mpDarkGray
+        } else if isFutureGoal {
+            ddayText = "시작 전"
+            self.ddayView.textLabel.textColor = UIColor.mpMainColor
+        } else {
+            if daysLeft == 0 {
+                ddayText = "D-Day"
+            } else {
+                ddayText = "D-\(daysLeft)"
+            }
+        }
+        
+        ddayView.textLabel.text = ddayText
+    }
+    
     func configureViews(goalDetail : GoalDetail){
         //layer1
         //dday
-        dday.configure(for: goalDetail)
+        configureDdayLabel(goal: goalDetail)
         
         let dateFormatter = DateFormatter()
         

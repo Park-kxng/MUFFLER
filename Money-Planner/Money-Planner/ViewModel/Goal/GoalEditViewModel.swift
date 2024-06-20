@@ -23,8 +23,7 @@ class GoalEditViewModel {
     var goalDetailRelay = PublishRelay<GoalDetail>()
     var categoryGoals : [CategoryGoal]? //PublishRelay<>()
     var dailyBudgets : [Int64]?//PublishRelay<>()
-    var deleteResponseRelay = PublishRelay<DeleteGoalResponse>()
-    
+
     //goalDetail 호출
     func fetchGoal(goalId: String) {
         repository.getGoalDetail(goalId: goalId)
@@ -49,8 +48,6 @@ class GoalEditViewModel {
     func deleteGoalByGoalID(goalId: Int64) {
         repository.deleteGoal(goalId: String(goalId))
             .subscribe(onSuccess: { [weak self] response in
-                // 성공 응답 처리
-                self?.deleteResponseRelay.accept(response)
                 print("목표 삭제 성공: \(response)")
             }, onFailure: { [weak self] error in
                 // 오류 응답 처리

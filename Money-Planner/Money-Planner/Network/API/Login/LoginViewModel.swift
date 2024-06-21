@@ -42,39 +42,45 @@ class LoginViewModel {
 //            topViewController.present(alertController, animated: true, completion: nil)
 //        }
     func refreshAccessTokenIfNeeded() -> Observable<Bool> {
-            print("log: 엑세스 토큰 갱신 시도")
+        print("log: 엑세스 토큰 갱신 시도")
 
-            guard let refreshToken = TokenManager.shared.refreshToken else {
-                print("log: 리프레시 토큰이 없음")
-                handleFailedTokenRefresh(message: "리프레시 토큰이 없습니다.")
-                return Observable.just(false)
-            }
-
-            let refreshTokenRequest = RefreshTokenRequest(refreshToken: refreshToken)
-            return loginRepository.refreshToken(refreshToken: refreshTokenRequest)
-                .map { response in
-                    if response.isSuccess {
-                        print("결과 : 성공 - 엑세스 토큰 갱신 ")
-                        if let result = response.result {
-                            let accessToken = result.accessToken
-                            let refreshToken = result.refreshToken
-                            self.handleSuccessfulTokenRefresh(accessToken: accessToken, refreshToken: refreshToken)
-                        }
-                        return true
-                    } else {
-                        print("결과 : 실패 - 엑세스 토큰 갱신 실패 > 리프레쉬 토큰 갱신 필요 ")
-                        self.handleFailedTokenRefresh(message: response.message)
-                        return false
-                    }
-                }
-                .do(onNext: { response in
-                    print("log: 토큰 갱신 응답 수신, 응답: \(response)")
-                }, onError: { error in
-                    print("log: 토큰 갱신 요청 실패, 에러: \(error)")
-                    self.handleFailedTokenRefresh(message: error.localizedDescription)
-                })
-                .catchAndReturn(false)
+        guard let refreshToken = TokenManager.shared.refreshToken else {
+            print("log: 리프레시 토큰이 없음")
+            handleFailedTokenRefresh(message: "리프레시 토큰이 없습니다.")
+            return Observable.just(false)
         }
+
+        let refreshTokenRequest = RefreshTokenRequest(refreshToken: refreshToken)
+        return loginRepository.refreshToken(refreshToken: refreshTokenRequest)
+            .map { response in
+                if response.isSuccess {
+                    print("결과 : 성공 - 엑세스 토큰 갱신 ")
+                    if let result = response.result {
+                        let accessToken = result.accessToken
+                        let refreshToken = result.refreshToken
+                        self.handleSuccessfulTokenRefresh(accessToken: accessToken, refreshToken: refreshToken)
+                    }
+                    return true
+                } else {
+                    print("결과 : 실패 - 엑세스 토큰 갱신 실패 > 리프레쉬 토큰 갱신 필요 ")
+                    self.handleFailedTokenRefresh(message: response.message)
+                    return false
+                }
+            }
+            .do(onNext: { response in
+                print("log: 토큰 갱신 응답 수신, 응답: \(response)")
+            }, onError: { error in
+                if let moyaError = error as? MoyaError, let response = moyaError.response {
+                    let responseBody = String(data: response.data, encoding: .utf8) ?? "Unable to decode response body"
+                    print("log: 토큰 갱신 요청 실패, 에러: \(error), 응답: \(responseBody)")
+                } else {
+                    print("log: 토큰 갱신 요청 실패, 에러: \(error)")
+                }
+                self.handleFailedTokenRefresh(message: error.localizedDescription)
+            })
+            .catchAndReturn(false)
+    }
+
 
 
     private func handleSuccessfulTokenRefresh(accessToken : String, refreshToken:String) {

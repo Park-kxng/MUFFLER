@@ -41,7 +41,7 @@ final class TokenAuthPlugin: PluginType {
     }
 
     private func handleTokenRefresh(target: TargetType, error: MoyaError) {
-        print("[TokenAuthPlugin - 토큰 갱신")
+        print("[TokenAuthPlugin - 토큰 갱신 시도 중..")
         lock.lock()
         defer { lock.unlock() }
         
@@ -66,11 +66,13 @@ final class TokenAuthPlugin: PluginType {
                     defer { self.lock.unlock() }
                     
                     self.isRefreshing = false
+                    
                     if success {
                         print("[TokenAuthPlugin] Token refreshed successfully")
                     } else {
                         print("[TokenAuthPlugin] Failed to refresh token")
                     }
+                    
                     self.requestsToRetry.forEach { target, completion in
                         if success {
                             let provider = MoyaProvider<MultiTarget>(plugins: [TokenAuthPlugin()])

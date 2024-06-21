@@ -48,6 +48,8 @@ class GoalMainViewModel {
                 // Handle error
                 print("error : nowResponse")
                 print(error)
+                self.nowGoalResponse.accept(nil)
+                self.nowGoal.accept(nil)
             })
             .disposed(by: disposeBag)
     }

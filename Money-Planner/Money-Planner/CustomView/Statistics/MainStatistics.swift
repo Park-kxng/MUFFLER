@@ -162,6 +162,12 @@ class MainStatisticsView : UIView {
             stackView.removeFromSuperview()
         }
         else{
+            useAmountLabel.removeFromSuperview()
+            useAmount.removeFromSuperview()
+            totalAmount.removeFromSuperview()
+            stackView.removeFromSuperview()
+            imageView.removeFromSuperview()
+            
             addSubview(noGoalView)
             
             NSLayoutConstraint.activate([

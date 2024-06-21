@@ -126,6 +126,7 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
         contentScrollView.delegate = self
         categoryScrollView.delegate = self
         consumeView.tableView.delegate = self
+        statisticsView.noGoalView.delegate = self
         //        consumeView.
         
         fetchCalendarData()
@@ -143,6 +144,8 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
         NotificationCenter.default.addObserver(self, selector: #selector(getNotificationChangeHomenow), name: Notification.Name("addGoal"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(getNotificationDeleteConsumeList(_:)), name: Notification.Name("deleteExpense"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(getNotificationDeleteGoal(_:)), name: Notification.Name("deleteGoal"), object: nil)
         
         
         // 스크롤 뷰 작업
@@ -230,6 +233,10 @@ extension HomeViewController{
                 if(goal != nil){
                     self.nowGoal = goal
                     self.allStatisticsData = Statistics(totalCost: goal!.totalCost!, goalBudget: goal!.goalBudget!)
+                }else{
+                    self.nowGoal = nil
+                    self.allStatisticsData = nil
+                    self.statisticsData = nil
                 }
                 
                 
@@ -538,11 +545,12 @@ extension HomeViewController{
         headerView.translatesAutoresizingMaskIntoConstraints = false
         
         // 제목 레이블 추가
-        
         let goalText = self.nowGoal?.goalTitle
         
         if (goalText != nil && goalText != ""){
             titleLabel.text = goalText
+        }else{
+            titleLabel.text = "목표를 선택해주세요"
         }
         
         if(self.nowGoal?.icon != nil){
@@ -726,6 +734,12 @@ extension HomeViewController{
         return result
     }
     
+    func addGoal(){
+        let vc = GoalTitleViewController()
+        vc.hidesBottomBarWhenPushed = true
+        navigationController?.pushViewController(vc, animated: true)
+    }
+    
     func calculateIndex(for dateString: String) -> Int {
         // 날짜에 해당하는 인덱스 구하기
         
@@ -875,11 +889,9 @@ extension HomeViewController: UICollectionViewDataSource, UICollectionViewDelega
     }
 }
 
-extension HomeViewController : GoalListModalViewDelegate{
+extension HomeViewController : GoalListModalViewDelegate, MainNoGoalViewDelegate{
     func addNewGoal() {
-        let vc = GoalTitleViewController()
-        vc.hidesBottomBarWhenPushed = true
-        navigationController?.pushViewController(vc, animated: true)
+        addGoal()
     }
     
     func changeGoal(goalId: Int) {
@@ -1047,6 +1059,25 @@ extension HomeViewController {
                 }
             }
             reloadUI()
+        }
+    }
+    
+    @objc func getNotificationDeleteGoal(_ notification: Notification){
+        if let userInfo = notification.userInfo {
+            let goalId = userInfo["goalId"] as! Int64
+            
+            if goalId != self.nowGoal!.goalID{
+                return
+            }
+            
+            if(collectionView.currentPage == 1){
+                let indexPath = IndexPath(item: 0, section: 0)
+                collectionView.scrollToItem(at: indexPath, at: .centeredHorizontally, animated: true)
+                toggleButton.isRight.toggle()
+                self.hasNext = false
+            }
+            categoryScrollView.changeSelectedButton(index: -1)
+            fetchCalendarData()
         }
     }
 }

@@ -11,7 +11,7 @@ import Foundation
 // 로그인
 struct LoginRequest: Codable {
     let socialType: SocialType
-    let idToken: String
+    let token: String
    
     enum SocialType: String, Codable {
         case kakao = "KAKAO"

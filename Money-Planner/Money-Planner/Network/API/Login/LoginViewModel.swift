@@ -148,33 +148,32 @@ class LoginViewModel {
     func login(socialType:LoginRequest.SocialType, idToken:String){
         print(socialType, idToken)
         //print("로그인 api 연결")
-        let request = LoginRequest(socialType: socialType, idToken: idToken)
+        let request = LoginRequest(socialType: socialType, token: idToken) // idToken -> token으로 변수명 변경
         loginRepository.login(request: request)
             .subscribe(onNext: { response in
                 print(response)
                 if response.isSuccess == true {
                     
                     if let result = response.result {
-                        // 토큰 업데이트
-                        TokenManager.shared.handleLoginSuccess(accessToken: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzkwMjQ5OTM1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTQ3NTMxODB9.5S9qfgfujoKQYVyRRU9RejMwnIKUejsjgUxzDZ1ecDw", refreshToken: result.tokenInfo.refreshToken)
-
-//                        TokenManager.shared.handleLoginSuccess(accessToken: result.tokenInfo.accessToken, refreshToken: result.tokenInfo.refreshToken)
-                        print("토큰 업데이트 완료 ------------------------------------------------")
-                        print("엑세스 토큰 : ", String(TokenManager.shared.accessToken ?? "nil"))
-                        print("리프레쉬 토큰 : ",  String(TokenManager.shared.refreshToken ?? "nil"))
-                        print("------------------------------------------------")
-
-                        if result.newMember {
-                            print("새로운 회원 : 온보딩 화면으로 이동")
-                            // 온보딩 화면으로 이동 (임시로 홈화면으로 이동)
-                            // 홈 화면으로 이동합니다.
-                            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                                sceneDelegate.moveToOnBoarding()
-                            }                        }else{
-                            print("원래 있던 회원 : 홈 화면으로 이동")
-                            // 홈 화면으로 이동
-                            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                                sceneDelegate.moveToHome()
+                        if let tokenInfo = result.tokenInfo, let newMember = result.newMember {
+                            // 토큰 업데이트
+                            TokenManager.shared.handleLoginSuccess(accessToken: tokenInfo.accessToken, refreshToken: tokenInfo.accessToken )
+                            print("토큰 업데이트 완료 ------------------------------------------------")
+                            print("엑세스 토큰 : ", String(TokenManager.shared.accessToken ?? "nil"))
+                            print("리프레쉬 토큰 : ",  String(TokenManager.shared.refreshToken ?? "nil"))
+                            print("------------------------------------------------")
+                            
+                            if newMember {
+                                print("새로운 회원 : 온보딩 화면으로 이동")
+                                // 온보딩 화면으로 이동
+                                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                                    sceneDelegate.moveToOnBoarding()
+                                }                        }else{
+                                print("원래 있던 회원 : 홈 화면으로 이동")
+                                // 홈 화면으로 이동
+                                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                                    sceneDelegate.moveToHome()
+                                }
                             }
                         }
                     }

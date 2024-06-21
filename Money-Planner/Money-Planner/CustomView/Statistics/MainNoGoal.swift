@@ -8,6 +8,10 @@
 import Foundation
 import UIKit
 
+protocol MainNoGoalViewDelegate : AnyObject{
+    func addNewGoal()
+}
+
 class MainNoGoalView : UIView {
     
     let alertLabel1: UILabel = {
@@ -43,6 +47,8 @@ class MainNoGoalView : UIView {
         return button
     }()
     
+    weak var delegate: MainNoGoalViewDelegate?
+    
     override init(frame: CGRect) {
         super.init(frame: frame)
         // UIButton의 Action 설정
@@ -73,12 +79,12 @@ class MainNoGoalView : UIView {
             makeGoalButton.heightAnchor.constraint(equalToConstant: 48),
             makeGoalButton.centerXAnchor.constraint(equalTo: centerXAnchor)
         ])
-
+        
     }
-
+    
     @objc func newGoalButtonTapped() {
-           print("새 목표 만들기 버튼이 탭되었습니다.")
-       }
+        delegate?.addNewGoal()
+    }
 }
 
 

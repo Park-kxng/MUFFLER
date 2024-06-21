@@ -196,7 +196,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func moveToOnBoarding(){
-        print("온보딩 화면으로 이동")
+        print("온보딩 화면으로 이동 - 프로필 입력")
         DispatchQueue.main.async {
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
             if let window = windowScene.windows.first {
@@ -220,6 +220,19 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
     }
+    func moveToOnBoardingNextStep() {
+        print("다음 온보딩 화면으로 이동 - 앱 설명")
+        DispatchQueue.main.async {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            if let window = windowScene.windows.first {
+                let onBoardingVC = OnboardingViewController()
+                let navigationController = UINavigationController(rootViewController: onBoardingVC)
+                window.rootViewController = navigationController
+                window.makeKeyAndVisible()
+            }
+        }
+    }
+
 
    
     @objc func cancelOnBoarding() {

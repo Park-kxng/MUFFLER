@@ -345,27 +345,26 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
     @objc
     private func completeButtonTapped(){
         print("완료 버튼 클릭 > 프로필 설정 시도")
-        viewModel.join(name: currText, img: selectedIcon) { success in
-            if success{
-                print("결과 : 프로필 설정 완료")
-                
-                UserDefaults.standard.set(self.nameTextField.text, forKey: "name")
-                UserDefaults.standard.set(self.selectedIcon, forKey: "profileImg")
-                
+        if let curr_name = nameTextField.text {
+            viewModel.join(name: curr_name, img: selectedIcon) { success in
+                if success{
+                    print("결과 : 프로필 설정 완료")
+                    
+                    UserDefaults.standard.set(self.nameTextField.text, forKey: "name")
+                    UserDefaults.standard.set(self.selectedIcon, forKey: "profileImg")
 
-                // 온보딩 화면으로 이동하기 - 윤진
-                // 홈 화면으로 이동(임시)
-//                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-//                    sceneDelegate.moveToHome()
-//                }
-                let vc = OnboardingViewController()
-                vc.hidesBottomBarWhenPushed = true
-                self.navigationController?.pushViewController(vc, animated: true)
-            }else{
-                print("결과 : 프로필 설정 실패")
+
+                    // 다음 온보딩 화면으로 이동하기
+                    if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                        sceneDelegate.moveToOnBoardingNextStep()
+                    }
+
+                }else{
+                    print("결과 : 프로필 설정 실패")
+                }
             }
+            
         }
-        
     }
     @objc
     private func selectIcon(){

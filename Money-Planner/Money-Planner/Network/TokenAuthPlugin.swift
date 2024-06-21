@@ -41,7 +41,7 @@ final class TokenAuthPlugin: PluginType {
     }
 
     private func handleTokenRefresh(target: TargetType, error: MoyaError) {
-        print("[TokenAuthPlugin - 토큰 갱신 시도 중..")
+        print("[TokenAuthPlugin - 토큰 갱신 시도 중")
         lock.lock()
         defer { lock.unlock() }
         

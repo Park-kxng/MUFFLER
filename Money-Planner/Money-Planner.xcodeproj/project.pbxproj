@@ -870,7 +870,6 @@
 				7A610AD72B49008600D3096F /* Home */,
 				7A610AD42B49005400D3096F /* Battle */,
 				7A610AD32B49004500D3096F /* MyPage */,
-				20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */,
 			);
 			path = View;
 			sourceTree = "<group>";
@@ -962,6 +961,7 @@
 		7A610AE32B49020700D3096F /* Login */ = {
 			isa = PBXGroup;
 			children = (
+				20C041022BBEA18700D715F8 /* OnBoardingProfileViewController.swift */,
 				7A610ABB2B47FA8E00D3096F /* LoginViewController.swift */,
 				7A610AF12B49421F00D3096F /* KakaoLogin.swift */,
 				7A610AF32B49422E00D3096F /* AppleLogin.swift */,

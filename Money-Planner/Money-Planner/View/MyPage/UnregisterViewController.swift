@@ -7,14 +7,18 @@
 
 import Foundation
 import UIKit
+import RxSwift
+import AuthenticationServices
 
 
-class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate {
+
+class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate, ASAuthorizationControllerPresentationContextProviding, ASAuthorizationControllerDelegate{
     
     private var UserName: String?
     var completeCheck = compeleBtnCheck()
     var currTextSize : Int?
-
+    private let viewModel = LoginViewModel()
+    private let disposeBag = DisposeBag()
     private lazy var headerView = HeaderView(title: "")
 
     private var completeButton = MainBottomBtn(title: "탈퇴하기")
@@ -225,7 +229,7 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
 //        emailLabel2.translatesAutoresizingMaskIntoConstraints = false
 //        view.addSubview(emailLabel2)
 //        NSLayoutConstraint.activate([
-//            
+//
 //            emailLabel2.topAnchor.constraint(equalTo: emailTextField.bottomAnchor, constant: 10),
 //            emailLabel2.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 16),
 //            emailLabel2.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -16),
@@ -375,12 +379,55 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
 
             completeButton.isEnabled = isButtonEnabled
         }
+    
+    // Apple ID 인증 흐름 추가
+    private func requestAppleAuthorization() {
+        let appleIDProvider = ASAuthorizationAppleIDProvider()
+        let request = appleIDProvider.createRequest()
+        request.requestedScopes = [.fullName, .email]
+        
+        let authorizationController = ASAuthorizationController(authorizationRequests: [request])
+        authorizationController.delegate = self
+        authorizationController.presentationContextProvider = self
+        authorizationController.performRequests()
+    }
+    
+    // ASAuthorizationControllerDelegate 메서드
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithAuthorization authorization: ASAuthorization) {
+        if let appleIDCredential = authorization.credential as? ASAuthorizationAppleIDCredential,
+           let authorizationCode = appleIDCredential.authorizationCode,
+           let idToken = String(data: authorizationCode, encoding: .utf8) {
+            
+            print("Apple ID Token: \(idToken)")
+            proceedWithUnregister(idToken: idToken)
+        }
+    }
+    
+    func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
+        print("Authorization failed: \(error.localizedDescription)")
+    }
+    
+    func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
+        return self.view.window!
+    }
+    
+    private func proceedWithUnregister(idToken: String) {
+        if let socialType = TokenManager.shared.socialType, let reason = reasonTextField.text {
+            print(idToken, socialType, reason)
+            viewModel.leave(socialType: socialType, reason: reason, authenticationCode: idToken)
+            dismiss(animated: true)
+        }
+        
+    }
+   
 }
+
 extension UnregisterViewController: UnregisterPopupViewDelegate {
     func UnregisterpopupChecked() {
         print("탈퇴하기 완료")
-        // 탈퇴하기 완료 로직 추가
-        dismiss(animated: true)
+        
+        // Apple ID 인증 요청 후
+        requestAppleAuthorization()
     }
 }
 
@@ -389,6 +436,6 @@ extension UnregisterViewController: ReasonModalDelegate {
         reasonTextField.text = reason
         print(reason)
         view.layoutIfNeeded()
-
     }
 }
+

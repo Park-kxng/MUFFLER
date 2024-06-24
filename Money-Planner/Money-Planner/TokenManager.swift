@@ -22,6 +22,21 @@ class TokenManager {
         get { try? keychain.get("refreshToken") }
         set { try? keychain.set(newValue ?? "", key: "refreshToken") }
     }
+    
+    var idToken: String? {
+        get { try? keychain.get("idToken") }
+        set { try? keychain.set(newValue ?? "", key: "idToken") }
+    }
+    
+    var socialType: SocialType? {
+        get {
+            guard let value = try? keychain.get("socialType") else { return nil }
+            return SocialType(rawValue: value)
+        }
+        set {
+            try? keychain.set(newValue?.rawValue ?? "", key: "socialType")
+        }
+    }
     func isLoggedIn() -> Bool {
            return accessToken != nil
     }
@@ -30,6 +45,11 @@ class TokenManager {
     func handleLoginSuccess(accessToken: String, refreshToken: String) {
         TokenManager.shared.accessToken = accessToken
         TokenManager.shared.refreshToken = refreshToken
+    }
+    
+    func saveIdTokenAndSocialType (idToken : String, socialType : SocialType){
+        TokenManager.shared.idToken = idToken
+        TokenManager.shared.socialType = socialType
     }
 
     // 토큰 삭제

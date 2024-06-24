@@ -12,12 +12,6 @@ import Foundation
 struct LoginRequest: Codable {
     let socialType: SocialType
     let token: String
-   
-    enum SocialType: String, Codable {
-        case kakao = "KAKAO"
-        case apple = "APPLE"
-      
-    }
 }
 
 

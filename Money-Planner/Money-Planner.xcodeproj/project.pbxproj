@@ -7,8 +7,11 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		200970632C2599ED003C58D4 /* LeaveRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200970622C2599ED003C58D4 /* LeaveRequest.swift */; };
+		200970652C259ED7003C58D4 /* SocialType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200970642C259ED7003C58D4 /* SocialType.swift */; };
 		20118A112B56A86100B2569E /* ConsumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20118A102B56A86100B2569E /* ConsumeViewController.swift */; };
 		202754242B7FBF860084A757 /* ExpenseTapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202754232B7FBF860084A757 /* ExpenseTapController.swift */; };
+		203C24102C29AD3900AB5FEA /* LeaveResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203C240F2C29AD3900AB5FEA /* LeaveResponse.swift */; };
 		20545A8E2BBFD4710024B1E5 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20545A8D2BBFD4710024B1E5 /* UIViewController.swift */; };
 		20545A902BBFEDF80024B1E5 /* TokenAuthPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20545A8F2BBFEDF80024B1E5 /* TokenAuthPlugin.swift */; };
 		20545A922BBFEFB10024B1E5 /* AuthenticatedAPI.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20545A912BBFEFB10024B1E5 /* AuthenticatedAPI.swift */; };
@@ -239,8 +242,11 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		200970622C2599ED003C58D4 /* LeaveRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveRequest.swift; sourceTree = "<group>"; };
+		200970642C259ED7003C58D4 /* SocialType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialType.swift; sourceTree = "<group>"; };
 		20118A102B56A86100B2569E /* ConsumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumeViewController.swift; sourceTree = "<group>"; };
 		202754232B7FBF860084A757 /* ExpenseTapController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseTapController.swift; sourceTree = "<group>"; };
+		203C240F2C29AD3900AB5FEA /* LeaveResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveResponse.swift; sourceTree = "<group>"; };
 		20545A8D2BBFD4710024B1E5 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		20545A8F2BBFEDF80024B1E5 /* TokenAuthPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAuthPlugin.swift; sourceTree = "<group>"; };
 		20545A912BBFEFB10024B1E5 /* AuthenticatedAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthenticatedAPI.swift; sourceTree = "<group>"; };
@@ -533,6 +539,9 @@
 				20C041072BBEF0E000D715F8 /* JoinRequest.swift */,
 				20C041092BBEF0EF00D715F8 /* JoinResponse.swift */,
 				38A55ED32BE9C9AC0086C75B /* Notification.swift */,
+				200970622C2599ED003C58D4 /* LeaveRequest.swift */,
+				200970642C259ED7003C58D4 /* SocialType.swift */,
+				203C240F2C29AD3900AB5FEA /* LeaveResponse.swift */,
 			);
 			path = Member;
 			sourceTree = "<group>";
@@ -1286,12 +1295,15 @@
 				7A610ABC2B47FA8E00D3096F /* LoginViewController.swift in Sources */,
 				206C58D42B623C43008410C1 /* CategoryCell.swift in Sources */,
 				7A8F3EF62B85059D00480902 /* GoalTotalAmountViewController.swift in Sources */,
+				200970652C259ED7003C58D4 /* SocialType.swift in Sources */,
 				7A8F3ED52B85055D00480902 /* DailyExpenseGoalModal.swift in Sources */,
 				38A55ED02BE9C97E0086C75B /* NotificationAPI.swift in Sources */,
+				200970632C2599ED003C58D4 /* LeaveRequest.swift in Sources */,
 				7A610AF02B49414100D3096F /* RegisterProfileViewController.swift in Sources */,
 				205894072B827B58008F536D /* UpdateCategoryRequest.swift in Sources */,
 				208C90D52B7F7B6100C67960 /* CategoryIconSelectionViewController.swift in Sources */,
 				7A4C67462B5A4B77008BCAC9 /* MainTextField.swift in Sources */,
+				203C24102C29AD3900AB5FEA /* LeaveResponse.swift in Sources */,
 				D20D70142B612BB4006D6762 /* CategoryTableView.swift in Sources */,
 				208C90CA2B7BBBB600C67960 /* ResponseExpenseDto.swift in Sources */,
 				209FF8712B851E79009E68E7 /* RoutineDetailViewController.swift in Sources */,

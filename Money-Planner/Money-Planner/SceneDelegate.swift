@@ -12,8 +12,6 @@ import RxSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
-    
-
              
     var window: UIWindow?
     private let disposeBag = DisposeBag()
@@ -23,8 +21,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
          // UIWindowScene 유효성 검사
          guard let windowScene = (scene as? UIWindowScene) else { return }
          window = UIWindow(windowScene: windowScene)
-         
-         checkAndRefreshToken() // 토큰 확인 후 화면 이동
+         checkAndRefreshToken() // 토큰 확인 후 화면 이동 로직 진행
          
          self.window?.makeKeyAndVisible()
      }
@@ -35,20 +32,37 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         if isLoggedIn {
             print("저장된 토큰이 있습니다 --> 홈화면으로 이동합니다")
-            refreshAccessTokenIfNeeded() // 토큰 갱신 시도
+            tryConnect() // 토큰 갱신 시도
         } else {
             print("저장된 토큰이 없습니다 --> 로그인 화면으로 이동")
             self.moveToLogin() // 로그인 화면으로 이동
         }
         
     }
-    
+    // api 연결 시도
+    private func tryConnect(){
+        let loginRepository = LoginRepository()
+        // 3. 토큰 갱신 시도
+        loginRepository.connect()
+            .subscribe(onNext: { [weak self] response in
+                if response.isSuccess {
+                    print("결과 : 성공 - api 연결 시도 > 현재 토큰 이상 없음 ")
+                    self?.setupMainInterface()
+                } else {
+                    self?.refreshAccessTokenIfNeeded()
+                }
+            }, onError: { [weak self] error in
+                self?.refreshAccessTokenIfNeeded()
+            })
+            .disposed(by: disposeBag)
+        
+    }
     // 토큰 갱신 함수
     private func refreshAccessTokenIfNeeded() {
         
         // 1. 엑세스 토큰 갱신에 필요한 리프레시 토큰 가져오기
         guard let refreshToken = TokenManager.shared.refreshToken else {
-            print("리프레시 토큰이 없습니다 --> 로그인 화면으로 이동")
+            print("[log] 리프레시 토큰이 없습니다 --> 로그인 화면으로 이동")
             self.moveToLogin()
             return
         }

@@ -145,7 +145,7 @@ class LoginViewModel {
     }
 
     // 토큰이 없는 경우 > 로그인 화면
-    func login(socialType:LoginRequest.SocialType, idToken:String){
+    func login(socialType:SocialType, idToken:String){
         print(socialType, idToken)
         //print("로그인 api 연결")
         let request = LoginRequest(socialType: socialType, token: idToken) // idToken -> token으로 변수명 변경
@@ -158,6 +158,9 @@ class LoginViewModel {
                         if let tokenInfo = result.tokenInfo, let newMember = result.newMember {
                             // 토큰 업데이트
                             TokenManager.shared.handleLoginSuccess(accessToken: tokenInfo.accessToken, refreshToken: tokenInfo.accessToken )
+                            
+                            // idToken과 socialType 저장
+                            TokenManager.shared.saveIdTokenAndSocialType(idToken: idToken, socialType: socialType)
                             print("토큰 업데이트 완료 ------------------------------------------------")
                             print("엑세스 토큰 : ", String(TokenManager.shared.accessToken ?? "nil"))
                             print("리프레쉬 토큰 : ",  String(TokenManager.shared.refreshToken ?? "nil"))
@@ -188,4 +191,40 @@ class LoginViewModel {
             .disposed(by: disposeBag)
     }
     
+    // 탈퇴 함수
+    func leave( socialType: SocialType, reason:String, authenticationCode : String) -> Void{
+        let request = LeaveRequest(socialType: socialType, reason: reason, authenticationCode: authenticationCode)
+        loginRepository.leave(request: request)
+            .subscribe(onNext: { response in
+                print("결과",response)
+                if response.isSuccess == false {
+                    DispatchQueue.main.async {
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let topViewController = windowScene.windows.first?.rootViewController {
+                            
+                        }
+                    }
+                }else{
+                    // 로그인 화면으로 이동
+                    if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                        sceneDelegate.moveToLogin()
+                    }
+                    
+                }
+            }, onError: { error in
+                // 오류가 발생한 경우에 대한 처리를 수행합니다.
+                print(error)
+                print("Error refreshing access token: \(error.localizedDescription)")
+                // Display an alert
+                           DispatchQueue.main.async {
+                               if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                  let topViewController = windowScene.windows.first?.rootViewController {
+                                   let alertController = UIAlertController(title: "탈퇴 실패", message: "탈퇴를 실패하였습니다. 다시 시도해주세요.", preferredStyle: .alert)
+                                   alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                                   topViewController.present(alertController, animated: true, completion: nil)
+                               }
+                           }
+            })
+            .disposed(by: disposeBag)
+    }
 }

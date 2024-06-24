@@ -234,7 +234,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
     }
-    func moveToOnBoardingNextStep() {
+    func moveToOnBoardingExplain() {
         print("다음 온보딩 화면으로 이동 - 앱 설명")
         DispatchQueue.main.async {
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
@@ -246,7 +246,18 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
             }
         }
     }
-
+    func moveToOnBoardingNotification() {
+        print("다음 온보딩 화면으로 이동 - 알람")
+        DispatchQueue.main.async {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            if let window = windowScene.windows.first {
+                let onBoardingVC = OnboardingNotificationViewController()
+                let navigationController = UINavigationController(rootViewController: onBoardingVC)
+                window.rootViewController = navigationController
+                window.makeKeyAndVisible()
+            }
+        }
+    }
 
    
     @objc func cancelOnBoarding() {

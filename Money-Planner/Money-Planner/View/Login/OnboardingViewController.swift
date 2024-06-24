@@ -163,7 +163,7 @@ class OnboardingViewController: UIViewController {
         } else {
             // 홈화면으로 이동
             if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                sceneDelegate.moveToHome()
+                sceneDelegate.moveToOnBoardingNotification()
             }
         }
     }

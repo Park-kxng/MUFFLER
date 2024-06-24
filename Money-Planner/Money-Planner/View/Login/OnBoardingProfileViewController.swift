@@ -356,7 +356,7 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
 
                     // 다음 온보딩 화면으로 이동하기
                     if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                        sceneDelegate.moveToOnBoardingNextStep()
+                        sceneDelegate.moveToOnBoardingExplain()
                     }
 
                 }else{

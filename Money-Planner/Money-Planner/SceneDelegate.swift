@@ -8,59 +8,96 @@
 import UIKit
 import KakaoSDKAuth
 import AuthenticationServices
+import RxSwift
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
+             
     var window: UIWindow?
-     
+    private let disposeBag = DisposeBag()
+    
      // 앱이 시작될 때 초기 화면 설정
      func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
          // UIWindowScene 유효성 검사
          guard let windowScene = (scene as? UIWindowScene) else { return }
          window = UIWindow(windowScene: windowScene)
-         // login api 연결
-         let viewModel = LoginViewModel()
-         let disposeBag = viewModel.disposeBag
+         checkAndRefreshToken() // 토큰 확인 후 화면 이동 로직 진행
          
-         
-//         TokenManager.shared.handleLoginSuccess(accessToken: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI0NjEzNzk1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTY1NzIxMDh9.Vb0JSZPhaTuLs7JqoSlBkOSuAc-9BLj0065XnzD13hI", refreshToken: "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTkwNzc3MDh9.W3WkUHWtETcBl_wXUUXGqJWsKLvojwRHK-cN1163F-Q")
-////         TokenManager.shared.clearTokens() // 토큰 삭제
-//         print("토큰 확인", TokenManager.shared.accessToken, TokenManager.shared.refreshToken)
-         
-         
-         let isLoggedIn = TokenManager.shared.isLoggedIn() // 엑세스 토큰 있는지 여부 (있으면 Ture, 없으면 False)
-         if isLoggedIn {
-             print("저장된 토큰이 있습니다 --> 홈화면으로 이동합니다")
-             self.setupMainInterface()
-         }else{
-             
-             print("저장된 토큰이 없습니다 --> 로그인 화면으로 이동")
-             self.window?.rootViewController = LoginViewController()
-         }
-         
-//             print("로그인 한 적 있음 -> 엑세스 토큰 확인 중")
-//              // 가진 토큰으로 로그인 시도
-//             viewModel.isLoginEnabled()
-//                 .subscribe(onNext: { isEnabled in
-//                     if isEnabled {
-//                         print("로그인 가능 > 홈화면으로 이동")
-//                         // 홈화면으로 이동
-//                         self.setupMainInterface()
-//
-//                     } else {
-//                         print("로그인 불가능 > 토큰 갱신 시도")
-//                     }
-//                 })
-//                 .disposed(by: disposeBag)
-//         } else {
-//             print("토큰 없음")
-//
-//                 
-//             }
-//         }
-         self.setupMainInterface()
          self.window?.makeKeyAndVisible()
      }
+    
+    // 토큰 확인 후 화면 이동
+    private func checkAndRefreshToken() {
+        let isLoggedIn = TokenManager.shared.isLoggedIn() // 저장된 토큰이 있는 확인 -> 있으면 true , 없으면 false
+        
+        if isLoggedIn {
+            print("저장된 토큰이 있습니다 --> 홈화면으로 이동합니다")
+            tryConnect() // 토큰 갱신 시도
+        } else {
+            print("저장된 토큰이 없습니다 --> 로그인 화면으로 이동")
+            self.moveToLogin() // 로그인 화면으로 이동
+        }
+        
+    }
+    // api 연결 시도
+    private func tryConnect(){
+        let loginRepository = LoginRepository()
+        // 3. 토큰 갱신 시도
+        loginRepository.connect()
+            .subscribe(onNext: { [weak self] response in
+                if response.isSuccess {
+                    print("결과 : 성공 - api 연결 시도 > 현재 토큰 이상 없음 ")
+                    self?.setupMainInterface()
+                } else {
+                    self?.refreshAccessTokenIfNeeded()
+                }
+            }, onError: { [weak self] error in
+                self?.refreshAccessTokenIfNeeded()
+            })
+            .disposed(by: disposeBag)
+        
+    }
+    // 토큰 갱신 함수
+    private func refreshAccessTokenIfNeeded() {
+        
+        // 1. 엑세스 토큰 갱신에 필요한 리프레시 토큰 가져오기
+        guard let refreshToken = TokenManager.shared.refreshToken else {
+            print("[log] 리프레시 토큰이 없습니다 --> 로그인 화면으로 이동")
+            self.moveToLogin()
+            return
+        }
+        
+        // 2. 토큰 갱신 api 연결에 필요한 요청 및 초기화
+        let refreshTokenRequest = RefreshTokenRequest(refreshToken: refreshToken)
+        let loginRepository = LoginRepository()
+        
+        // 3. 토큰 갱신 시도
+        loginRepository.refreshToken(refreshToken: refreshTokenRequest)
+            .subscribe(onNext: { [weak self] response in
+                if response.isSuccess {
+                    print("결과 : 성공 - 엑세스 토큰 갱신 ")
+                    
+                    // 3-1. 토큰 갱신 성공 - 엑세스, 리프레쉬 토큰 다시 저장
+                    if let result = response.result {
+                        let accessToken = result.accessToken
+                        let refreshToken = result.refreshToken
+                        TokenManager.shared.handleLoginSuccess(accessToken: accessToken, refreshToken: refreshToken)
+                        self?.setupMainInterface()
+                    }
+                } else {
+                    
+                    // 3-2. 토큰 갱신 실패 - 로그인 화면으로 이동
+                    print("결과 : 실패 - 엑세스 토큰 갱신 실패")
+                    self?.moveToLogin()
+                }
+            }, onError: { [weak self] error in
+                
+                // 3-3. 토큰 갱신 api 연결 실패 - 로그인 화면으로 이동
+                print("토큰 갱신 요청 실패, 에러: \(error)")
+                self?.moveToLogin()
+            })
+            .disposed(by: disposeBag)
+    }
      
      // 메인 인터페이스 설정
      func setupMainInterface() {
@@ -173,7 +210,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func moveToOnBoarding(){
-        print("온보딩 화면으로 이동")
+        print("온보딩 화면으로 이동 - 프로필 입력")
         DispatchQueue.main.async {
             guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
             if let window = windowScene.windows.first {
@@ -192,6 +229,30 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                     backButton.addTarget(self, action: #selector(self.cancelOnBoarding), for: .touchUpInside)
                     onBoardingVC.navigationItem.leftBarButtonItem = UIBarButtonItem(customView: backButton)
                 }
+                window.rootViewController = navigationController
+                window.makeKeyAndVisible()
+            }
+        }
+    }
+    func moveToOnBoardingExplain() {
+        print("다음 온보딩 화면으로 이동 - 앱 설명")
+        DispatchQueue.main.async {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            if let window = windowScene.windows.first {
+                let onBoardingVC = OnboardingViewController()
+                let navigationController = UINavigationController(rootViewController: onBoardingVC)
+                window.rootViewController = navigationController
+                window.makeKeyAndVisible()
+            }
+        }
+    }
+    func moveToOnBoardingNotification() {
+        print("다음 온보딩 화면으로 이동 - 알람")
+        DispatchQueue.main.async {
+            guard let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene else { return }
+            if let window = windowScene.windows.first {
+                let onBoardingVC = OnboardingNotificationViewController()
+                let navigationController = UINavigationController(rootViewController: onBoardingVC)
                 window.rootViewController = navigationController
                 window.makeKeyAndVisible()
             }
@@ -219,3 +280,10 @@ extension SceneDelegate {
         UIView.transition(with: window, duration: 0.2, options: [.transitionCrossDissolve], animations: nil, completion: nil)
       }
 }
+
+
+// 토큰 수동으로 넣는 코드 - by. 근영 -----------------------------------------------------------
+//     TokenManager.shared.handleLoginSuccess(accessToken: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzI0NjEzNzk1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTY1NzIxMDh9.Vb0JSZPhaTuLs7JqoSlBkOSuAc-9BLj0065XnzD13hI", refreshToken: "eyJhbGciOiJIUzI1NiJ9.eyJleHAiOjE3MTkwNzc3MDh9.W3WkUHWtETcBl_wXUUXGqJWsKLvojwRHK-cN1163F-Q")
+//     TokenManager.shared.clearTokens() // 토큰 삭제
+//     print("토큰 확인", TokenManager.shared.accessToken, TokenManager.shared.refreshToken) // 토큰 확인 코드
+// ----------------------------------------------------------------------------------------

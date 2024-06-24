@@ -206,7 +206,7 @@ class LoginViewController: UIViewController {
     }
     
     
-    private func handleLoginResult(socialType:LoginRequest.SocialType, oauthToken: OAuthToken?, error: Error?) {
+    private func handleLoginResult(socialType:SocialType, oauthToken: OAuthToken?, error: Error?) {
         if let error = error {
             print("로그인 실패: \(error.localizedDescription)")
         } else if let oauthToken = oauthToken {

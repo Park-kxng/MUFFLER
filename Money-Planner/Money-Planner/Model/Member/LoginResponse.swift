@@ -6,25 +6,23 @@
 //
 
 import Foundation
+
 // member/login
 // 로그인 시 응답
-struct LoginResponse: Decodable {
-    let isSuccess: Bool?
-    let message: String?
+struct LoginResponse: Codable {
+    let isSuccess: Bool
+    let message: String
     let result: LoginResult?
 
-   
-    struct LoginResult : Decodable {
-        let tokenInfo: TokenInfo
-        let newMember: Bool
-        
+    struct LoginResult: Codable {
+        let tokenInfo: TokenInfo?
+        let newMember: Bool?
     }
-    struct TokenInfo : Decodable{
-        let type : String
-        let accessToken : String
-        let refreshToken : String
 
+    struct TokenInfo: Codable {
+        let type: String
+        let accessToken: String
+        let refreshToken: String
     }
-   
-    
 }
+

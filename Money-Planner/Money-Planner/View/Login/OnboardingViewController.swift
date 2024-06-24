@@ -161,9 +161,10 @@ class OnboardingViewController: UIViewController {
                 nextBtn.setTitle("시작하기", for: .normal)
             }
         } else {
-            let vc = OnboardingNotificationViewController()
-            vc.hidesBottomBarWhenPushed = true
-            self.navigationController?.pushViewController(vc, animated: true)
+            // 홈화면으로 이동
+            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                sceneDelegate.moveToOnBoardingNotification()
+            }
         }
     }
     

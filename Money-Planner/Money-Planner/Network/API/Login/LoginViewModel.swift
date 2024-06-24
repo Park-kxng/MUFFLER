@@ -42,39 +42,45 @@ class LoginViewModel {
 //            topViewController.present(alertController, animated: true, completion: nil)
 //        }
     func refreshAccessTokenIfNeeded() -> Observable<Bool> {
-            print("log: 엑세스 토큰 갱신 시도")
+        print("log: 엑세스 토큰 갱신 시도")
 
-            guard let refreshToken = TokenManager.shared.refreshToken else {
-                print("log: 리프레시 토큰이 없음")
-                handleFailedTokenRefresh(message: "리프레시 토큰이 없습니다.")
-                return Observable.just(false)
-            }
-
-            let refreshTokenRequest = RefreshTokenRequest(refreshToken: refreshToken)
-            return loginRepository.refreshToken(refreshToken: refreshTokenRequest)
-                .map { response in
-                    if response.isSuccess {
-                        print("결과 : 성공 - 엑세스 토큰 갱신 ")
-                        if let result = response.result {
-                            let accessToken = result.accessToken
-                            let refreshToken = result.refreshToken
-                            self.handleSuccessfulTokenRefresh(accessToken: accessToken, refreshToken: refreshToken)
-                        }
-                        return true
-                    } else {
-                        print("결과 : 실패 - 엑세스 토큰 갱신 실패 > 리프레쉬 토큰 갱신 필요 ")
-                        self.handleFailedTokenRefresh(message: response.message)
-                        return false
-                    }
-                }
-                .do(onNext: { response in
-                    print("log: 토큰 갱신 응답 수신, 응답: \(response)")
-                }, onError: { error in
-                    print("log: 토큰 갱신 요청 실패, 에러: \(error)")
-                    self.handleFailedTokenRefresh(message: error.localizedDescription)
-                })
-                .catchAndReturn(false)
+        guard let refreshToken = TokenManager.shared.refreshToken else {
+            print("log: 리프레시 토큰이 없음")
+            handleFailedTokenRefresh(message: "리프레시 토큰이 없습니다.")
+            return Observable.just(false)
         }
+
+        let refreshTokenRequest = RefreshTokenRequest(refreshToken: refreshToken)
+        return loginRepository.refreshToken(refreshToken: refreshTokenRequest)
+            .map { response in
+                if response.isSuccess {
+                    print("결과 : 성공 - 엑세스 토큰 갱신 ")
+                    if let result = response.result {
+                        let accessToken = result.accessToken
+                        let refreshToken = result.refreshToken
+                        self.handleSuccessfulTokenRefresh(accessToken: accessToken, refreshToken: refreshToken)
+                    }
+                    return true
+                } else {
+                    print("결과 : 실패 - 엑세스 토큰 갱신 실패 > 리프레쉬 토큰 갱신 필요 ")
+                    self.handleFailedTokenRefresh(message: response.message)
+                    return false
+                }
+            }
+            .do(onNext: { response in
+                print("log: 토큰 갱신 응답 수신, 응답: \(response)")
+            }, onError: { error in
+                if let moyaError = error as? MoyaError, let response = moyaError.response {
+                    let responseBody = String(data: response.data, encoding: .utf8) ?? "Unable to decode response body"
+                    print("log: 토큰 갱신 요청 실패, 에러: \(error), 응답: \(responseBody)")
+                } else {
+                    print("log: 토큰 갱신 요청 실패, 에러: \(error)")
+                }
+                self.handleFailedTokenRefresh(message: error.localizedDescription)
+            })
+            .catchAndReturn(false)
+    }
+
 
 
     private func handleSuccessfulTokenRefresh(accessToken : String, refreshToken:String) {
@@ -139,36 +145,38 @@ class LoginViewModel {
     }
 
     // 토큰이 없는 경우 > 로그인 화면
-    func login(socialType:LoginRequest.SocialType, idToken:String){
+    func login(socialType:SocialType, idToken:String){
         print(socialType, idToken)
         //print("로그인 api 연결")
-        let request = LoginRequest(socialType: socialType, idToken: idToken)
+        let request = LoginRequest(socialType: socialType, token: idToken) // idToken -> token으로 변수명 변경
         loginRepository.login(request: request)
             .subscribe(onNext: { response in
                 print(response)
                 if response.isSuccess == true {
                     
                     if let result = response.result {
-                        // 토큰 업데이트
-                        TokenManager.shared.handleLoginSuccess(accessToken: "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiIzMzkwMjQ5OTM1IiwiYXV0aCI6IlVTRVIiLCJleHAiOjE3MTQ3NTMxODB9.5S9qfgfujoKQYVyRRU9RejMwnIKUejsjgUxzDZ1ecDw", refreshToken: result.tokenInfo.refreshToken)
-
-//                        TokenManager.shared.handleLoginSuccess(accessToken: result.tokenInfo.accessToken, refreshToken: result.tokenInfo.refreshToken)
-                        print("토큰 업데이트 완료 ------------------------------------------------")
-                        print("엑세스 토큰 : ", String(TokenManager.shared.accessToken ?? "nil"))
-                        print("리프레쉬 토큰 : ",  String(TokenManager.shared.refreshToken ?? "nil"))
-                        print("------------------------------------------------")
-
-                        if result.newMember {
-                            print("새로운 회원 : 온보딩 화면으로 이동")
-                            // 온보딩 화면으로 이동 (임시로 홈화면으로 이동)
-                            // 홈 화면으로 이동합니다.
-                            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                                sceneDelegate.moveToOnBoarding()
-                            }                        }else{
-                            print("원래 있던 회원 : 홈 화면으로 이동")
-                            // 홈 화면으로 이동
-                            if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
-                                sceneDelegate.moveToHome()
+                        if let tokenInfo = result.tokenInfo, let newMember = result.newMember {
+                            // 토큰 업데이트
+                            TokenManager.shared.handleLoginSuccess(accessToken: tokenInfo.accessToken, refreshToken: tokenInfo.accessToken )
+                            
+                            // idToken과 socialType 저장
+                            TokenManager.shared.saveIdTokenAndSocialType(idToken: idToken, socialType: socialType)
+                            print("토큰 업데이트 완료 ------------------------------------------------")
+                            print("엑세스 토큰 : ", String(TokenManager.shared.accessToken ?? "nil"))
+                            print("리프레쉬 토큰 : ",  String(TokenManager.shared.refreshToken ?? "nil"))
+                            print("------------------------------------------------")
+                            
+                            if newMember {
+                                print("새로운 회원 : 온보딩 화면으로 이동")
+                                // 온보딩 화면으로 이동
+                                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                                    sceneDelegate.moveToOnBoarding()
+                                }                        }else{
+                                print("원래 있던 회원 : 홈 화면으로 이동")
+                                // 홈 화면으로 이동
+                                if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                                    sceneDelegate.moveToHome()
+                                }
                             }
                         }
                     }
@@ -183,4 +191,40 @@ class LoginViewModel {
             .disposed(by: disposeBag)
     }
     
+    // 탈퇴 함수
+    func leave( socialType: SocialType, reason:String, authenticationCode : String) -> Void{
+        let request = LeaveRequest(socialType: socialType, reason: reason, authenticationCode: authenticationCode)
+        loginRepository.leave(request: request)
+            .subscribe(onNext: { response in
+                print("결과",response)
+                if response.isSuccess == false {
+                    DispatchQueue.main.async {
+                        if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                           let topViewController = windowScene.windows.first?.rootViewController {
+                            
+                        }
+                    }
+                }else{
+                    // 로그인 화면으로 이동
+                    if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+                        sceneDelegate.moveToLogin()
+                    }
+                    
+                }
+            }, onError: { error in
+                // 오류가 발생한 경우에 대한 처리를 수행합니다.
+                print(error)
+                print("Error refreshing access token: \(error.localizedDescription)")
+                // Display an alert
+                           DispatchQueue.main.async {
+                               if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                                  let topViewController = windowScene.windows.first?.rootViewController {
+                                   let alertController = UIAlertController(title: "탈퇴 실패", message: "탈퇴를 실패하였습니다. 다시 시도해주세요.", preferredStyle: .alert)
+                                   alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                                   topViewController.present(alertController, animated: true, completion: nil)
+                               }
+                           }
+            })
+            .disposed(by: disposeBag)
+    }
 }

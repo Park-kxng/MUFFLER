@@ -16,6 +16,12 @@ final class TokenAuthPlugin: PluginType {
         } else {
             print("[TokenAuthPlugin] No access token available")
         }
+
+        // Print the request URL
+        if let url = request.url {
+            print("[TokenAuthPlugin] Preparing request for URL: \(url.absoluteString)")
+        }
+
         return request
     }
 
@@ -41,12 +47,12 @@ final class TokenAuthPlugin: PluginType {
     }
 
     private func handleTokenRefresh(target: TargetType, error: MoyaError) {
-        print("[TokenAuthPlugin - 토큰 갱신")
+        print("[TokenAuthPlugin] Token refresh attempt underway")
         lock.lock()
         defer { lock.unlock() }
-        
+
         requestsToRetry.append((target, { result in
-            // 재요청 로직
+            // Retry logic
             let provider = MoyaProvider<MultiTarget>(plugins: [TokenAuthPlugin()])
             provider.request(MultiTarget(target)) { result in
                 print("[TokenAuthPlugin] Retrying original request")
@@ -57,20 +63,22 @@ final class TokenAuthPlugin: PluginType {
             isRefreshing = true
             print("[TokenAuthPlugin] Refreshing token...")
 
-            // LoginViewModel 인스턴스를 통해 refreshAccessTokenIfNeeded 호출
+            // Call to refresh token
             let loginViewModel = LoginViewModel()
             loginViewModel.refreshAccessTokenIfNeeded()
                 .subscribe(onNext: { [weak self] success in
                     guard let self = self else { return }
                     self.lock.lock()
                     defer { self.lock.unlock() }
-                    
+
                     self.isRefreshing = false
+
                     if success {
                         print("[TokenAuthPlugin] Token refreshed successfully")
                     } else {
                         print("[TokenAuthPlugin] Failed to refresh token")
                     }
+
                     self.requestsToRetry.forEach { target, completion in
                         if success {
                             let provider = MoyaProvider<MultiTarget>(plugins: [TokenAuthPlugin()])

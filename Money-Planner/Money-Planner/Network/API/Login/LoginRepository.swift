@@ -11,11 +11,10 @@ import RxMoya
 import Moya
 
 class LoginRepository {
-    private let provider = MoyaProvider<LoginAPI>().rx
+    private let provider = MoyaProvider<LoginAPI>(plugins: [TokenAuthPlugin()]).rx
     let disposeBag = DisposeBag()
     
     // member controller
-    
     func connect() -> Observable<ConnectModel> {
         return provider.request(.connect)
             .map(ConnectModel.self)
@@ -42,16 +41,29 @@ class LoginRepository {
                 .asObservable()
         }
 
-    
+    // 로그인
     func login(request : LoginRequest)-> Observable<LoginResponse> {
         return provider.request(.login(request: request))
             .map(LoginResponse.self)
             .asObservable()
     }
+    
+    // 프로필 설정
     func join(request : JoinRequest)-> Observable<JoinResponse> {
         return provider.request(.join(request: request))
             .map(JoinResponse.self)
             .asObservable()
+    }
+    
+    // 탈퇴
+    func leave(request : LeaveRequest)-> Observable<LeaveResponse> {
+        return provider.request(.leave(request: request))
+            .map(LeaveResponse.self)
+            .asObservable()
+            .catch { error -> Observable<LeaveResponse> in
+                           print("Leave request failed: \(error.localizedDescription)")
+                           throw error
+                       }
     }
 
 }

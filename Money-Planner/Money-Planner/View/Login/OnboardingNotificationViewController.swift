@@ -129,16 +129,20 @@ class OnboardingNotificationViewController: UIViewController {
         //알림 수신 설정
         //홈으로 이동
         print("알림 수신 설정")
-        let vc = HomeViewController()
-        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(vc, animated: false)
+        // 홈화면으로 이동
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            sceneDelegate.moveToHome()
+        }
     }
     
     @objc func denyBtnPressed() {
         //알림 거부 설정
         //홈으로 이동
         print("알림 거부 설정")
-        let vc = HomeViewController()
-        (UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate)?.changeRootVC(vc, animated: false)
+        // 홈화면으로 이동
+        if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
+            sceneDelegate.moveToHome()
+        }
     }
     
 }

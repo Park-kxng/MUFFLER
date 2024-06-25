@@ -157,7 +157,7 @@ class LoginViewModel {
                     if let result = response.result {
                         if let tokenInfo = result.tokenInfo, let newMember = result.newMember {
                             // 토큰 업데이트
-                            TokenManager.shared.handleLoginSuccess(accessToken: tokenInfo.accessToken, refreshToken: tokenInfo.accessToken )
+                            TokenManager.shared.handleLoginSuccess(accessToken: tokenInfo.accessToken, refreshToken: tokenInfo.refreshToken )
                             
                             // idToken과 socialType 저장
                             TokenManager.shared.saveIdTokenAndSocialType(idToken: idToken, socialType: socialType)
@@ -191,8 +191,9 @@ class LoginViewModel {
             .disposed(by: disposeBag)
     }
     
-    // 탈퇴 함수
-    func leave( socialType: SocialType, reason:String, authenticationCode : String) -> Void{
+    // 탈퇴
+    func leave( socialType: SocialType, reason:String, authenticationCode : String?) -> Void{
+        
         let request = LeaveRequest(socialType: socialType, reason: reason, authenticationCode: authenticationCode)
         loginRepository.leave(request: request)
             .subscribe(onNext: { response in

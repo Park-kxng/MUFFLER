@@ -30,12 +30,13 @@ final class TokenAuthPlugin: PluginType {
 
         switch result {
         case .success(let response):
-            if response.statusCode == 401 {
-                print("[TokenAuthPlugin] Received 401 error, need to refresh token")
-                handleTokenRefresh(target: target, error: .statusCode(response))
-            } else {
-                print("[TokenAuthPlugin] Request succeeded with status code: \(response.statusCode)")
-            }
+            print(response)
+//            if response.statusCode == 401 {
+//                print("[TokenAuthPlugin] Received 401 error, need to refresh token")
+//                handleTokenRefresh(target: target, error: .statusCode(response))
+//            } else {
+//                print("[TokenAuthPlugin] Request succeeded with status code: \(response.statusCode)")
+//            }
         case .failure(let error):
             if let response = error.response, response.statusCode == 401 {
                 print("[TokenAuthPlugin] Received 401 error, need to refresh token")

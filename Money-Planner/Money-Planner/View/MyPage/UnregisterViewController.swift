@@ -17,8 +17,8 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
     private var UserName: String?
     var completeCheck = compeleBtnCheck()
     var currTextSize : Int?
-    private let viewModel = LoginViewModel()
-    private let disposeBag = DisposeBag()
+    let viewModel = LoginViewModel()
+    let disposeBag = DisposeBag()
     private lazy var headerView = HeaderView(title: "")
 
     private var completeButton = MainBottomBtn(title: "탈퇴하기")
@@ -414,7 +414,7 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
     private func proceedWithUnregister(idToken: String) {
         if let socialType = TokenManager.shared.socialType, let reason = reasonTextField.text {
             print(idToken, socialType, reason)
-            viewModel.leave(socialType: socialType, reason: reason, authenticationCode: idToken)
+            viewModel.leave(socialType: .apple, reason: reason, authenticationCode: idToken)
             dismiss(animated: true)
         }
         
@@ -424,10 +424,19 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
 
 extension UnregisterViewController: UnregisterPopupViewDelegate {
     func UnregisterpopupChecked() {
-        print("탈퇴하기 완료")
+        print("탈퇴하기 선택")
+        if  TokenManager.shared.socialType == .apple {
+            // Apple ID 인증 요청 후
+            requestAppleAuthorization()
+        }else{
+            if let reason = reasonTextField.text {
+                // 카카오 탈퇴 실행
+                viewModel.leave(socialType: .kakao, reason: reason, authenticationCode: nil )
+                dismiss(animated: true)
+            }
+            
+        }
         
-        // Apple ID 인증 요청 후
-        requestAppleAuthorization()
     }
 }
 

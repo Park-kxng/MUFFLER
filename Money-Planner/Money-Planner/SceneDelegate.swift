@@ -20,6 +20,9 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
      func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
          // UIWindowScene 유효성 검사
          guard let windowScene = (scene as? UIWindowScene) else { return }
+//        TokenManager.shared.clearTokens() // 토큰 삭제
+
+//         TokenManager.shared.handleLoginSuccess(accessToken: "test", refreshToken: TokenManager.shared.refreshToken ?? "")
          window = UIWindow(windowScene: windowScene)
          checkAndRefreshToken() // 토큰 확인 후 화면 이동 로직 진행
          

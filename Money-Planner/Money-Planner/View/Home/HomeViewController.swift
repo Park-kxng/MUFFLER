@@ -236,7 +236,6 @@ extension HomeViewController{
                 if(data?.dailyList != nil){
                     self.dailyList = data!.dailyList!
                 }
-                
                 DispatchQueue.main.async {
                     self.reloadUI()
                 }
@@ -388,17 +387,14 @@ extension HomeViewController{
                 DispatchQueue.main.async {
                     self.setupCategoryView()
                 }
-                
-                
             case .failure(.failure(message: let message)):
-                print(message)
+                print("fetchCategoryList failure: \(message)")
             case .failure(.networkFail(let error)):
-                print(error)
-                print("networkFail in loginWithSocialAPI")
+                print("fetchCategoryList networkFail: \(error)")
             }
         }
     }
-    
+
     // 목표 리스트에서 목표 바꿨을때
     func fetchChangeGoalData(goalId : Int){
         self.loading = true

@@ -30,12 +30,13 @@ extension RoutineAPI : BaseAPI {
         }
     }
     
-    public var headers: [String: String]? {
-        if let accessToken = TokenManager.shared.accessToken {
-            print("토큰 불러오기 성공")
-            return ["Authorization": "Bearer \(accessToken)"]
-        } else {
-            return nil
-        }
+    public var headers: [String : String]? {
+           return ["Content-type": "application/json"]
+    }
+}
+
+extension RoutineAPI : AuthenticatedAPI {
+    var requiresAuthentication: Bool {
+        return true
     }
 }

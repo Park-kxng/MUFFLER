@@ -402,6 +402,7 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
             proceedWithUnregister(idToken: idToken)
         }
     }
+
     
     func authorizationController(controller: ASAuthorizationController, didCompleteWithError error: Error) {
         print("Authorization failed: \(error.localizedDescription)")
@@ -414,8 +415,10 @@ class UnregisterViewController: UIViewController,UITextFieldDelegate,UITextViewD
     private func proceedWithUnregister(idToken: String) {
         if let socialType = TokenManager.shared.socialType, let reason = reasonTextField.text {
             print(idToken, socialType, reason)
-            viewModel.leave(socialType: .apple, reason: reason, authenticationCode: idToken)
-            dismiss(animated: true)
+            //dismiss(animated: true)
+            
+            viewModel.leave(socialType: .apple, reason: reason, authenticationCode: idToken, viewController: self)
+
         }
         
     }
@@ -431,7 +434,7 @@ extension UnregisterViewController: UnregisterPopupViewDelegate {
         }else{
             if let reason = reasonTextField.text {
                 // 카카오 탈퇴 실행
-                viewModel.leave(socialType: .kakao, reason: reason, authenticationCode: nil )
+                viewModel.leave(socialType: .kakao, reason: reason, authenticationCode: nil ,viewController: self)
                 dismiss(animated: true)
             }
             

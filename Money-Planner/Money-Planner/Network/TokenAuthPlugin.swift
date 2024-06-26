@@ -1,7 +1,6 @@
 import Moya
 import RxSwift
 import Foundation
-
 final class TokenAuthPlugin: PluginType {
     private let tokenManager = TokenManager.shared
     private let lock = NSLock()
@@ -17,7 +16,6 @@ final class TokenAuthPlugin: PluginType {
             print("[TokenAuthPlugin] No access token available")
         }
 
-        // Print the request URL
         if let url = request.url {
             print("[TokenAuthPlugin] Preparing request for URL: \(url.absoluteString)")
         }
@@ -30,19 +28,20 @@ final class TokenAuthPlugin: PluginType {
 
         switch result {
         case .success(let response):
-            print(response)
-//            if response.statusCode == 401 {
-//                print("[TokenAuthPlugin] Received 401 error, need to refresh token")
-//                handleTokenRefresh(target: target, error: .statusCode(response))
-//            } else {
-//                print("[TokenAuthPlugin] Request succeeded with status code: \(response.statusCode)")
-//            }
+            print("[TokenAuthPlugin] Request succeeded with status code: \(response.statusCode)")
+            if response.statusCode == 401 {
+                print("[TokenAuthPlugin] Received 401 error, need to refresh token")
+                handleTokenRefresh(target: target, error: .statusCode(response))
+            }
         case .failure(let error):
+            print("[TokenAuthPlugin] Request failed with error: \(error)")
             if let response = error.response, response.statusCode == 401 {
                 print("[TokenAuthPlugin] Received 401 error, need to refresh token")
                 handleTokenRefresh(target: target, error: error)
+            } else if case .underlying(let nsError as NSError, _) = error, nsError.domain == NSURLErrorDomain, nsError.code == NSURLErrorCancelled {
+                print("[TokenAuthPlugin] Request was explicitly cancelled")
             } else {
-                print("[TokenAuthPlugin] Request failed with error: \(error)")
+                print("[TokenAuthPlugin] Other error occurred: \(error)")
             }
         }
     }
@@ -53,7 +52,6 @@ final class TokenAuthPlugin: PluginType {
         defer { lock.unlock() }
 
         requestsToRetry.append((target, { result in
-            // Retry logic
             let provider = MoyaProvider<MultiTarget>(plugins: [TokenAuthPlugin()])
             provider.request(MultiTarget(target)) { result in
                 print("[TokenAuthPlugin] Retrying original request")
@@ -64,7 +62,6 @@ final class TokenAuthPlugin: PluginType {
             isRefreshing = true
             print("[TokenAuthPlugin] Refreshing token...")
 
-            // Call to refresh token
             let loginViewModel = LoginViewModel()
             loginViewModel.refreshAccessTokenIfNeeded()
                 .subscribe(onNext: { [weak self] success in
@@ -106,4 +103,3 @@ final class TokenAuthPlugin: PluginType {
         }
     }
 }
-

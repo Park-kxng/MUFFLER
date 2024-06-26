@@ -16,4 +16,24 @@ extension UIViewController {
             self.present(alertController, animated: true, completion: nil)
         }
     }
+    // 로딩화면 보여주기
+    func showLoading() {
+            let loadingView = UIView(frame: self.view.bounds)
+            loadingView.backgroundColor = UIColor(white: 0, alpha: 0.5)
+            loadingView.tag = 999
+            
+            let activityIndicator = UIActivityIndicatorView(style: .large)
+            activityIndicator.center = loadingView.center
+            activityIndicator.startAnimating()
+            
+            loadingView.addSubview(activityIndicator)
+            self.view.addSubview(loadingView)
+        }
+    
+    // 로딩화면 취소하기
+    func hideLoading() {
+        if let loadingView = self.view.viewWithTag(999) {
+            loadingView.removeFromSuperview()
+        }
+    }
 }

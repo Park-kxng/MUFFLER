@@ -192,40 +192,57 @@ class LoginViewModel {
     }
     
     // 탈퇴
-    func leave( socialType: SocialType, reason:String, authenticationCode : String?) -> Void{
-        
+    func leave(socialType: SocialType, reason: String, authenticationCode: String?, viewController: UIViewController) -> Void {
+        print("탈퇴 요청 시작: SocialType: \(socialType), reason: \(reason), authenticationCode: \(String(describing: authenticationCode))")
+
         let request = LeaveRequest(socialType: socialType, reason: reason, authenticationCode: authenticationCode)
+        
+        // 로딩 화면 표시
+        viewController.showLoading()
         loginRepository.leave(request: request)
             .subscribe(onNext: { response in
-                print("결과",response)
+                // 로딩 화면 숨김
+               DispatchQueue.main.async {
+                   viewController.hideLoading()
+               }
+                print("탈퇴 결과:", response)
                 if response.isSuccess == false {
                     DispatchQueue.main.async {
                         if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
                            let topViewController = windowScene.windows.first?.rootViewController {
-                            
+                            let alertController = UIAlertController(title: "탈퇴 실패", message: response.message ?? "알 수 없는 오류가 발생했습니다.", preferredStyle: .alert)
+                            alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                            topViewController.present(alertController, animated: true, completion: nil)
                         }
                     }
-                }else{
+                } else {
+                    TokenManager.shared.clearTokens()
                     // 로그인 화면으로 이동
                     if let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate {
                         sceneDelegate.moveToLogin()
                     }
-                    
                 }
             }, onError: { error in
+                // 로딩 화면 숨김
+                DispatchQueue.main.async {
+                    viewController.hideLoading()
+                }
                 // 오류가 발생한 경우에 대한 처리를 수행합니다.
-                print(error)
+                print("탈퇴 요청 중 오류 발생:", error)
                 print("Error refreshing access token: \(error.localizedDescription)")
                 // Display an alert
-                           DispatchQueue.main.async {
-                               if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
-                                  let topViewController = windowScene.windows.first?.rootViewController {
-                                   let alertController = UIAlertController(title: "탈퇴 실패", message: "탈퇴를 실패하였습니다. 다시 시도해주세요.", preferredStyle: .alert)
-                                   alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
-                                   topViewController.present(alertController, animated: true, completion: nil)
-                               }
-                           }
+                DispatchQueue.main.async {
+                    if let windowScene = UIApplication.shared.connectedScenes.first as? UIWindowScene,
+                       let topViewController = windowScene.windows.first?.rootViewController {
+                        let alertController = UIAlertController(title: "탈퇴 실패", message: "탈퇴를 실패하였습니다. 다시 시도해주세요.", preferredStyle: .alert)
+                        alertController.addAction(UIAlertAction(title: "확인", style: .default, handler: nil))
+                        topViewController.present(alertController, animated: true, completion: nil)
+                    }
+                }
             })
             .disposed(by: disposeBag)
     }
+
+
+
 }

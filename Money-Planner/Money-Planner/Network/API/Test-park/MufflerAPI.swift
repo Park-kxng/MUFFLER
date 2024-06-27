@@ -54,7 +54,13 @@ enum MufflerAPI {
 
 extension MufflerAPI: TargetType {
     var baseURL: URL {
-        return URL(string: "https://muffler.world")!
+        if let baseURLString = Bundle.main.object(forInfoDictionaryKey: "BaseURL") as? String,
+           let baseURL = URL(string: "https://" + baseURLString) {
+            return baseURL
+        } else {
+            fatalError("Invalid or missing BaseURL in Info.plist")
+        }
+
     }
 
     var path: String {

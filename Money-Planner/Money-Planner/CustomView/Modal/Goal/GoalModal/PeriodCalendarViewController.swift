@@ -639,28 +639,6 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
     }
     
     
-    //날짜 배경색
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillDefaultColorFor date: Date) -> UIColor? {
-        
-//        guard let start = startDate, let end = endDate else {
-//            // If only one date is selected, check if it's the start or end date and color it accordingly.
-//            if let startDate = startDate, date == startDate {
-//                return .mpMainColor
-//            }
-//            return nil // No special coloring for other dates
-//        }
-//        
-//        if date == start || date == end {
-//            // Start and end dates have the mpMainColor
-//            calendar.appearance.titleFont = UIFont(name: "SFProDisplay-Bold", size: 20) ?? UIFont.systemFont(ofSize: 20)
-//            return .mpMainColor
-//        } else if date > start && date < end {
-//            // Dates in between have the mpCalendarHighLight color
-//            return .mpCalendarHighLight
-//        }
-        return nil
-    }
-    
     //날짜 글자 색
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
         
@@ -755,25 +733,6 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
         setUnselectableDateRanges(ranges)
     }
     
-    //    func generateUnselectableDateRanges() {
-    //        let dateFormatter = DateFormatter()
-    //        dateFormatter.dateFormat = "yyyy/MM/dd"
-    //
-    //        let range1Start = dateFormatter.date(from: "2024/02/13")!
-    //        let range1End = dateFormatter.date(from: "2024/02/15")!
-    //
-    //        let range2Start = dateFormatter.date(from: "2024/02/18")!
-    //        let range2End = dateFormatter.date(from: "2024/02/25")!
-    //
-    //        unselectableDateRanges = [
-    //            [range1Start, range1End],
-    //            [range2Start, range2End]
-    //        ]
-    //
-    //        // After setting the ranges, tell the calendar to refresh
-    //        calendar.reloadData()
-    //    }
-    
     // 애니메이션으로 텍스트를 변경하는 함수
     func changeLabelWithAnimation(_ label: UILabel, to newText: String, duration: TimeInterval = 0.1) {
         UIView.transition(with: label, duration: duration, options: .transitionCrossDissolve, animations: {
@@ -781,19 +740,6 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
         }, completion: nil)
     }
     
-    
-}
-
-
-extension PeriodCalendarModal {
-    
-    //    // 특정 날짜의 모서리 둥글기
-    //    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderRadiusFor date: Date) -> CGFloat {
-    //        if let start = startDate, let end = endDate {
-    //
-    //        }
-    //        return 1.0 // 기본값은 둥근 모서리
-    //    }
     
 }
 
@@ -921,70 +867,6 @@ extension PeriodCalendarModal: MonthSelectionDelegate {
         calendar.setCurrentPage(date, animated: true)
     }
 }
-
-
-
-//@objc func monthButtonTapped() {
-//    // Container view for the date picker and toolbar
-//    containerView = UIView()
-//    containerView!.backgroundColor = .white
-//    containerView!.layer.cornerRadius = 12
-//
-//    containerView!.layer.shadowColor = UIColor.mpBlack.cgColor
-//    containerView!.layer.shadowOpacity = 0.5
-//    containerView!.layer.shadowOffset = CGSize(width: 0, height: 2)
-//    containerView!.layer.shadowRadius = 8
-//
-//    containerView!.translatesAutoresizingMaskIntoConstraints = false
-//    view.addSubview(containerView!)
-//
-//    // Date Picker setup
-//    let datePicker = UIDatePicker()
-//    datePicker.datePickerMode = .date
-//    if #available(iOS 13.4, *) {
-//        datePicker.preferredDatePickerStyle = .wheels
-//    }
-//    datePicker.translatesAutoresizingMaskIntoConstraints = false
-//
-//    // Done Button setup
-//    let doneButton = UIButton()
-//    doneButton.layer.cornerRadius = 5
-//    doneButton.backgroundColor = .mpMainColor
-//    doneButton.setTitle("완료", for: .normal)
-//    doneButton.setTitleColor(.mpWhite, for: .normal)
-//    doneButton.translatesAutoresizingMaskIntoConstraints = false
-//    doneButton.addTarget(self, action: #selector(dismissDatePicker), for: .touchUpInside)
-//
-//    containerView!.addSubview(datePicker)
-//    containerView!.addSubview(doneButton)
-//
-//    NSLayoutConstraint.activate([
-//        containerView!.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//        containerView!.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-//        containerView!.widthAnchor.constraint(equalToConstant: 300),
-//        containerView!.heightAnchor.constraint(equalToConstant: 250),
-//
-//        datePicker.topAnchor.constraint(equalTo: containerView!.topAnchor, constant: 20),
-//        datePicker.leadingAnchor.constraint(equalTo: containerView!.leadingAnchor, constant: 10),
-//        datePicker.trailingAnchor.constraint(equalTo: containerView!.trailingAnchor, constant: -10),
-//
-//        doneButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 20),
-//        doneButton.heightAnchor.constraint(equalToConstant: 44),
-//        doneButton.leadingAnchor.constraint(equalTo: containerView!.leadingAnchor, constant: 10),
-//        doneButton.trailingAnchor.constraint(equalTo: containerView!.trailingAnchor, constant: -10),
-//        doneButton.bottomAnchor.constraint(equalTo: containerView!.bottomAnchor, constant: -20)
-//    ])
-//
-//    // Only show month and year in the date picker
-//    if #available(iOS 13.4, *) {
-//        datePicker.locale = Locale(identifier: "en_GB")
-//        datePicker.datePickerMode = .date
-//        datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
-//    } else {
-//        // Fallback for earlier versions
-//    }
-//}
-
 
 class SelectDatesCustomCalendarCell: FSCalendarCell {
     

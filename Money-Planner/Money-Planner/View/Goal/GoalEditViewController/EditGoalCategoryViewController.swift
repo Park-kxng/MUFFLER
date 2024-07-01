@@ -72,20 +72,20 @@ extension EditGoalCategoryViewController: MoneyAmountTextCellDelegate {
         var categoryGoalSumOver = false
         
         // Assuming categoryGoalMaker array has elements for each category with corresponding section
-        if categoryGoalMaker.count > indexPath.section {
+        if data.count > indexPath.section {
             // Update the category's budget with the new value
-            categoryGoalMaker[indexPath.section].categoryBudget = newValueNumeric
+            data[indexPath.section].cost = newValueNumeric
         }
         
         // Update sumAmount
-        sumAmount = categoryGoalMaker.reduce(0) { $0 + ($1.categoryBudget ?? 0 ) }
+        sumAmount = data.reduce(0) { $0 + ($1.cost ?? 0 ) }
         
         //총합 업데이트 및 디스플레이 반영
         updateSumAmountDisplay()
         
         //moneyAmountTextCell 경고문 변경
         if let cell = tableView.cellForRow(at: indexPath) as? MoneyAmountTextCell {
-            if let ga = goalCreationManager.goalBudget {
+            if let ga = goalBudget {
                 if ga < newValueNumeric {
                     categoryGoalOver = true
                     categoryGoalSumOver = true
@@ -103,7 +103,7 @@ extension EditGoalCategoryViewController: MoneyAmountTextCellDelegate {
         }
         
         //progressBar 업데이트
-        progressBar.changeUsedAmt(usedAmt: sumAmount, goalAmt: goalCreationManager.goalBudget!)
+        progressBar.changeUsedAmt(usedAmt: sumAmount, goalAmt: goalBudget!)
         
         //btmBtn 활성화 결정
         //checkForDuplicateCategoriesAndUpdateUI()
@@ -119,28 +119,16 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
         // 직접 추가 완료 후
     }
     
-    private func bindViewModel() {
-        // goalDetailRelay 구독을 통해 초기 카테고리 목표 데이터 설정
-//        goalEditViewModel.goalDetailRelay
-//            .subscribe(onNext: { [weak self] goalDetail in
-//                self?.data = goalDetail.categoryGoals.map { categoryGoal in
-//                    GoalCategory(
-//                        categoryName: categoryGoal.name,
-//                        categoryIcon: categoryGoal.iconName,
-//                        categoryId: categoryGoal.categoryId,
-//                        cost: categoryGoal.budget
-//                    )
-//                }
-//                self?.tableView.reloadData()
-//            }).disposed(by: disposeBag)
-    }
-    
     ///카테고리 셀을 만들기 위함.
     weak var delegate: CategorySelectionDelegate?
     
     // api 연결
     let viewModel = MufflerViewModel()
+    
     let goalEditViewModel = GoalEditViewModel.shared
+    let goalDetailViewModel = GoalDetailViewModel.shared
+    
+    let goalBudget = GoalEditViewModel.shared.goalBudget
     let disposeBag = DisposeBag()
     
     // 카테고리 내용 저장
@@ -148,6 +136,7 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
         var categoryName : String
         var categoryIcon : String
         var categoryId : Int64
+        var categoryGoalId : Int64?
         var cost : Int64?
     }
     
@@ -155,46 +144,47 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
     
     var currentCellIndex : Int = 0
     //화면 구성 요소
-    var header = HeaderView(title: "")
     var descriptionView = DescriptionView(text: "카테고리별 목표 금액을\n입력해주세요", alignToCenter: false)
     var progressBar = GoalProgressBar(goalAmt: 300000, usedAmt: 0) // 임시 값으로 초기화
     let totalCostLabel = MPLabel() //progressBar 안에
     let leftAmountLabel = MPLabel() //progressBar 안에
     var verticalStack = UIStackView()
     var tableView : UITableView!
-    var btmBtn = MainBottomBtn(title: "다음")
+    var btmBtn = MainBottomBtn(title: "수정")
     
     var selectedIndexPath : IndexPath?
     
     //카테고리 목표금액의 합
     var sumAmount : Int64 = 0
     
-    //카테고리별 목표
-    var categoryGoalMaker : [Category] = [] //같은 카테고리 목표는 모달에서 막아야함.
-    /// categoryGoalMaker를 인자로 넘겨주고,
-    /// 여기에 겹치는 id를 가진 버튼만 전부 disable 시킬 수 있게 만들어야함.
-    
     //카테고리 셀의 수 - 1의 값
     var categoryCount : Int = 1
     
-    //목표 생성용
-    private let goalCreationManager = GoalCreationManager.shared // 목표 생성용
     
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .systemBackground
         
-        setupHeader()
+        if(goalEditViewModel.categoryGoals != nil){
+            let categoryGoals = goalEditViewModel.categoryGoals!
+            let categoryGoalsDetails = goalDetailViewModel.goalCateogoryReports!
+            
+            categoryCount = categoryGoals.count == 0 ? 1 :categoryGoals.count + 1
+            
+            for i in 0..<goalEditViewModel.categoryGoals!.count{
+                
+                let category : GoalCategory = GoalCategory(categoryName: categoryGoalsDetails[i].categoryName, categoryIcon: categoryGoalsDetails[i].categoryIcon, categoryId: categoryGoals[i].categoryId, categoryGoalId: categoryGoals[i].categoryGoalId , cost: categoryGoals[i].categoryBudget)
+                data.append(category)
+                
+                sumAmount = categoryGoals[i].categoryBudget + sumAmount
+            }
+            
+            progressBar.changeUsedAmt(usedAmt: sumAmount, goalAmt: goalBudget!)
+        }
         setupDescriptionView()
         setupStackView()
         setupBtmBtn()
         setupTableView()
-        bindViewModel()
-        // 기본 네비게이션 바의 뒤로 가기 버튼 숨기기
-        navigationItem.hidesBackButton = true
-        navigationItem.leftBarButtonItem = nil
-        
-        btmBtn.isEnabled = false
     }
     
     // 여기서부터 setup 메서드들을 정의합니다.
@@ -209,31 +199,19 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
                let categoryBudgetText = amountCell.textField.text,
                let categoryBudget = Int64(categoryBudgetText.replacingOccurrences(of: ",", with: "")) {
                 
+                
+                let categoryGoalId = data[section].categoryGoalId ?? -1
+                
                 //이 부분 무조건 수정해야함
-                let categoryGoal = CategoryGoal(categoryGoalId: -1, categoryId: categoryId, categoryBudget: categoryBudget)
+                let categoryGoal = CategoryGoal(categoryGoalId: categoryGoalId, categoryId: categoryId, categoryBudget: categoryBudget)
+                
                 categoryGoals.append(categoryGoal)
             }
         }
         
-        // Add category goals to the goalCreationManager
-       goalCreationManager.addCategoryGoals(categoryGoals: categoryGoals)
+        goalEditViewModel.updateGoalCategoryGoals(goalId: goalEditViewModel.goalId!, newCategoryGoals: categoryGoals)
         
-        // Proceed to the next view controller or show an error/alert if needed
-        let goalDailyVC = GoalDailyViewController()
-        navigationController?.pushViewController(goalDailyVC, animated: true)
-    }
-    
-    private func setupHeader() {
-        header.translatesAutoresizingMaskIntoConstraints = false
-        header.addBackButtonTarget(target: self, action: #selector(backButtonTapped), for: .touchUpInside)
-        view.addSubview(header)
-        
-        NSLayoutConstraint.activate([
-            header.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor),
-            header.leadingAnchor.constraint(equalTo: view.leadingAnchor),
-            header.trailingAnchor.constraint(equalTo: view.trailingAnchor),
-            header.heightAnchor.constraint(equalToConstant: 60) // 예시 높이값
-        ])
+        navigationController?.popViewController(animated: true)
     }
     
     @objc private func backButtonTapped() {
@@ -246,7 +224,7 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
         view.addSubview(descriptionView)
         
         NSLayoutConstraint.activate([
-            descriptionView.topAnchor.constraint(equalTo: header.bottomAnchor, constant: 30),
+            descriptionView.topAnchor.constraint(equalTo: view.safeAreaLayoutGuide.topAnchor, constant: 30),
             descriptionView.leadingAnchor.constraint(equalTo: view.leadingAnchor, constant: 20),
             descriptionView.trailingAnchor.constraint(equalTo: view.trailingAnchor, constant: -20)
         ])
@@ -368,38 +346,21 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
         return section == categoryCount - 1 ? 1 : 2
     }
     
-//    //헤더 텍스트 지정
-//    func tableView(_ tableView: UITableView, titleForHeaderInSection section: Int) -> String? {
-//        return "카테고리 목표 \(section + 1)"
-//    }
-    
     //헤더 뷰 지정 (헤더 텍스트보다 발전)
     func tableView(_ tableView: UITableView, viewForHeaderInSection section: Int) -> UIView? {
         guard let headerView = tableView.dequeueReusableHeaderFooterView(withIdentifier: CustomSectionHeaderView.identifier) as? CustomSectionHeaderView else { return nil }
         // 삭제 없데이트
         headerView.titleLabel.text = "카테고리 목표 \(section + 1)"
-        headerView.onDeleteButtonTapped = { [weak self] in
+        headerView.onDeleteButtonTapped = {
+            // 삭제 버튼 눌렀을 때 처리
+            [weak self] in
             guard let self = self else { return }
-               // 배열 범위 확인
-//            if section < self.data.count {
-//                // 데이터 모델에서 해당 섹션 삭제
-//                self.data.remove(at: section)
-//
-//                // 테이블 뷰에서 섹션 삭제
-//                self.tableView.performBatchUpdates({
-//                    self.tableView.deleteSections(IndexSet(integer: section), with: .automatic)
-//                }) { completed in
-//                    // 필요한 추가 작업 수행, 예를 들어 다른 섹션의 인덱스 업데이트 등
-//                    tableView.reloadData() // 전체 테이블 뷰를 새로고침하여 헤더 타이틀 업데이트
-//
-//                }
-//            }
-            //금액 빼고
-            sumAmount -= categoryGoalMaker[section].categoryBudget ?? 0
+
+            sumAmount -= data[section].cost ?? 0
             //초기화 시키고
             self.resetCategorySection(section)
             //삭제
-            self.categoryGoalMaker.remove(at: section)
+            self.data.remove(at: section)
             self.categoryCount -= 1
             
             // 섹션 삭제 후 테이블 뷰 업데이트
@@ -411,7 +372,7 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
             }
             
             updateSumAmountDisplay()
-            progressBar.changeUsedAmt(usedAmt: sumAmount, goalAmt: goalCreationManager.goalBudget!)
+            progressBar.changeUsedAmt(usedAmt: sumAmount, goalAmt: goalBudget!)
             
             //btmBtn 활성화 체크
             //checkForDuplicateCategoriesAndUpdateUI()
@@ -433,19 +394,18 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
     
     //섹션, row 별 셀 종류 지정
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        print(currentCellIndex)
         currentCellIndex = indexPath.section
         print(data)
         if indexPath.section == categoryCount - 1 {
             // 마지막 섹션에 GoalCreateCategoryBtnCell 배치
             let cell = tableView.dequeueReusableCell(withIdentifier: "GoalCreateCategoryBtnCell", for: indexPath) as! GoalCreateCategoryBtnCell
-            cell.onAddButtonTapped = { [weak self] in
+            cell.onAddButtonTapped = {
+                // add 버튼 눌렀을 때
+                [weak self] in
                 guard let self = self else { return }
                 self.categoryCount += 1
                 // 마지막 섹션 바로 앞에 새로운 GoalCategoryTableViewCell 섹션 추가
                 self.tableView.insertSections([self.categoryCount - 2], with: .automatic)
-                let newCategory = Category(id: 0, name: "")// TODO : id는 나중에
-                self.categoryGoalMaker.append(newCategory)
                 
                 // 빈 데이터 넣기
                 let add = GoalCategory(categoryName: "", categoryIcon: "", categoryId: 0, cost: 0)
@@ -456,7 +416,6 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
             return cell
         } else {
             if indexPath.row == 0 {
-                // "GoalCategoryTableViewCell" 식별자를 사용하여 셀을 재사용 대기열에서 가져옴
                 let cell = tableView.dequeueReusableCell(withIdentifier: "GoalCategoryTableViewCell", for: indexPath) as! GoalCategoryTableViewCell
                 
                 // 현재 섹션의 인덱스가 data 리스트의 크기보다 작은 경우, 즉 선택된 카테고리 정보가 있는 경우
@@ -473,21 +432,21 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
                 cell.isModified = false
                 cell.categoryModalBtn.addTarget(self, action: #selector(categoryModalButtonTapped), for: .touchUpInside)
                 return cell
-            } else {
             }
                 // Dequeue MoneyAmountTextCell for amount input
                 let cell = tableView.dequeueReusableCell(withIdentifier: "MoneyAmountTextCell", for: indexPath) as! MoneyAmountTextCell
                 if indexPath.section < data.count {
                     // 이미 추가된 금액이 있는 경우
                     let dataIndex = data[indexPath.section]
-                    cell.configureCell(image: UIImage(named: "icon_Wallet"), placeholder: "목표 금액", cost: String(dataIndex.cost ?? 0))
+                    cell.configureCell(image: UIImage(named: "icon_Wallet"), placeholder: "목표 금액", cost: dataIndex.cost?.formattedWithSeparator() ?? "")
+                    cell.amountLabel.text = dataIndex.cost?.formattedWithSeparator()
                 
                 }else{
                     
                 cell.textField.text = nil
                 cell.amountLabel.text = ""
                 cell.configureCell(image: UIImage(named: "icon_Wallet"), placeholder: "목표 금액", cost: "")
-                            }
+                }
             cell.delegate = self
             
             return cell
@@ -500,12 +459,6 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
         return 84
     }
-    
-    //선택된 셀을 늘 추적 => 버튼이 눌렸다고 셀이 선택된건 아니다.
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        self.selectedIndexPath = indexPath
-//        print("선택된 셀의 섹션: \(indexPath.section), 행: \(indexPath.row)")
-//    }
     
     @objc func categoryModalButtonTapped(sender: UIButton) {
         // sender의 위치를 기반으로 indexPath를 찾음.
@@ -547,7 +500,7 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
     //총금액 알려주는 구간 업데이트
     private func updateSumAmountDisplay() {
         let formattedSumAmount = formatNumber(sumAmount)
-        let goalBudget = goalCreationManager.goalBudget ?? 0
+        let goalBudget = goalBudget ?? 0
         let formattedGoalAmount = formatNumber(goalBudget)
         
         let text = "\(formattedSumAmount)원 / \(formattedGoalAmount)원"
@@ -589,8 +542,8 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
     
     func resetCategorySection(_ section: Int) {
         // 데이터 모델 초기화
-        let resetCategory = Category(id: 0, name: "")
-        categoryGoalMaker[section] = resetCategory
+        let resetCategory = GoalCategory(categoryName: "", categoryIcon: "", categoryId: 0)
+        data[section] = resetCategory
         
         // 섹션 리로드 전에 셀 내용 초기화
         if let categoryCell = tableView.cellForRow(at: IndexPath(row: 0, section: section)) as? GoalCategoryTableViewCell {
@@ -632,7 +585,7 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
         }
         
         //목표금액 언더인가 체크
-        if sumAmount > goalCreationManager.goalBudget! {
+        if sumAmount > goalBudget! {
             allConditionsMet = false
         }
         
@@ -641,25 +594,6 @@ class EditGoalCategoryViewController: UIViewController, UITableViewDelegate, UIT
         
         return allConditionsMet
     }
-    
-    //    func updateCellsForGoalAmountChange() {
-    //        // goalBudget가 goalCreationManager.goalBudget보다 작거나 같은지 확인
-    //        let isGoalAmountExceeded = sumAmount > goalCreationManager.goalBudget!
-    //
-    //        for section in 0..<categoryCount - 1 {  // 마지막 "추가" 섹션은 제외
-    //            if let amountCell = tableView.cellForRow(at: IndexPath(row: 1, section: section)) as? MoneyAmountTextCell {
-    //                // 각 MoneyAmountTextCell의 상태 업데이트
-    //                if !isGoalAmountExceeded {
-    //                    // 개별 카테고리 금액이 목표 금액을 초과하지 않는 경우
-    //                    amountCell.categoryGoalOver = false
-    //                    amountCell.categoryGoalSumOver = false
-    //                }
-    //            }
-    //        }
-    //
-    //        // 모든 조건이 충족되는지 확인하고 버튼 상태 업데이트
-    //        checkAllSectionsAndEnableButton()
-    //    }
     
     //같은 이름의 카테고리가 있는지 확인
     func checkForDuplicateCategoriesAndUpdateUI() {

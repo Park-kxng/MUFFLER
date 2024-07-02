@@ -19,9 +19,10 @@ extension GoalDailyViewController: GoalAmountModalViewControllerDelegate {
         // Update the amountInfo dictionary and reload the calendar
         amountInfo[dateKey] = newAmount
         isEdited[dateKey] = true
-        sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
         
         refreshAmountInfo(startDate: goalCreationManager.startDate!.toDate ?? Date(), endDate: goalCreationManager.endDate!.toDate ?? Date())
+        
+        sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
         
         customCalendarView.calendar.reloadData()
         
@@ -85,7 +86,6 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         setupWeekdayLabels()
         
         btmBtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
-//        btmBtn.isEnabled = true
          
         self.tabBarController?.tabBar.isHidden = true
         
@@ -207,6 +207,15 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
     }
     
     @objc private func btmButtonTapped() {
+        
+        if(sumAmount != goalCreationManager.goalBudget){
+            let alert = UIAlertController(title: "오류", message: "목표금액의 합이\n 최종예산과 일치하지 않습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            self.present(alert, animated: true){
+                return
+            }
+        }
+        
         let goalFinalVC = GoalFinalViewController()
         let budgets = convertToInt64Array(from: amountInfo)
         goalCreationManager.addDailyBudgets(budgets: budgets)

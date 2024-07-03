@@ -332,21 +332,6 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
             currentDate = calendar.date(byAdding: .day, value: 1, to: currentDate)!
         }
         refreshAmountInfo(startDate: start, endDate: end)
-        
-        
-        // 초기 호출이 정확히 나눠떨어지지 않는 부분 보안하기 위해서 추가
-        var total: Int64 = 0
-        for value in amountInfo.values {
-            if let intValue = Int64(value) {
-                // Add the integer value to the total
-                total += intValue
-            }
-        }
-        
-        let goalBudget = GoalCreationManager.shared.goalBudget
-        if(total != goalBudget){
-            amountInfo[formatDate(start)] = String(Int64(amountInfo[formatDate(start)]!)! + (goalBudget! - total))
-        }
     }
     
     func presentEditModal(for date: Date, with currentAmount: Int64) {
@@ -411,6 +396,32 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
                     }
                 }
             }
+        }
+        
+        var total: Int64 = 0
+        total = convertToInt64Array(from: amountInfo).reduce(0, +)
+
+        if(total != goalBudget){
+
+            // 수정 안 한 것 중 제일 앞에 있는것 찾기
+            var index : String = formatDate(startDate)
+            
+            var current = startDate
+            let calendar = Calendar.current
+            
+            while current <= endDate {
+                let dateString = formatDate(current)
+                
+                if(isEdited[dateString] ?? false){
+                    current = calendar.date(byAdding: .day, value: 1, to: current)!
+                    continue
+                }
+                
+                index = dateString
+                break
+            }
+            
+            amountInfo[index] = String(Int64(amountInfo[index]!)! + (goalBudget! - total))
         }
     }
     

@@ -85,8 +85,6 @@ extension HomeAPI : BaseAPI {
     
     public var headers: [String: String]? {
         return ["Content-type": "application/json"]
-
-       
     }
 }
 

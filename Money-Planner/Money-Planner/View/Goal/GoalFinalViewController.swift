@@ -112,7 +112,7 @@ class GoalFinalViewController : UIViewController{
         goalCreationManager.postContent()
         
         //이게 무슨 코드인가 공부
-        DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + 1) {
             // 3초 후에 실행될 코드
             NotificationCenter.default.post(name: Notification.Name("addGoal"), object: nil)
         }

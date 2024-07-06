@@ -291,7 +291,7 @@ class AskViewController: UIViewController,UITextFieldDelegate,UITextViewDelegate
 
        func textViewDidEndEditing(_ textView: UITextView) {
            if textView.text.isEmpty {
-               textView.text = "Placeholder Text"
+               textView.text = "어떤 내용이 궁금하신가요?" // 수정 .placeholder.text으로 되어 있었음
                textView.textColor = UIColor.lightGray
                completeCheck.contentsWriten = false
                updateCompleteButtonState()

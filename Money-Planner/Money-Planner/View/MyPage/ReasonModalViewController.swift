@@ -142,6 +142,7 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
             if let cell = tableView.cellForRow(at: indexPath) {
                 cell.accessoryType = .checkmark
                 cell.tintColor = .mpMainColor // Change the color of the checkmark
+                cell.textLabel?.textColor = .mpBlack // 텍스트 컬러 업데이트
                 closeButton.isEnabled = true
                 closeButton.backgroundColor = .mpMainColor
                 closeButton.setTitleColor(.mpWhite, for: .normal)

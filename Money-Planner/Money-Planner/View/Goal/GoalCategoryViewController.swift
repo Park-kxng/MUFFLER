@@ -302,11 +302,13 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
 
         let keyboardHeight = keyboardFrame.cgRectValue.height
-        let adjustmentHeight = show ? -keyboardHeight : 0
+        
+        print(keyboardHeight)
+        let adjustmentHeight = show ? -keyboardHeight + 30 : -30.0
 
         if let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
             UIView.animate(withDuration: animationDuration) {
-                self.bottomConstraint?.constant = adjustmentHeight - 30 // 기존 offset을 고려합니다.
+                self.bottomConstraint?.constant = adjustmentHeight
                 self.view.layoutIfNeeded()
             }
         }
@@ -334,7 +336,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
             tableView.topAnchor.constraint(equalTo: verticalStack.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0),
-            tableView.bottomAnchor.constraint(equalTo: btmBtn.topAnchor, constant: -20)
+            tableView.bottomAnchor.constraint(equalTo: btmBtn.topAnchor, constant: -5)
         ])
     }
     

@@ -45,7 +45,7 @@ extension CustomTabBarController : WhichAddModalDelegate{
             self.present(vc, animated: true, completion: nil)
 
         }else{
-            let currentDate = Date().toString()
+            let currentDate = Date().toString(format: "yyyy-MM-dd")
             let vc = EvaluationViewController()
             vc.dateText = currentDate
             vc.isThroughFloatButton = true

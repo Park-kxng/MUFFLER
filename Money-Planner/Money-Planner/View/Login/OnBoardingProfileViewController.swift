@@ -125,7 +125,7 @@ class OnBoardingProfileViewController: UIViewController,UITextFieldDelegate,UIIm
     private let nameLabel : MPLabel = {
         let label = MPLabel()
         label.font = .mpFont14B()
-        label.text = "이름"
+        label.text = "닉네임"
         label.textColor = .mpGray
         return label
     }()

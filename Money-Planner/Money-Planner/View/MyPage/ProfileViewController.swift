@@ -115,7 +115,7 @@ class ProfileViewController: UIViewController,UITextFieldDelegate,UIImagePickerC
     private let nameLabel : MPLabel = {
         let label = MPLabel()
         label.font = .mpFont14B()
-        label.text = "이름"
+        label.text = "닉네임"
         label.textColor = .mpGray
         return label
     }()

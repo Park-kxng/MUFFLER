@@ -59,7 +59,6 @@ class GoalTotalAmountViewController : UIViewController, UITableViewDataSource {
     
     @objc func btmButtonTapped() {
         let modal = WarnAboutUneditableModal()
-        modal.modalPresentationStyle = .popover
         modal.delegate = self
         self.present(modal, animated: true)
     }

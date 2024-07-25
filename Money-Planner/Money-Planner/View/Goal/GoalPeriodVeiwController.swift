@@ -60,7 +60,6 @@ class GoalPeriodViewController : UIViewController, UINavigationControllerDelegat
         findOutPreviousConsumeRecord { [self] canRestore in
             if canRestore {
                 let modal = FoundPreviousConsumeRecordModal(startDate: periodBtn.startDate, endDate: periodBtn.endDate)
-                modal.modalPresentationStyle = .popover
                 modal.delegate = self
                 self.present(modal, animated: true)
             } else {
@@ -121,16 +120,7 @@ class GoalPeriodViewController : UIViewController, UINavigationControllerDelegat
     @objc private func periodBtnTapped() {
         let modal = PeriodCalendarModal()
         modal.delegate = self
-        let navigationController = UINavigationController(rootViewController: modal)
-        navigationController.modalPresentationStyle = .popover
-        // popover 관련 설정을 할 수 있습니다. 예를 들어, 어디서 popover가 나타나야 할지 등을 설정할 수 있습니다.
-        if let popoverController = navigationController.popoverPresentationController {
-//            popoverController.sourceView = self.view // Popover가 나타날 뷰를 지정합니다.
-//            popoverController.sourceRect = CGRect(x: self.view.bounds.midX, y: self.view.bounds.midY, width: 0, height: 0)
-//            popoverController.permittedArrowDirections = [] // 화살표 방향을 없애고 싶을 때 사용합니다.
-        }
-        // 현재 뷰 컨트롤러에서 navigationController를 모달로 표시합니다.
-        self.present(navigationController, animated: true, completion: nil)
+        present(modal, animated: true, completion: nil)
     }
 
 

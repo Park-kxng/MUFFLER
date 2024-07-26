@@ -6,13 +6,13 @@
 //
 
 import UIKit
-protocol ReasonModalDelegate : AnyObject {
-    func reasonChecked (_ reason : String )
+protocol ReasonModalDelegate: AnyObject {
+    func reasonChecked(_ reason: String)
 }
-
 
 class ReasonModalViewController: UIViewController, UITableViewDataSource, UITableViewDelegate {
     weak var delegate: ReasonModalDelegate?
+    
     private let withdrawalReasons = [
         "서비스 이용이 불편해서",
         "목표 달성에 도움이 되지 않아서",
@@ -20,14 +20,16 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
         "개인정보 및 보안 우려",
         "타 서비스로 이동"
     ]
-    private let modalBar : UIView = {
+    
+    private let modalBar: UIView = {
         let view = UIView()
         view.layer.cornerRadius = 8
         view.backgroundColor = .mpLightGray
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
-    private let titleLabel : MPLabel = {
+    
+    private let titleLabel: MPLabel = {
         let label = MPLabel()
         label.text = "탈퇴 사유를 알려주세요"
         label.font = .mpFont20B()
@@ -35,12 +37,12 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
+    
     private let tableView: UITableView = {
         let tableView = UITableView()
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.tableFooterView = UIView()
-        tableView.separatorStyle = .none // Set separator style to none
-        
+        tableView.separatorStyle = .none
         return tableView
     }()
     
@@ -50,7 +52,7 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
         button.setTitle("완료", for: .normal)
         button.titleLabel?.font = .mpFont16B()
         button.backgroundColor = .mpGypsumGray
-        button.setTitleColor(.mpGray, for: .normal) // Adjust color as needed
+        button.setTitleColor(.mpGray, for: .normal)
         button.layer.cornerRadius = 10
         button.isEnabled = false
         return button
@@ -64,9 +66,10 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
         view.translatesAutoresizingMaskIntoConstraints = false
         return view
     }()
+    
     private var selectedIndexPath: IndexPath?
     private var selectedReason: String?
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -92,7 +95,6 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
             titleLabel.trailingAnchor.constraint(equalTo: customModal.trailingAnchor, constant: -16),
             titleLabel.heightAnchor.constraint(equalToConstant: 28),
             
-            
             tableView.topAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: customModal.leadingAnchor),
             tableView.trailingAnchor.constraint(equalTo: customModal.trailingAnchor),
@@ -100,7 +102,7 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
             
             closeButton.leadingAnchor.constraint(equalTo: customModal.leadingAnchor, constant: 16),
             closeButton.trailingAnchor.constraint(equalTo: customModal.trailingAnchor, constant: -16),
-            closeButton.bottomAnchor.constraint(equalTo: customModal.bottomAnchor,constant: -16),
+            closeButton.bottomAnchor.constraint(equalTo: customModal.bottomAnchor, constant: -16),
             closeButton.heightAnchor.constraint(equalToConstant: 50)
         ])
         
@@ -112,17 +114,20 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     @objc private func closeModal() {
-        delegate?.reasonChecked(selectedReason!)
-        dismiss(animated: true, completion: nil)
+        if let selectedReason = selectedReason {
+            delegate?.reasonChecked(selectedReason)
+            dismiss(animated: true, completion: nil)
+        }
     }
-    
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
         return withdrawalReasons.count
     }
+    
     func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
-        return 60.0 // Change the cell height as needed
+        return 60.0
     }
+    
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "Cell", for: indexPath)
         cell.textLabel?.text = withdrawalReasons[indexPath.row]
@@ -133,25 +138,27 @@ class ReasonModalViewController: UIViewController, UITableViewDataSource, UITabl
     }
     
     func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-            // Unselect the previously selected cell
-            if let selectedIndexPath = selectedIndexPath {
-                tableView.cellForRow(at: selectedIndexPath)?.accessoryType = .none
+        // Unselect the previously selected cell
+        if let selectedIndexPath = selectedIndexPath {
+            if let previousCell = tableView.cellForRow(at: selectedIndexPath) {
+                previousCell.accessoryType = .none
+                previousCell.textLabel?.textColor = .mpDarkGray // 이전 셀의 텍스트 색상 복원
             }
-
-            // Select the current cell
-            if let cell = tableView.cellForRow(at: indexPath) {
-                cell.accessoryType = .checkmark
-                cell.tintColor = .mpMainColor // Change the color of the checkmark
-                cell.textLabel?.textColor = .mpBlack // 텍스트 컬러 업데이트
-                closeButton.isEnabled = true
-                closeButton.backgroundColor = .mpMainColor
-                closeButton.setTitleColor(.mpWhite, for: .normal)
-                selectedReason = withdrawalReasons[indexPath.row]
-
-            }
-
-            selectedIndexPath = indexPath
-
-            tableView.deselectRow(at: indexPath, animated: true)
         }
+        
+        // Select the current cell
+        if let cell = tableView.cellForRow(at: indexPath) {
+            cell.accessoryType = .checkmark
+            cell.tintColor = .mpMainColor
+            cell.textLabel?.textColor = .mpBlack // 현재 셀의 텍스트 색상 변경
+            closeButton.isEnabled = true
+            closeButton.backgroundColor = .mpMainColor
+            closeButton.setTitleColor(.mpWhite, for: .normal)
+            selectedReason = withdrawalReasons[indexPath.row]
+        }
+        
+        selectedIndexPath = indexPath
+        tableView.deselectRow(at: indexPath, animated: true)
+    }
 }
+

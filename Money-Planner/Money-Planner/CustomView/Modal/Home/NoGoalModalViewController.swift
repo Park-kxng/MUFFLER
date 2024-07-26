@@ -6,7 +6,7 @@ class NoGoalModalViewController : UIViewController {
     
     private let titleLabel : MPLabel = {
         let label = MPLabel()
-        label.text = "오늘의 목표가 없어요"
+        label.text = "목표가 없는 날이에요"
         label.font = .mpFont20B()
         label.textColor = .mpBlack
         label.translatesAutoresizingMaskIntoConstraints = false
@@ -15,15 +15,15 @@ class NoGoalModalViewController : UIViewController {
     
     private let contentLabel1 : MPLabel = {
         let label = MPLabel()
-        label.text = "목표를 만들어"
-        label.font = .mpFont20M()
+        label.text = "목표를 만든 후, 목표를 바탕으로"
+        label.font = .mpFont16M()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
     private let contentLabel2 : MPLabel = {
         let label = MPLabel()
-        label.text = "오늘 하루를 평가해보세요!"
-        label.font = .mpFont20M()
+        label.text = "오늘 하루의 소비를 평가해보아요"
+        label.font = .mpFont16M()
         label.translatesAutoresizingMaskIntoConstraints = false
         return label
     }()
@@ -76,15 +76,15 @@ class NoGoalModalViewController : UIViewController {
             customModal.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             customModal.centerYAnchor.constraint(equalTo: view.centerYAnchor),
             customModal.widthAnchor.constraint(equalTo: view.widthAnchor, constant: -64),
-            customModal.heightAnchor.constraint(equalToConstant: 343),
+            customModal.heightAnchor.constraint(equalToConstant: 242),
             
             titleLabel.centerXAnchor.constraint(equalTo: view.centerXAnchor),
             titleLabel.topAnchor.constraint(equalTo: customModal.topAnchor, constant: 36),
             
             contentLabel1.centerXAnchor.constraint(equalTo: customModal.centerXAnchor),
-            contentLabel1.centerYAnchor.constraint(equalTo: customModal.centerYAnchor, constant: -14),
+            contentLabel1.centerYAnchor.constraint(equalTo: titleLabel.bottomAnchor, constant: 36),
             contentLabel2.centerXAnchor.constraint(equalTo: customModal.centerXAnchor),
-            contentLabel2.centerYAnchor.constraint(equalTo: customModal.centerYAnchor, constant: 14),
+            contentLabel2.centerYAnchor.constraint(equalTo: contentLabel1.bottomAnchor, constant: 8),
             
             
             doneButton.leadingAnchor.constraint(equalTo: customModal.centerXAnchor, constant: 4),

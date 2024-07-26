@@ -97,6 +97,7 @@ final class NotificationRepository : BaseRepository<NotificationAPI> {
     //patchToken
     func patchToken(token: String, completion: @escaping (Result<NotificationToken?, BaseError>) -> Void){
         provider.request(.patchToken(token: token)) { result in
+            print("결과---", result)
             switch result {
             case let .success(response):
                 do {
@@ -123,6 +124,7 @@ final class NotificationRepository : BaseRepository<NotificationAPI> {
     //sendToken
     func sendToken(token: String, completion: @escaping (Result<NotificationToken?, BaseError>) -> Void){
         provider.request(.sendToken(token: token)) { result in
+            print("결과---", result)
             switch result {
             case let .success(response):
                 do {

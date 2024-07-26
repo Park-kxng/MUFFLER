@@ -100,7 +100,13 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
         return img
     }()
     
-    var nowGoal : Goal?
+    var nowGoal : Goal?{
+        didSet{
+            if(nowGoal != nil){
+                NotificationCenter.default.post(name: Notification.Name("isExistGoal"), object: nil)
+            }
+        }
+    }
     var dailyList : [CalendarDaily?] = []
     var categoryList : [Category] = [Category(id: -1, name: "전체")]
     var consumeList : [DailyConsume] = []
@@ -146,6 +152,8 @@ class HomeViewController : UIViewController, MainMonthViewDelegate{
         NotificationCenter.default.addObserver(self, selector: #selector(getNotificationDeleteConsumeList(_:)), name: Notification.Name("deleteExpense"), object: nil)
         
         NotificationCenter.default.addObserver(self, selector: #selector(getNotificationDeleteGoal(_:)), name: Notification.Name("deleteGoal"), object: nil)
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(getNotificationOpenAddGoal), name: Notification.Name("openAddGoal"), object: nil)
         
         
         // 스크롤 뷰 작업
@@ -1075,5 +1083,9 @@ extension HomeViewController {
             categoryScrollView.changeSelectedButton(index: -1)
             fetchCalendarData()
         }
+    }
+    
+    @objc func getNotificationOpenAddGoal(){
+        self.addGoal()
     }
 }

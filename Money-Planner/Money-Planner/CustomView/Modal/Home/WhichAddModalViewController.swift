@@ -9,6 +9,7 @@ protocol WhichAddModalDelegate : AnyObject {
 
 class WhichAddModalViewController : UIViewController, UITableViewDataSource, UITableViewDelegate {
     var delegate : WhichAddModalDelegate?
+    var isExistTodayGoal : Bool = false
     
     private let todo = [
         "소비내역 추가하기",

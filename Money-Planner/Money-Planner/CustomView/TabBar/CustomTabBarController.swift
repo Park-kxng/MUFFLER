@@ -9,10 +9,14 @@ import Foundation
 import UIKit
 
 class CustomTabBarController: UITabBarController, UITabBarControllerDelegate {
+    var  isExistTodayGoal : Bool = false
     override func viewDidLoad() {
         super.viewDidLoad()
         setupStyle()
         self.delegate = self // 소비등록 화면
+        
+        NotificationCenter.default.addObserver(self, selector: #selector(getNotificationIsExistGoal), name: Notification.Name("isExistGoal"), object: nil)
+
 
     }
 
@@ -34,9 +38,13 @@ class CustomTabBarController: UITabBarController, UITabBarControllerDelegate {
             // 다른 탭은 정상적으로 선택되게 합니다.
             return true
         }
+    
+    @objc func getNotificationIsExistGoal(){
+        isExistTodayGoal = true
+    }
 }
 
-extension CustomTabBarController : WhichAddModalDelegate{
+extension CustomTabBarController : WhichAddModalDelegate{    
     func moveToView(index: Int) {
         if(index == 0){
             // 여기에서 모달 뷰 컨트롤러를 초기화하고 표시합니다.
@@ -45,15 +53,20 @@ extension CustomTabBarController : WhichAddModalDelegate{
             self.present(vc, animated: true, completion: nil)
 
         }else{
-            let currentDate = Date().toString(format: "yyyy-MM-dd")
-            let vc = EvaluationViewController()
-            vc.dateText = currentDate
-            vc.isThroughFloatButton = true
-            vc.modalPresentationStyle = .fullScreen
-            self.present(vc, animated: true, completion: nil)
-
+            if(isExistTodayGoal){
+                let currentDate = Date().toString(format: "yyyy-MM-dd")
+                let vc = EvaluationViewController()
+                vc.dateText = currentDate
+                vc.isThroughFloatButton = true
+                vc.modalPresentationStyle = .fullScreen
+                self.present(vc, animated: true, completion: nil)
+            }else{
+                let vc = NoGoalModalViewController()
+                self.present(vc, animated: true)
+            }
         }
     }
     
-    
 }
+
+

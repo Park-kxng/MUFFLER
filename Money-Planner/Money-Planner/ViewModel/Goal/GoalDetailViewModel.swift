@@ -20,6 +20,8 @@ class GoalDetailViewModel {
     let dailyExpenseListRelay = BehaviorRelay<[DailyExpense]>(value: [])//PublishRelay<[DailyExpense]>()
     let selectedCategoryRelay = BehaviorRelay<[String : Bool]>(value: [:])
     
+    var goalCateogoryReports : [CategoryGoalReport]?
+    
     var hasNext = false
     private var lastDate: String?
     private var lastExpenseId: String?
@@ -49,6 +51,8 @@ class GoalDetailViewModel {
                 switch event {
                 case .success(let response):
                     self?.goalReportRelay.accept(response.result)
+                    self?.goalCateogoryReports =
+                    response.result.categoryGoalReports
                 case .failure(let error):
                     print(error.localizedDescription)
                 }

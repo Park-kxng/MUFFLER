@@ -20,7 +20,7 @@ protocol PeriodSelectionDelegate: AnyObject {
 //선택된 날짜의 배경색 설정
 extension PeriodCalendarModal: FSCalendarDelegateAppearance {
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillSelectionColorFor date: Date) -> UIColor? {
-        return .mpMainColor
+        return .clear
     }
 }
 
@@ -225,7 +225,7 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
             })
             .disposed(by: disposeBag)
     }
-
+    
     
     //요일 폰트 및 텍스트 반영
     override func viewDidLayoutSubviews() {
@@ -322,6 +322,7 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
         calendar.appearance.weekdayFont = UIFont(name: "SFProText-Bold", size: 14) ?? .mpFont14B()
         calendar.appearance.titleFont = UIFont(name: "SFProDisplay-Bold", size: 20) ?? UIFont.systemFont(ofSize: 20)
         calendar.rowHeight = 52 // 높이 조절
+        calendar.register(SelectDatesCustomCalendarCell.self, forCellReuseIdentifier: SelectDatesCustomCalendarCell.description())
     }
     
     private func setupLayoutConstraints() {
@@ -513,6 +514,7 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
                         completeBtn.backgroundColor = .mpMainColor
                     }
                     subTitleLabel.textColor = .mpBlack
+                    
                 }else{
                     changeLabelWithAnimation(titleLabel, to: "시작일을 선택해주세요")
                     changeLabelWithAnimation(subTitleLabel, to: "이미 존재하는 목표의 기간과 겹칩니다.")
@@ -588,40 +590,66 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
         return false
     }
     
-    
-    //날짜 배경색
-    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, fillDefaultColorFor date: Date) -> UIColor? {
+    func typeOfDate(_ date: Date) -> SelectedDateType {
+        if(startDate == nil){
+            return .notSelected
+        }
         
-        guard let start = startDate, let end = endDate else {
-            // If only one date is selected, check if it's the start or end date and color it accordingly.
-            if let startDate = startDate, date == startDate {
-                return .mpMainColor
+        if(startDate != nil && endDate == nil && startDate == date){
+            return .singleDate
+        }else if(startDate != nil && endDate == nil){
+            return .notSelected
+        }
+        
+        if(startDate != nil && endDate != nil){
+            if(startDate == date){
+                return .firstDate
             }
-            return nil // No special coloring for other dates
+            
+            if(endDate == date){
+                return .lastDate
+            }
+            
+            if(!date.isInRange(startDate: startDate!, endDate: endDate!)){
+                return .notSelected
+            }else{
+                if date == startDate {
+                    return .firstDate
+                }else if(date == endDate){
+                    return .lastDate
+                }
+                else { return .middleDate }
+            }
         }
         
-        if date == start || date == end {
-            // Start and end dates have the mpMainColor
-            calendar.appearance.titleFont = UIFont(name: "SFProDisplay-Bold", size: 20) ?? UIFont.systemFont(ofSize: 20)
-            return .mpMainColor
-        } else if date > start && date < end {
-            // Dates in between have the mpCalendarHighLight color
-            return .mpCalendarHighLight
-        }
-        return nil
+        return .notSelected
     }
+    
+    func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
+        
+        guard let cell = calendar.dequeueReusableCell(withIdentifier: SelectDatesCustomCalendarCell.description(), for: date, at: position) as? SelectDatesCustomCalendarCell else { return FSCalendarCell() }
+        
+        cell.setConfigure()
+        cell.setConstraints()
+        cell.settingImageView()
+        // 현재 그리는 셀의 date의 타입에 기반해서 셀 디자인
+        cell.updateBackImage(typeOfDate(date))
+        
+        return cell
+    }
+    
     
     //날짜 글자 색
     func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
         
-//        //placeholder는 안보이도록 한다.
-//        self.calendar.appearance.titlePlaceholderColor = .clear
+        //        //placeholder는 안보이도록 한다.
+        //        self.calendar.appearance.titlePlaceholderColor = .clear
         
         //현재달의 오늘 날짜를 특수 표시
         
-//        let currentYear = Calendar.current.component(.year, from: calendar.currentPage)
+        //        let currentYear = Calendar.current.component(.year, from: calendar.currentPage)
         let currentMonth = Calendar.current.component(.month, from: calendar.currentPage)
-//        let dateYear = Calendar.current.component(.year, from: date)
+        //        let dateYear = Calendar.current.component(.year, from: date)
         let dateMonth = Calendar.current.component(.month, from: date)
         
         if Calendar.current.isDateInToday(date) {
@@ -705,25 +733,6 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
         setUnselectableDateRanges(ranges)
     }
     
-//    func generateUnselectableDateRanges() {
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "yyyy/MM/dd"
-//        
-//        let range1Start = dateFormatter.date(from: "2024/02/13")!
-//        let range1End = dateFormatter.date(from: "2024/02/15")!
-//        
-//        let range2Start = dateFormatter.date(from: "2024/02/18")!
-//        let range2End = dateFormatter.date(from: "2024/02/25")!
-//        
-//        unselectableDateRanges = [
-//            [range1Start, range1End],
-//            [range2Start, range2End]
-//        ]
-//        
-//        // After setting the ranges, tell the calendar to refresh
-//        calendar.reloadData()
-//    }
-    
     // 애니메이션으로 텍스트를 변경하는 함수
     func changeLabelWithAnimation(_ label: UILabel, to newText: String, duration: TimeInterval = 0.1) {
         UIView.transition(with: label, duration: duration, options: .transitionCrossDissolve, animations: {
@@ -732,19 +741,6 @@ class PeriodCalendarModal: UIViewController, FSCalendarDelegate, FSCalendarDataS
     }
     
     
-}
-
-
-extension PeriodCalendarModal {
-    
-//    // 특정 날짜의 모서리 둥글기
-//    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, borderRadiusFor date: Date) -> CGFloat {
-//        if let start = startDate, let end = endDate {
-//
-//        }
-//        return 1.0 // 기본값은 둥근 모서리
-//    }
-
 }
 
 
@@ -796,7 +792,7 @@ class MonthSelectionViewController: UIViewController {
         picker.translatesAutoresizingMaskIntoConstraints = false // 활성화해야 auto layout이 작동합니다.
         return picker
     }()
-
+    
     private let doneButton: UIButton = {
         let button = UIButton(type: .system)
         button.setTitle("선택 완료", for: .normal)
@@ -806,7 +802,7 @@ class MonthSelectionViewController: UIViewController {
         button.translatesAutoresizingMaskIntoConstraints = false // 활성화해야 auto layout이 작동합니다.
         return button
     }()
-
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         view.backgroundColor = .clear
@@ -823,7 +819,7 @@ class MonthSelectionViewController: UIViewController {
         
         doneButton.addTarget(self, action: #selector(doneButtonTapped), for: .touchUpInside)
     }
-
+    
     private func setupConstraints() {
         NSLayoutConstraint.activate([
             customModal.bottomAnchor.constraint(equalTo: view.safeAreaLayoutGuide.bottomAnchor, constant: -30),
@@ -844,7 +840,7 @@ class MonthSelectionViewController: UIViewController {
             doneButton.bottomAnchor.constraint(equalTo: customModal.bottomAnchor, constant: -20)
         ])
     }
-
+    
     @objc private func doneButtonTapped() {
         delegate?.monthSelectionDidSelect(date: datePicker.date)
         navigationController?.popViewController(animated: false)
@@ -865,72 +861,104 @@ extension PeriodCalendarModal: MonthSelectionDelegate {
         monthSelectionVC.delegate = self
         navigationController?.pushViewController(monthSelectionVC, animated: true)
     }
-
+    
     func monthSelectionDidSelect(date: Date) {
         // 업데이트할 날짜를 여기에서 처리합니다.
         calendar.setCurrentPage(date, animated: true)
     }
 }
 
-
-
-//@objc func monthButtonTapped() {
-//    // Container view for the date picker and toolbar
-//    containerView = UIView()
-//    containerView!.backgroundColor = .white
-//    containerView!.layer.cornerRadius = 12
-//    
-//    containerView!.layer.shadowColor = UIColor.mpBlack.cgColor
-//    containerView!.layer.shadowOpacity = 0.5
-//    containerView!.layer.shadowOffset = CGSize(width: 0, height: 2)
-//    containerView!.layer.shadowRadius = 8
-//    
-//    containerView!.translatesAutoresizingMaskIntoConstraints = false
-//    view.addSubview(containerView!)
-//    
-//    // Date Picker setup
-//    let datePicker = UIDatePicker()
-//    datePicker.datePickerMode = .date
-//    if #available(iOS 13.4, *) {
-//        datePicker.preferredDatePickerStyle = .wheels
-//    }
-//    datePicker.translatesAutoresizingMaskIntoConstraints = false
-//    
-//    // Done Button setup
-//    let doneButton = UIButton()
-//    doneButton.layer.cornerRadius = 5
-//    doneButton.backgroundColor = .mpMainColor
-//    doneButton.setTitle("완료", for: .normal)
-//    doneButton.setTitleColor(.mpWhite, for: .normal)
-//    doneButton.translatesAutoresizingMaskIntoConstraints = false
-//    doneButton.addTarget(self, action: #selector(dismissDatePicker), for: .touchUpInside)
-//    
-//    containerView!.addSubview(datePicker)
-//    containerView!.addSubview(doneButton)
-//    
-//    NSLayoutConstraint.activate([
-//        containerView!.centerXAnchor.constraint(equalTo: view.centerXAnchor),
-//        containerView!.centerYAnchor.constraint(equalTo: view.centerYAnchor),
-//        containerView!.widthAnchor.constraint(equalToConstant: 300),
-//        containerView!.heightAnchor.constraint(equalToConstant: 250),
-//        
-//        datePicker.topAnchor.constraint(equalTo: containerView!.topAnchor, constant: 20),
-//        datePicker.leadingAnchor.constraint(equalTo: containerView!.leadingAnchor, constant: 10),
-//        datePicker.trailingAnchor.constraint(equalTo: containerView!.trailingAnchor, constant: -10),
-//        
-//        doneButton.topAnchor.constraint(equalTo: datePicker.bottomAnchor, constant: 20),
-//        doneButton.heightAnchor.constraint(equalToConstant: 44),
-//        doneButton.leadingAnchor.constraint(equalTo: containerView!.leadingAnchor, constant: 10),
-//        doneButton.trailingAnchor.constraint(equalTo: containerView!.trailingAnchor, constant: -10),
-//        doneButton.bottomAnchor.constraint(equalTo: containerView!.bottomAnchor, constant: -20)
-//    ])
-//    
-//    // Only show month and year in the date picker
-//    if #available(iOS 13.4, *) {
-//        datePicker.locale = Locale(identifier: "en_GB")
-//        datePicker.datePickerMode = .date
-//        datePicker.addTarget(self, action: #selector(dateChanged(_:)), for: .valueChanged)
-//    } else {
-//        // Fallback for earlier versions
-//    }
-//}
+class SelectDatesCustomCalendarCell: FSCalendarCell {
+    
+    var circleBackImageView = UIImageView()
+    var leftRectBackImageView = UIImageView()
+    var rightRectBackImageView = UIImageView()
+    
+    func setConfigure() {
+        contentView.insertSubview(circleBackImageView, at: 0)
+        contentView.insertSubview(leftRectBackImageView, at: 0)
+        contentView.insertSubview(rightRectBackImageView, at: 0)
+    }
+    
+    func setConstraints() {
+        // titleLabel의 제약 조건 설정
+        titleLabel.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            titleLabel.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            titleLabel.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
+        
+        // leftRectBackImageView의 제약 조건 설정
+        leftRectBackImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            leftRectBackImageView.leadingAnchor.constraint(equalTo: contentView.leadingAnchor),
+            leftRectBackImageView.trailingAnchor.constraint(equalTo: contentView.centerXAnchor),
+            leftRectBackImageView.heightAnchor.constraint(equalToConstant: 33),
+            leftRectBackImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
+        
+        // circleBackImageView의 제약 조건 설정
+        circleBackImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            circleBackImageView.centerXAnchor.constraint(equalTo: contentView.centerXAnchor),
+            circleBackImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor),
+            circleBackImageView.widthAnchor.constraint(equalToConstant: 33),
+            circleBackImageView.heightAnchor.constraint(equalToConstant: 33)
+        ])
+        
+        // rightRectBackImageView의 제약 조건 설정
+        rightRectBackImageView.translatesAutoresizingMaskIntoConstraints = false
+        NSLayoutConstraint.activate([
+            rightRectBackImageView.leadingAnchor.constraint(equalTo: contentView.centerXAnchor),
+            rightRectBackImageView.trailingAnchor.constraint(equalTo: contentView.trailingAnchor),
+            rightRectBackImageView.heightAnchor.constraint(equalToConstant: 33),
+            rightRectBackImageView.centerYAnchor.constraint(equalTo: contentView.centerYAnchor)
+        ])
+    }
+    
+    func settingImageView() {
+        circleBackImageView.clipsToBounds = true
+        circleBackImageView.layer.cornerRadius = 16.5
+                
+        circleBackImageView.backgroundColor = UIColor.mpMainColor
+        leftRectBackImageView.backgroundColor = UIColor.mpCalendarHighLight
+        rightRectBackImageView.backgroundColor = UIColor.mpCalendarHighLight
+    }
+    
+    func updateBackImage(_ dateType: SelectedDateType) {
+        switch dateType {
+        case .singleDate:
+            // left right hidden true
+            // circle hidden false
+            leftRectBackImageView.isHidden = true
+            rightRectBackImageView.isHidden = true
+            circleBackImageView.isHidden = false
+            
+        case .firstDate:
+            // leftRect hidden true
+            // circle, right hidden false
+            leftRectBackImageView.isHidden = true
+            circleBackImageView.isHidden = false
+            rightRectBackImageView.isHidden = false
+            
+        case .middleDate:
+            // circle hidden true
+            // left, right hidden false
+            circleBackImageView.isHidden = true
+            leftRectBackImageView.isHidden = false
+            rightRectBackImageView.isHidden = false
+            
+        case .lastDate:
+            // rightRect hidden true
+            // circle, left hidden false
+            rightRectBackImageView.isHidden = true
+            circleBackImageView.isHidden = false
+            leftRectBackImageView.isHidden = false
+        case .sundayDate, .saturdayDate,  .firstOfMonth, .lastOfMonth, .notSelected:
+            rightRectBackImageView.isHidden = true
+            circleBackImageView.isHidden = true
+            leftRectBackImageView.isHidden = true
+        }
+        
+    }
+}

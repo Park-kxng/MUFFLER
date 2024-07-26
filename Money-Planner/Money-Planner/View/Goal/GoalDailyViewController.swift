@@ -19,9 +19,10 @@ extension GoalDailyViewController: GoalAmountModalViewControllerDelegate {
         // Update the amountInfo dictionary and reload the calendar
         amountInfo[dateKey] = newAmount
         isEdited[dateKey] = true
-        sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
         
         refreshAmountInfo(startDate: goalCreationManager.startDate!.toDate ?? Date(), endDate: goalCreationManager.endDate!.toDate ?? Date())
+        
+        sumAmount = convertToInt64Array(from: amountInfo).reduce(0, +)
         
         customCalendarView.calendar.reloadData()
         
@@ -85,7 +86,6 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         setupWeekdayLabels()
         
         btmBtn.addTarget(self, action: #selector(btmButtonTapped), for: .touchUpInside)
-//        btmBtn.isEnabled = true
          
         self.tabBarController?.tabBar.isHidden = true
         
@@ -207,6 +207,15 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
     }
     
     @objc private func btmButtonTapped() {
+        
+        if(sumAmount != goalCreationManager.goalBudget){
+            let alert = UIAlertController(title: "오류", message: "목표금액의 합이\n 최종예산과 일치하지 않습니다.", preferredStyle: .alert)
+            alert.addAction(UIAlertAction(title: "확인", style: .default))
+            self.present(alert, animated: true){
+                return
+            }
+        }
+        
         let goalFinalVC = GoalFinalViewController()
         let budgets = convertToInt64Array(from: amountInfo)
         goalCreationManager.addDailyBudgets(budgets: budgets)
@@ -239,112 +248,6 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
         CATransaction.commit()
         
     }
-    
-//    func calendarCurrentPageDidChange(_ calendar: FSCalendar) {
-//        print("calendarCurrentPageDidChange")
-//        let currentPageDate = calendar.currentPage
-//        let today = Date()
-//        
-//        let todayYear = Calendar.current.component(.year, from: today)
-//        let todayMonth = Calendar.current.component(.month, from: today)
-//        let currentPageYear = Calendar.current.component(.year, from: currentPageDate)
-//        let currentPageMonth = Calendar.current.component(.month, from: currentPageDate)
-//        
-//        // 현재 페이지가 오늘 날짜의 월과 동일한 경우 오늘의 타이틀 색상을 변경합니다.
-//        if todayYear == currentPageYear && todayMonth == currentPageMonth {
-//            calendar.appearance.titleTodayColor = .mpBlack
-//        } else {
-//            calendar.appearance.titleTodayColor = .mpGray
-//        }
-//    }
-    
-//    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
-//        let dateString = formatDate(date)
-//        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
-//           date >= startDate && date <= endDate {
-//            
-//            
-//            let currentYear = Calendar.current.component(.year, from: calendar.currentPage)
-//            let currentMonth = Calendar.current.component(.month, from: calendar.currentPage)
-//            let dateYear = Calendar.current.component(.year, from: date)
-//            let dateMonth = Calendar.current.component(.month, from: date)
-//            
-//            if currentMonth == dateMonth && currentYear == dateYear {
-//                return .mpRed// Dates in the current month
-//            }else {
-//                return .mpBlack // Your custom color for edited dates
-//            }
-//            
-//        }
-//        return .mpMidGray
-//    }
-    // FSCalendarDelegateAppearance 프로토콜 메소드
-//    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleDefaultColorFor date: Date) -> UIColor? {
-//
-//        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
-//           date >= startDate && date <= endDate {
-//            
-//            let todayYear = Calendar.current.component(.year, from: Date())
-//            let todayMonth = Calendar.current.component(.month, from: Date())
-//            let dateYear = Calendar.current.component(.year, from: date)
-//            let dateMonth = Calendar.current.component(.month, from: date)
-//            
-//            if todayYear == dateYear && todayMonth == dateMonth {
-//                return .mpBlack
-//            }else{
-//                return .mpGray
-//            }
-//                
-//        } else {
-//            return .mpGray
-//        }
-//    }
-//
-//    func calendar(_ calendar: FSCalendar, appearance: FSCalendarAppearance, titleFontFor date: Date) -> UIFont? {
-//        // 특정 조건에 따라 날짜의 글꼴을 결정
-//        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
-//           date >= startDate && date <= endDate {
-//            
-//            let todayYear = Calendar.current.component(.year, from: Date())
-//            let todayMonth = Calendar.current.component(.month, from: Date())
-//            let dateYear = Calendar.current.component(.year, from: date)
-//            let dateMonth = Calendar.current.component(.month, from: date)
-//            
-//            if todayYear == dateYear && todayMonth == dateMonth {
-//                return .mpFont18B()
-//            }else{
-//                return .mpFont18R()
-//            }
-//                
-//        } else {
-//            return .mpFont18R()
-//        }
-//    }
-//
-//    func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
-//        let cell = calendar.dequeueReusableCell(withIdentifier: "customCell", for: date, at: position) as! CustomFSCalendarCell
-//        let dateFormatter = DateFormatter()
-//        dateFormatter.dateFormat = "yyyy/MM/dd"
-//        let dateKey = dateFormatter.string(from: date)
-//        
-//        // startDate와 endDate 사이의 날짜에 대해서만 금액 정보 표시 및 이미지 설정
-//        if let startDate = customCalendarView.startDate, let endDate = customCalendarView.endDate,
-//           date >= startDate && date <= endDate {
-//            cell.configureBackgroundImage(image: UIImage(named: "btn_date_off"))
-//            cell.configureImageSize(CGSize(width: 30, height: 30)) // 이미지 크기 조정
-//            // 금액 정보가 있는 경우 해당 금액을 표시
-//            if let amount = amountInfo[dateKey] {
-//                cell.configureAmountText(amount)
-//            } else {
-//                // 금액 정보가 없는 경우 빈 문자열로 설정
-//                cell.configureAmountText("")
-//            }
-//        } else {
-//            cell.configureBackgroundImage(image: nil)
-//            cell.configureAmountText("") // 금액 정보 없는 경우 빈 문자열로 설정
-//        }
-//        return cell
-//    }
     
     func calendar(_ calendar: FSCalendar, cellFor date: Date, at position: FSCalendarMonthPosition) -> FSCalendarCell {
         let cell = calendar.dequeueReusableCell(withIdentifier: "customCell", for: date, at: position) as! CustomFSCalendarCell
@@ -489,9 +392,36 @@ class GoalDailyViewController: UIViewController, FSCalendarDelegate, FSCalendarD
                         let remainderMultiplier = Int64(unedited.count)
                         let remainder = remainderConstant * remainderMultiplier
                         distribution(startDate: startDate, endDate: endDate, days: Int64(unedited.count), budget: budget, remainder: remainder, addToHead: true)
+                        
                     }
                 }
             }
+        }
+        
+        var total: Int64 = 0
+        total = convertToInt64Array(from: amountInfo).reduce(0, +)
+
+        if(total != goalBudget){
+
+            // 수정 안 한 것 중 제일 앞에 있는것 찾기
+            var index : String = formatDate(startDate)
+            
+            var current = startDate
+            let calendar = Calendar.current
+            
+            while current <= endDate {
+                let dateString = formatDate(current)
+                
+                if(isEdited[dateString] ?? false){
+                    current = calendar.date(byAdding: .day, value: 1, to: current)!
+                    continue
+                }
+                
+                index = dateString
+                break
+            }
+            
+            amountInfo[index] = String(Int64(amountInfo[index]!)! + (goalBudget! - total))
         }
     }
     

@@ -485,9 +485,7 @@ extension GoalDetailsViewController {
     @objc func showModal() {
         let modalVC = GoalExpenseFilterModal()
         modalVC.delegate = self
-        let navController = UINavigationController(rootViewController: modalVC)
-        navController.modalPresentationStyle = .popover // 또는 .fullScreen 등 적절한 스타일 선택
-        present(navController, animated: true)
+        present(modalVC, animated: true)
     }
 
     
@@ -508,7 +506,6 @@ extension GoalDetailsViewController: GoalExpenseFilterDelegate {
         // 현재 모달을 닫고, 날짜 선택 모달을 띄우는 코드
         dismiss(animated: true) {
             let modal = ShowingPeriodSelectionModal(startDate: self.goalDetail?.startDate.toDate ?? Date(), endDate: self.goalDetail?.endDate.toDate ?? Date())
-            modal.modalPresentationStyle = .popover
             modal.delegate = self // Ensure this modal's delegate is set if needed
             self.present(modal, animated: true)
         }

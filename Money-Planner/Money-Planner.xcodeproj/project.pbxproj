@@ -226,6 +226,7 @@
 		D2D0B73D2B6BAB7A003B6B5E /* CalendarDaily.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D0B73C2B6BAB7A003B6B5E /* CalendarDaily.swift */; };
 		D2D0B7412B6BACAB003B6B5E /* HomeNow.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2D0B7402B6BACAB003B6B5E /* HomeNow.swift */; };
 		D2D5934C2BBC4BA00010D29D /* Settings.bundle in Resources */ = {isa = PBXBuildFile; fileRef = D2D5934B2BBC4BA00010D29D /* Settings.bundle */; };
+		D2E404CD2C52472C005B085D /* NoGoalModalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = D2E404CC2C52472C005B085D /* NoGoalModalViewController.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXCopyFilesBuildPhase section */
@@ -448,6 +449,7 @@
 		D2D0B73C2B6BAB7A003B6B5E /* CalendarDaily.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CalendarDaily.swift; sourceTree = "<group>"; };
 		D2D0B7402B6BACAB003B6B5E /* HomeNow.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomeNow.swift; sourceTree = "<group>"; };
 		D2D5934B2BBC4BA00010D29D /* Settings.bundle */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.plug-in"; path = Settings.bundle; sourceTree = "<group>"; };
+		D2E404CC2C52472C005B085D /* NoGoalModalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NoGoalModalViewController.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -611,6 +613,7 @@
 				D25D765E2B81E2240044A74D /* OrderModalViewController.swift */,
 				D223B7542B85379000A21267 /* WhichAddModalViewController.swift */,
 				D259F66E2C00983D0014B6FB /* SelectMonthModalViewController.swift */,
+				D2E404CC2C52472C005B085D /* NoGoalModalViewController.swift */,
 			);
 			path = Home;
 			sourceTree = "<group>";
@@ -1457,6 +1460,7 @@
 				7A8F3EE12B85058400480902 /* GoalMain.swift in Sources */,
 				7A8F3EF72B85059D00480902 /* GoalMainViewController.swift in Sources */,
 				D253EEBD2B7B652300A4FC1C /* ExpenseAPI.swift in Sources */,
+				D2E404CD2C52472C005B085D /* NoGoalModalViewController.swift in Sources */,
 				D20D6FDA2B581A05006D6762 /* CustomTabBarController.swift in Sources */,
 				208C90AA2B6D559F00C67960 /* AskViewController.swift in Sources */,
 				7A4C673B2B5A4A8D008BCAC9 /* DescriptionView.swift in Sources */,
@@ -1630,7 +1634,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 10002;
+				CURRENT_PROJECT_VERSION = 10007;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 387JTQ5ATJ;
 				GENERATE_INFOPLIST_FILE = YES;
@@ -1668,7 +1672,7 @@
 				CODE_SIGN_IDENTITY = "Apple Development";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer";
 				CODE_SIGN_STYLE = Manual;
-				CURRENT_PROJECT_VERSION = 10002;
+				CURRENT_PROJECT_VERSION = 10007;
 				DEVELOPMENT_TEAM = "";
 				"DEVELOPMENT_TEAM[sdk=iphoneos*]" = 387JTQ5ATJ;
 				GENERATE_INFOPLIST_FILE = YES;

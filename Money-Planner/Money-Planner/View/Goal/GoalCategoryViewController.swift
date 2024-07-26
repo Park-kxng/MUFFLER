@@ -302,11 +302,13 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
         guard let keyboardFrame = notification.userInfo?[UIResponder.keyboardFrameEndUserInfoKey] as? NSValue else { return }
 
         let keyboardHeight = keyboardFrame.cgRectValue.height
-        let adjustmentHeight = show ? -keyboardHeight : 0
+        
+        print(keyboardHeight)
+        let adjustmentHeight = show ? -keyboardHeight + 30 : -30.0
 
         if let animationDuration = notification.userInfo?[UIResponder.keyboardAnimationDurationUserInfoKey] as? TimeInterval {
             UIView.animate(withDuration: animationDuration) {
-                self.bottomConstraint?.constant = adjustmentHeight - 30 // 기존 offset을 고려합니다.
+                self.bottomConstraint?.constant = adjustmentHeight
                 self.view.layoutIfNeeded()
             }
         }
@@ -334,7 +336,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
             tableView.topAnchor.constraint(equalTo: verticalStack.bottomAnchor, constant: 20),
             tableView.leadingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.leadingAnchor, constant: 0),
             tableView.trailingAnchor.constraint(equalTo: view.safeAreaLayoutGuide.trailingAnchor, constant: 0),
-            tableView.bottomAnchor.constraint(equalTo: btmBtn.topAnchor, constant: -20)
+            tableView.bottomAnchor.constraint(equalTo: btmBtn.topAnchor, constant: -5)
         ])
     }
     
@@ -458,7 +460,6 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
                 let category = data[indexPath.section]
                 cell.configureCell(categoryId: category.categoryId, text: category.categoryName, iconName: category.categoryIcon)
                 cell.isModified = category.categoryId != -1 // categoryId가 -1이 아니면 수정된 것으로 간주
-                cell.categoryModalBtn.addTarget(self, action: #selector(categoryModalButtonTapped), for: .touchUpInside)
                 return cell
             }
             else {
@@ -490,17 +491,12 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
     }
     
     //선택된 셀을 늘 추적 => 버튼이 눌렸다고 셀이 선택된건 아니다.
-//    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
-//        self.selectedIndexPath = indexPath
-//        print("선택된 셀의 섹션: \(indexPath.section), 행: \(indexPath.row)")
-//    }
-    
-    @objc func categoryModalButtonTapped(sender: UIButton) {
-        // sender의 위치를 기반으로 indexPath를 찾음.
-        let buttonPosition = sender.convert(CGPoint.zero, to: self.tableView)
-        if let indexPath = self.tableView.indexPathForRow(at: buttonPosition) {
+    func tableView(_ tableView: UITableView, didSelectRowAt indexPath: IndexPath) {
+        self.selectedIndexPath = indexPath
+        print("선택된 셀의 섹션: \(indexPath.section), 행: \(indexPath.row)")
+        
+        if(indexPath.row == 0){
             self.selectedIndexPath = indexPath
-            print("버튼이 있는 셀의 indexPath: \(indexPath)")
             
             // 모달 표시
             showCategoryModal()
@@ -510,7 +506,7 @@ class GoalCategoryViewController: UIViewController, UITableViewDelegate, UITable
             }
         }
     }
-    
+        
     private func showCategoryModal() {
         print("클릭 : 카테고리 선택을 위해 카테고리 선택 모달로 이동합니다")
 

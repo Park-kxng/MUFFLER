@@ -7,6 +7,7 @@
 
 import UIKit
 
+/// 카테고리 편집 테이블의 셀
 class CategoryTableCell: UITableViewCell {
     
     var eyeImageView : UIImageView = {

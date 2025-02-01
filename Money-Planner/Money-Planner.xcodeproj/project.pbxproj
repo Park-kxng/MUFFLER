@@ -503,6 +503,53 @@
 			path = Consume;
 			sourceTree = "<group>";
 		};
+		203846782D4E424E0024AF38 /* EditCategory */ = {
+			isa = PBXGroup;
+			children = (
+				D20D70102B612490006D6762 /* CategoryEditViewController.swift */,
+				D20D70132B612BB4006D6762 /* CategoryTableView.swift */,
+				203846522D4E36070024AF38 /* CategoryTableCell.swift */,
+			);
+			path = EditCategory;
+			sourceTree = "<group>";
+		};
+		203846792D4E42C50024AF38 /* AddCategory */ = {
+			isa = PBXGroup;
+			children = (
+				20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */,
+			);
+			path = AddCategory;
+			sourceTree = "<group>";
+		};
+		2038467A2D4E435E0024AF38 /* SelectCategoryIcon */ = {
+			isa = PBXGroup;
+			children = (
+				208C90D42B7F7B6100C67960 /* CategoryIconSelectionViewController.swift */,
+				208C90D62B7F7FBB00C67960 /* CategoryIconCell.swift */,
+			);
+			path = SelectCategoryIcon;
+			sourceTree = "<group>";
+		};
+		2038467B2D4E43830024AF38 /* SelectCategory */ = {
+			isa = PBXGroup;
+			children = (
+				206C58D72B626465008410C1 /* CategoryModalViewController.swift */,
+				206C58D32B623C43008410C1 /* CategoryCell.swift */,
+			);
+			path = SelectCategory;
+			sourceTree = "<group>";
+		};
+		2038467C2D4E44760024AF38 /* FilterCategory */ = {
+			isa = PBXGroup;
+			children = (
+				7A4FE0472BAB327100841D71 /* ShowingCategorySelectionModal.swift */,
+				203846542D4E363C0024AF38 /* SelectAllTableViewCell.swift */,
+				2038465A2D4E36A90024AF38 /* CategoryFilterTableView.swift */,
+				203846582D4E36710024AF38 /* CategoryFilterCell.swift */,
+			);
+			path = FilterCategory;
+			sourceTree = "<group>";
+		};
 		205894052B827B4A008F536D /* update */ = {
 			isa = PBXGroup;
 			children = (
@@ -687,16 +734,11 @@
 		20C041042BBEEBF800D715F8 /* Category */ = {
 			isa = PBXGroup;
 			children = (
-				206C58D72B626465008410C1 /* CategoryModalViewController.swift */,
-				D20D70132B612BB4006D6762 /* CategoryTableView.swift */,
-				206C58D32B623C43008410C1 /* CategoryCell.swift */,
-				20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */,
-				208C90D42B7F7B6100C67960 /* CategoryIconSelectionViewController.swift */,
-				208C90D62B7F7FBB00C67960 /* CategoryIconCell.swift */,
-				203846522D4E36070024AF38 /* CategoryTableCell.swift */,
-				203846542D4E363C0024AF38 /* SelectAllTableViewCell.swift */,
-				203846582D4E36710024AF38 /* CategoryFilterCell.swift */,
-				2038465A2D4E36A90024AF38 /* CategoryFilterTableView.swift */,
+				2038467C2D4E44760024AF38 /* FilterCategory */,
+				2038467B2D4E43830024AF38 /* SelectCategory */,
+				2038467A2D4E435E0024AF38 /* SelectCategoryIcon */,
+				203846792D4E42C50024AF38 /* AddCategory */,
+				203846782D4E424E0024AF38 /* EditCategory */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -974,7 +1016,6 @@
 				D20D700C2B611EE3006D6762 /* SearchConsumeViewController.swift */,
 				D20D700E2B61241F006D6762 /* NotificationsViewController.swift */,
 				551E8B732B7D10050008476B /* NotificationSettingViewController.swift */,
-				D20D70102B612490006D6762 /* CategoryEditViewController.swift */,
 				D20D701D2B668800006D6762 /* Home.json */,
 				D253EEB82B7B59FE00A4FC1C /* RepeatConsumeViewController.swift */,
 				209FF8702B851E79009E68E7 /* RoutineDetailViewController.swift */,
@@ -1048,7 +1089,6 @@
 				7A8F3ED22B85055D00480902 /* FoundPreviousConsumeRecordModal.swift */,
 				7A8F3ED32B85055D00480902 /* WarnAboutUneditableModal.swift */,
 				7A4FE0452BAB26AA00841D71 /* GoalExpenseFilterModal.swift */,
-				7A4FE0472BAB327100841D71 /* ShowingCategorySelectionModal.swift */,
 			);
 			path = GoalModal;
 			sourceTree = "<group>";

@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-// 카테고리 직접 추가
+/// 카테고리 직접 추가
 protocol AddCategoryViewDelegate : AnyObject{
     func AddCategoryCompleted (_ name : String, iconName: String)
 }

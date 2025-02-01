@@ -137,7 +137,6 @@
 		7A610AE52B491ED600D3096F /* Dummy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A610AE42B491ED600D3096F /* Dummy.swift */; };
 		7A610AE72B491F1600D3096F /* HeaderView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A610AE62B491F1600D3096F /* HeaderView.swift */; };
 		7A610AEA2B493EC900D3096F /* MakeGoalViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A610AE92B493EC900D3096F /* MakeGoalViewController.swift */; };
-		7A610AEE2B493F6D00D3096F /* RegisterUsageViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A610AED2B493F6D00D3096F /* RegisterUsageViewController.swift */; };
 		7A610AF02B49414100D3096F /* RegisterProfileViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A610AEF2B49414100D3096F /* RegisterProfileViewController.swift */; };
 		7A610AF22B49421F00D3096F /* KakaoLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A610AF12B49421F00D3096F /* KakaoLogin.swift */; };
 		7A610AF42B49422E00D3096F /* AppleLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7A610AF32B49422E00D3096F /* AppleLogin.swift */; };
@@ -363,7 +362,6 @@
 		7A610AE42B491ED600D3096F /* Dummy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Dummy.swift; sourceTree = "<group>"; };
 		7A610AE62B491F1600D3096F /* HeaderView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HeaderView.swift; sourceTree = "<group>"; };
 		7A610AE92B493EC900D3096F /* MakeGoalViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MakeGoalViewController.swift; sourceTree = "<group>"; };
-		7A610AED2B493F6D00D3096F /* RegisterUsageViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterUsageViewController.swift; sourceTree = "<group>"; };
 		7A610AEF2B49414100D3096F /* RegisterProfileViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = RegisterProfileViewController.swift; sourceTree = "<group>"; };
 		7A610AF12B49421F00D3096F /* KakaoLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = KakaoLogin.swift; sourceTree = "<group>"; };
 		7A610AF32B49422E00D3096F /* AppleLogin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppleLogin.swift; sourceTree = "<group>"; };
@@ -931,7 +929,6 @@
 			children = (
 				20C041042BBEEBF800D715F8 /* Category */,
 				20118A0E2B56A83400B2569E /* Consume */,
-				7A610AEC2B493F3B00D3096F /* Usage */,
 				7A610AE82B493E8000D3096F /* Goal */,
 				7A610AE32B49020700D3096F /* Login */,
 				7A610AD72B49008600D3096F /* Home */,
@@ -1056,14 +1053,6 @@
 				7A610AE92B493EC900D3096F /* MakeGoalViewController.swift */,
 			);
 			path = Goal;
-			sourceTree = "<group>";
-		};
-		7A610AEC2B493F3B00D3096F /* Usage */ = {
-			isa = PBXGroup;
-			children = (
-				7A610AED2B493F6D00D3096F /* RegisterUsageViewController.swift */,
-			);
-			path = Usage;
 			sourceTree = "<group>";
 		};
 		7A8F3ECB2B84FF9A00480902 /* Goal */ = {
@@ -1504,7 +1493,6 @@
 				2058940A2B827BF3008F536D /* DeleteCategoryResponse.swift in Sources */,
 				7A8F3F0A2B8524B100480902 /* GoalViewModel.swift in Sources */,
 				D217EBEF2B7460BC00EB6BF3 /* CategoryAPI.swift in Sources */,
-				7A610AEE2B493F6D00D3096F /* RegisterUsageViewController.swift in Sources */,
 				D20D6FED2B5B9962006D6762 /* MainCalendarView.swift in Sources */,
 				208C90C22B74E01700C67960 /* UnregisterPopupViewController.swift in Sources */,
 				D253EEAF2B7A0CA500A4FC1C /* MainNoGoal.swift in Sources */,

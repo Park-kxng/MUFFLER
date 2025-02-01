@@ -11,6 +11,10 @@
 		200970652C259ED7003C58D4 /* SocialType.swift in Sources */ = {isa = PBXBuildFile; fileRef = 200970642C259ED7003C58D4 /* SocialType.swift */; };
 		20118A112B56A86100B2569E /* ConsumeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20118A102B56A86100B2569E /* ConsumeViewController.swift */; };
 		202754242B7FBF860084A757 /* ExpenseTapController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 202754232B7FBF860084A757 /* ExpenseTapController.swift */; };
+		203846532D4E36070024AF38 /* CategoryTableCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203846522D4E36070024AF38 /* CategoryTableCell.swift */; };
+		203846552D4E363C0024AF38 /* SelectAllTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203846542D4E363C0024AF38 /* SelectAllTableViewCell.swift */; };
+		203846592D4E36710024AF38 /* CategoryFilterCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203846582D4E36710024AF38 /* CategoryFilterCell.swift */; };
+		2038465B2D4E36A90024AF38 /* CategoryFilterTableView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2038465A2D4E36A90024AF38 /* CategoryFilterTableView.swift */; };
 		203C24102C29AD3900AB5FEA /* LeaveResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 203C240F2C29AD3900AB5FEA /* LeaveResponse.swift */; };
 		20545A8E2BBFD4710024B1E5 /* UIViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20545A8D2BBFD4710024B1E5 /* UIViewController.swift */; };
 		20545A902BBFEDF80024B1E5 /* TokenAuthPlugin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20545A8F2BBFEDF80024B1E5 /* TokenAuthPlugin.swift */; };
@@ -247,6 +251,10 @@
 		200970642C259ED7003C58D4 /* SocialType.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SocialType.swift; sourceTree = "<group>"; };
 		20118A102B56A86100B2569E /* ConsumeViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumeViewController.swift; sourceTree = "<group>"; };
 		202754232B7FBF860084A757 /* ExpenseTapController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ExpenseTapController.swift; sourceTree = "<group>"; };
+		203846522D4E36070024AF38 /* CategoryTableCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryTableCell.swift; sourceTree = "<group>"; };
+		203846542D4E363C0024AF38 /* SelectAllTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SelectAllTableViewCell.swift; sourceTree = "<group>"; };
+		203846582D4E36710024AF38 /* CategoryFilterCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryFilterCell.swift; sourceTree = "<group>"; };
+		2038465A2D4E36A90024AF38 /* CategoryFilterTableView.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CategoryFilterTableView.swift; sourceTree = "<group>"; };
 		203C240F2C29AD3900AB5FEA /* LeaveResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LeaveResponse.swift; sourceTree = "<group>"; };
 		20545A8D2BBFD4710024B1E5 /* UIViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = UIViewController.swift; sourceTree = "<group>"; };
 		20545A8F2BBFEDF80024B1E5 /* TokenAuthPlugin.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TokenAuthPlugin.swift; sourceTree = "<group>"; };
@@ -630,6 +638,7 @@
 		208F5E852B81259100107735 /* Category */ = {
 			isa = PBXGroup;
 			children = (
+				D20D6FF22B5D67B1006D6762 /* Category.swift */,
 				205894082B827BDE008F536D /* delete */,
 				205894052B827B4A008F536D /* update */,
 				208F5E8D2B81323500107735 /* get */,
@@ -684,6 +693,10 @@
 				20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */,
 				208C90D42B7F7B6100C67960 /* CategoryIconSelectionViewController.swift */,
 				208C90D62B7F7FBB00C67960 /* CategoryIconCell.swift */,
+				203846522D4E36070024AF38 /* CategoryTableCell.swift */,
+				203846542D4E363C0024AF38 /* SelectAllTableViewCell.swift */,
+				203846582D4E36710024AF38 /* CategoryFilterCell.swift */,
+				2038465A2D4E36A90024AF38 /* CategoryFilterTableView.swift */,
 			);
 			path = Category;
 			sourceTree = "<group>";
@@ -906,7 +919,6 @@
 				208C90CB2B7BBC5500C67960 /* Expense */,
 				208C90BC2B6FE4CF00C67960 /* Member */,
 				7A610AE42B491ED600D3096F /* Dummy.swift */,
-				D20D6FF22B5D67B1006D6762 /* Category.swift */,
 				D20D6FFB2B5FDF00006D6762 /* DailyConsume.swift */,
 				D20D6FFD2B5FDF4C006D6762 /* ConsumeDetail.swift */,
 				D2D0B7392B6BAB02003B6B5E /* Goal.swift */,
@@ -1382,6 +1394,7 @@
 				D253EEB72B7B505B00A4FC1C /* HomeMoreModalViewController.swift in Sources */,
 				7A610AEA2B493EC900D3096F /* MakeGoalViewController.swift in Sources */,
 				208C90932B6AB7DA00C67960 /* ConnectModel.swift in Sources */,
+				203846592D4E36710024AF38 /* CategoryFilterCell.swift in Sources */,
 				552A42672B72200E007AEAAD /* DailyConsumeViewController.swift in Sources */,
 				D20D6FF32B5D67B1006D6762 /* Category.swift in Sources */,
 				D2D0B7382B6BA845003B6B5E /* HomeAPI.swift in Sources */,
@@ -1396,6 +1409,7 @@
 				7A4FE0412BA36EA500841D71 /* GoalEditViewModel.swift in Sources */,
 				7A4C67392B5A4A49008BCAC9 /* MPLabel.swift in Sources */,
 				7A8F3EF42B85059D00480902 /* GoalTitleViewController.swift in Sources */,
+				2038465B2D4E36A90024AF38 /* CategoryFilterTableView.swift in Sources */,
 				20E63BDB2BBAF90900A71DBA /* LoginRequest.swift in Sources */,
 				38A55ED62BE9D0700086C75B /* OnboardingNotificationViewController.swift in Sources */,
 				7A3069922B8C5D5400CD331D /* Example.swift in Sources */,
@@ -1463,10 +1477,12 @@
 				D2E404CD2C52472C005B085D /* NoGoalModalViewController.swift in Sources */,
 				D20D6FDA2B581A05006D6762 /* CustomTabBarController.swift in Sources */,
 				208C90AA2B6D559F00C67960 /* AskViewController.swift in Sources */,
+				203846552D4E363C0024AF38 /* SelectAllTableViewCell.swift in Sources */,
 				7A4C673B2B5A4A8D008BCAC9 /* DescriptionView.swift in Sources */,
 				20545A8E2BBFD4710024B1E5 /* UIViewController.swift in Sources */,
 				5591601C2B64595E00063F06 /* EvaluationViewController.swift in Sources */,
 				7A3069972B8F1BC200CD331D /* ReportView.swift in Sources */,
+				203846532D4E36070024AF38 /* CategoryTableCell.swift in Sources */,
 				552A43002B7AA03E007AEAAD /* goalDeleteModalView.swift in Sources */,
 				D25D76582B80CC5C0044A74D /* Routine.swift in Sources */,
 				7A8F3EE32B85058400480902 /* GoalDetail.swift in Sources */,

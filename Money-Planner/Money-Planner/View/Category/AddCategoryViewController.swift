@@ -477,6 +477,7 @@ class AddCategoryViewController: UIViewController,UITextFieldDelegate, CategoryI
         delegateEdit?.EditCategoryCompleted(categoryId: Int(categoryId), name: currText, icon: currIcon)
         dismiss(animated: true)
     }
+    
     @objc private func deleteCategoryComplete(){
         print("카테고리 삭제 완료")
         viewModel.deleteCategory(categoryId: categoryId)

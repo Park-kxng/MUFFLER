@@ -687,8 +687,8 @@
 		20C041042BBEEBF800D715F8 /* Category */ = {
 			isa = PBXGroup;
 			children = (
-				D20D70132B612BB4006D6762 /* CategoryTableView.swift */,
 				206C58D72B626465008410C1 /* CategoryModalViewController.swift */,
+				D20D70132B612BB4006D6762 /* CategoryTableView.swift */,
 				206C58D32B623C43008410C1 /* CategoryCell.swift */,
 				20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */,
 				208C90D42B7F7B6100C67960 /* CategoryIconSelectionViewController.swift */,
@@ -859,7 +859,7 @@
 				D29536ED2B4C076F00EEA81F /* Common */,
 				7A610ACE2B480B5B00D3096F /* Model */,
 				7A610ACD2B480B1400D3096F /* ViewModel */,
-				7A610ACC2B480B0E00D3096F /* View */,
+				7A610ACC2B480B0E00D3096F /* Presentation */,
 				7A610ACB2B480AFF00D3096F /* Network */,
 				7A610AC02B47FA8F00D3096F /* Assets.xcassets */,
 				7A610AC22B47FA8F00D3096F /* LaunchScreen.storyboard */,
@@ -884,7 +884,7 @@
 			path = Network;
 			sourceTree = "<group>";
 		};
-		7A610ACC2B480B0E00D3096F /* View */ = {
+		7A610ACC2B480B0E00D3096F /* Presentation */ = {
 			isa = PBXGroup;
 			children = (
 				20C041042BBEEBF800D715F8 /* Category */,
@@ -896,7 +896,7 @@
 				7A610AD42B49005400D3096F /* Battle */,
 				7A610AD32B49004500D3096F /* MyPage */,
 			);
-			path = View;
+			path = Presentation;
 			sourceTree = "<group>";
 		};
 		7A610ACD2B480B1400D3096F /* ViewModel */ = {

@@ -79,6 +79,7 @@
 		20E63BDD2BBAF9A400A71DBA /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */; };
 		20E6891E2D4E4E480067B8DF /* KakaoLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E6891D2D4E4E480067B8DF /* KakaoLogin.swift */; };
 		20E689222D4E53630067B8DF /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 20E689212D4E53630067B8DF /* .swiftlint.yml */; };
+		20E6892A2D4E61480067B8DF /* ConsumeViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E689292D4E61480067B8DF /* ConsumeViewModel.swift */; };
 		20EF782D2B68CEA700AA135E /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */; };
 		20EF78312B68E3AD00AA135E /* MyPageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EF78302B68E3AD00AA135E /* MyPageTableViewCell.swift */; };
 		38A55ECB2BE9C9170086C75B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 38A55ECA2BE9C9170086C75B /* FirebaseAnalytics */; };
@@ -314,6 +315,7 @@
 		20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
 		20E6891D2D4E4E480067B8DF /* KakaoLogin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KakaoLogin.swift; path = "Money-Planner/Presentation/Login/KakaoLogin.swift"; sourceTree = SOURCE_ROOT; };
 		20E689212D4E53630067B8DF /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
+		20E689292D4E61480067B8DF /* ConsumeViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ConsumeViewModel.swift; sourceTree = "<group>"; };
 		20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
 		20EF78302B68E3AD00AA135E /* MyPageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageTableViewCell.swift; sourceTree = "<group>"; };
 		38A55ECF2BE9C97E0086C75B /* NotificationAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAPI.swift; sourceTree = "<group>"; };
@@ -488,6 +490,7 @@
 			isa = PBXGroup;
 			children = (
 				20118A102B56A86100B2569E /* ConsumeViewController.swift */,
+				20E689292D4E61480067B8DF /* ConsumeViewModel.swift */,
 				208C90C62B7BB06800C67960 /* ConsumeDetailViewController.swift */,
 				208F5E7F2B8102A400107735 /* Calendar */,
 				208C90BF2B72636C00C67960 /* UIHelper.swift */,
@@ -1355,7 +1358,7 @@
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 			shellPath = /bin/sh;
-			shellScript = "if test -d \"/opt/homebrew/bin/\"; then\n  PATH=\"/opt/homebrew/bin/:${PATH}\"\nfi\n\nexport PATH\n\nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+			shellScript = "if which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
 		};
 /* End PBXShellScriptBuildPhase section */
 
@@ -1529,6 +1532,7 @@
 				7A8F3EE12B85058400480902 /* GoalMain.swift in Sources */,
 				7A8F3EF72B85059D00480902 /* GoalMainViewController.swift in Sources */,
 				D253EEBD2B7B652300A4FC1C /* ExpenseAPI.swift in Sources */,
+				20E6892A2D4E61480067B8DF /* ConsumeViewModel.swift in Sources */,
 				D2E404CD2C52472C005B085D /* NoGoalModalViewController.swift in Sources */,
 				D20D6FDA2B581A05006D6762 /* CustomTabBarController.swift in Sources */,
 				208C90AA2B6D559F00C67960 /* AskViewController.swift in Sources */,

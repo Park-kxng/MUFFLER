@@ -130,7 +130,7 @@ class SelectModalViewController : UIViewController {
                 if(currentYear == 2023 + i && currentMonth == j){
                     selectedIndex = count
                 }
-                count = count + 1
+                count += 1
             }
         }
         

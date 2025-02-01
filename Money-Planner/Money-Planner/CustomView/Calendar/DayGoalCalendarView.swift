@@ -106,7 +106,7 @@ class DayGoalCalendarView: UIView, UICollectionViewDelegate, UICollectionViewDat
         } else {
             var calcDate = indexPath.row-firstWeekDayOfMonth+2
             if(calcDate > numOfDaysInMonth[currentMonth]){
-                calcDate = calcDate - numOfDaysInMonth[currentMonth]
+                calcDate -= numOfDaysInMonth[currentMonth]
             }
             cell.isHidden=false
             cell.lbl.text="\(calcDate)"

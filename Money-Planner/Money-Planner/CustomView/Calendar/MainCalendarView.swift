@@ -137,7 +137,7 @@ class MainCalendarView: UIView, UICollectionViewDelegate, UICollectionViewDataSo
             var calcDate = indexPath.row-firstWeekDayOfMonth+2
             if(calcDate > numOfDaysInMonth[currentMonth]){
                 // 다음달 부분
-                calcDate = calcDate - numOfDaysInMonth[currentMonth]
+                calcDate -= numOfDaysInMonth[currentMonth]
                 cell.isHidden = true
             }else{
                 cell.isHidden=false

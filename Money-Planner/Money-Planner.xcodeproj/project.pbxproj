@@ -78,6 +78,7 @@
 		20E63BDB2BBAF90900A71DBA /* LoginRequest.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BDA2BBAF90900A71DBA /* LoginRequest.swift */; };
 		20E63BDD2BBAF9A400A71DBA /* LoginResponse.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */; };
 		20E6891E2D4E4E480067B8DF /* KakaoLogin.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20E6891D2D4E4E480067B8DF /* KakaoLogin.swift */; };
+		20E689222D4E53630067B8DF /* .swiftlint.yml in Resources */ = {isa = PBXBuildFile; fileRef = 20E689212D4E53630067B8DF /* .swiftlint.yml */; };
 		20EF782D2B68CEA700AA135E /* AddCategoryViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */; };
 		20EF78312B68E3AD00AA135E /* MyPageTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 20EF78302B68E3AD00AA135E /* MyPageTableViewCell.swift */; };
 		38A55ECB2BE9C9170086C75B /* FirebaseAnalytics in Frameworks */ = {isa = PBXBuildFile; productRef = 38A55ECA2BE9C9170086C75B /* FirebaseAnalytics */; };
@@ -312,6 +313,7 @@
 		20E63BDA2BBAF90900A71DBA /* LoginRequest.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginRequest.swift; sourceTree = "<group>"; };
 		20E63BDC2BBAF9A400A71DBA /* LoginResponse.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginResponse.swift; sourceTree = "<group>"; };
 		20E6891D2D4E4E480067B8DF /* KakaoLogin.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; name = KakaoLogin.swift; path = "Money-Planner/Presentation/Login/KakaoLogin.swift"; sourceTree = SOURCE_ROOT; };
+		20E689212D4E53630067B8DF /* .swiftlint.yml */ = {isa = PBXFileReference; lastKnownFileType = text.yaml; path = .swiftlint.yml; sourceTree = "<group>"; };
 		20EF782C2B68CEA700AA135E /* AddCategoryViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AddCategoryViewController.swift; sourceTree = "<group>"; };
 		20EF78302B68E3AD00AA135E /* MyPageTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = MyPageTableViewCell.swift; sourceTree = "<group>"; };
 		38A55ECF2BE9C97E0086C75B /* NotificationAPI.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = NotificationAPI.swift; sourceTree = "<group>"; };
@@ -896,6 +898,7 @@
 		7A610AAB2B47FA8E00D3096F = {
 			isa = PBXGroup;
 			children = (
+				20E689212D4E53630067B8DF /* .swiftlint.yml */,
 				D2D5934B2BBC4BA00010D29D /* Settings.bundle */,
 				7A610AB62B47FA8E00D3096F /* Money-Planner */,
 				7A610AB52B47FA8E00D3096F /* Products */,
@@ -1239,6 +1242,7 @@
 				7A610AB12B47FA8E00D3096F /* Frameworks */,
 				7A610AB22B47FA8E00D3096F /* Resources */,
 				208C90A02B6ABBE900C67960 /* Embed Frameworks */,
+				20E689202D4E530C0067B8DF /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1300,6 +1304,7 @@
 				7A30697C2B8C4FE900CD331D /* XCRemoteSwiftPackageReference "lottie-ios" */,
 				20C040FD2BBD96E300D715F8 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
 				38A55EC92BE9C8D10086C75B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */,
+				20E6891F2D4E51F00067B8DF /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */,
 			);
 			productRefGroup = 7A610AB52B47FA8E00D3096F /* Products */;
 			projectDirPath = "";
@@ -1315,6 +1320,7 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				20E689222D4E53630067B8DF /* .swiftlint.yml in Resources */,
 				7A610AC42B47FA8F00D3096F /* LaunchScreen.storyboard in Resources */,
 				7A30698D2B8C5C9700CD331D /* muffler_happy2.json in Resources */,
 				7A8F3EF92B8506A600480902 /* Config.xcconfig in Resources */,
@@ -1331,6 +1337,26 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		20E689202D4E530C0067B8DF /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+			);
+			outputFileListPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "if test -d \"/opt/homebrew/bin/\"; then\n  PATH=\"/opt/homebrew/bin/:${PATH}\"\nfi\n\nexport PATH\n\nif which swiftlint >/dev/null; then\n  swiftlint\nelse\n  echo \"warning: SwiftLint not installed, download from https://github.com/realm/SwiftLint\"\nfi\n";
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7A610AB02B47FA8E00D3096F /* Sources */ = {
@@ -1782,6 +1808,14 @@
 			requirement = {
 				branch = master;
 				kind = branch;
+			};
+		};
+		20E6891F2D4E51F00067B8DF /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/SimplyDanny/SwiftLintPlugins";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 0.58.2;
 			};
 		};
 		38A55EC92BE9C8D10086C75B /* XCRemoteSwiftPackageReference "firebase-ios-sdk" */ = {

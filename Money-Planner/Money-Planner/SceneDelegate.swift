@@ -24,8 +24,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
 
 //         TokenManager.shared.handleLoginSuccess(accessToken: "test", refreshToken: TokenManager.shared.refreshToken ?? "")
          window = UIWindow(windowScene: windowScene)
-         checkAndRefreshToken() // 토큰 확인 후 화면 이동 로직 진행
-         
+         //checkAndRefreshToken() // 토큰 확인 후 화면 이동 로직 진행
+         setupMainInterface()
          self.window?.makeKeyAndVisible()
      }
     

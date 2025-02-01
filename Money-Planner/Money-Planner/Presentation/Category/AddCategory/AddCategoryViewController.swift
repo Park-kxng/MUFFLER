@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-// 카테고리 직접 추가
+/// 카테고리 직접 추가
 protocol AddCategoryViewDelegate : AnyObject{
     func AddCategoryCompleted (_ name : String, iconName: String)
 }
@@ -477,6 +477,7 @@ class AddCategoryViewController: UIViewController,UITextFieldDelegate, CategoryI
         delegateEdit?.EditCategoryCompleted(categoryId: Int(categoryId), name: currText, icon: currIcon)
         dismiss(animated: true)
     }
+    
     @objc private func deleteCategoryComplete(){
         print("카테고리 삭제 완료")
         viewModel.deleteCategory(categoryId: categoryId)

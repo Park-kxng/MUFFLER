@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  Money-Planner
-//
-//  Created by 유철민 on 1/5/24.
-//
-
 import UIKit
 import RxSwift
 import RxCocoa
@@ -16,8 +9,6 @@ import Moya
 
 
 class LoginViewController: UIViewController {
-
-    
     private let viewModel = LoginViewModel()
     private let logoImageView = UIImageView()
     private let sloganLabel = MPLabel()
@@ -33,17 +24,12 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .mpWhite
         
-        // 뷰 설정
         setupSloganLabel()
         setupSubLabel()
         setuplogoImageView()
         setupButtons()
         bindEvents()
     }
-    
-    //아래에서부터 setup 함수들이다. 위의 4가지 요소의 '구성 + 오토레이아웃' 이다.
-    
-
     
     private func setupSloganLabel() {
         // NSMutableParagraphStyle 객체 생성 및 행 간격 설정
@@ -161,13 +147,6 @@ class LoginViewController: UIViewController {
     
     
     @objc private func loginToKakao() {
-//            guard let url = URL(string: "http://13.209.182.17:8080/api/member/login/kakao") else {
-//                print("유효하지 않은 URL입니다.")
-//                return
-//            }
-//            // Safari로 URL 열기
-//            UIApplication.shared.open(url, options: [:], completionHandler: nil)
-
         if UserApi.isKakaoTalkLoginAvailable() {
             print("카카오톡 사용 가능 -----------------------")
             UserApi.shared.rx_loginWithKakaoTalk()
@@ -217,11 +196,6 @@ class LoginViewController: UIViewController {
                 print("idToken",idToken)
                 viewModel.login(socialType: .kakao, idToken: idToken)
             }
-            //saveTokenToUserDefaults(token: oauthToken.accessToken)
-            // 홈화면으로 이동
-            // 홈 화면으로 이동합니다.
-            //let sceneDelegate = UIApplication.shared.connectedScenes.first?.delegate as? SceneDelegate
-            //sceneDelegate?.setupMainInterface()
         }
         
         
@@ -235,6 +209,8 @@ class LoginViewController: UIViewController {
     
 
 }
+
+
 extension LoginViewController: ASAuthorizationControllerDelegate, ASAuthorizationControllerPresentationContextProviding{
   func presentationAnchor(for controller: ASAuthorizationController) -> ASPresentationAnchor {
    

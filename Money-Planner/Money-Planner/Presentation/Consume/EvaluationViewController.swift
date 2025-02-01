@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 
+/// 소비 평가 페이지
 class EvaluationViewController : UIViewController, UICollectionViewDelegate, UICollectionViewDataSource, UICollectionViewDelegateFlowLayout {
     
     var dateText = ""

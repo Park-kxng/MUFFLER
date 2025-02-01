@@ -1,10 +1,3 @@
-//
-//  CategoryModalViewController.swift
-//  Money-Planner
-//
-//  Created by p_kxn_g on 1/25/24.
-//
-
 import Foundation
 import UIKit
 import RxSwift
@@ -60,12 +53,12 @@ class CategoryModalViewController : UIViewController,UICollectionViewDelegate,UI
     override func viewDidLoad() {
         super.viewDidLoad()
         setupBackground()
-        setupBackground()
         setuptitleLabel()
         setupCategoryCellContainerView()
         presentCustomModal()
 
     }
+    
     func presentCustomModal() {
         view.addSubview(customModal)
         customModal.translatesAutoresizingMaskIntoConstraints = false
@@ -78,6 +71,7 @@ class CategoryModalViewController : UIViewController,UICollectionViewDelegate,UI
         let numberOfItems = CGFloat(categories.count)/3
         let totalCellHeight = numberOfItems * cellHeight
         var modalHeight = totalCellHeight + 48 + 48 + 44+8*numberOfItems
+        
         // 카테고리가 너무 많으면 모달의 높이는 최대 664로 조정함.
         if modalHeight >= 664 {
                 modalHeight = 664
@@ -179,10 +173,6 @@ class CategoryModalViewController : UIViewController,UICollectionViewDelegate,UI
             delegate?.didSelectCategory(id: selectedId, category: selectedCategory, iconName: selectedIcon)
 
         }
-        
-        
-        
-        // You can perform additional actions or notify your view controller about the selected category he
     }
     
     

@@ -4,6 +4,13 @@ disabled_rules:
   - multiple_closures_with_trailing_closure
   - type_body_length
   - line_length
+  # 아래는 추후 삭제해야 함.
+  - type_name                 # 타입 이름 규칙 비활성화 (대문자로 시작해야 하는 규칙)
+  - identifier_name           # 변수, 함수명 규칙 비활성화
+  - function_parameter_count  # 함수 매개변수 개수 제한 해제
+  - cyclomatic_complexity     # 복잡도 제한 해제
+  - file_length               # 파일 길이 제한 해제
+  - empty_count               # `.count == 0` 대신 `.isEmpty` 강제하는 규칙 해제
   
 # 선택적으로 적용할 룰
 opt_in_rules:

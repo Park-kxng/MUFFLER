@@ -1247,6 +1247,7 @@
 			buildRules = (
 			);
 			dependencies = (
+				20E689282D4E60B00067B8DF /* PBXTargetDependency */,
 			);
 			name = "Money-Planner";
 			packageProductDependencies = (
@@ -1560,6 +1561,13 @@
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXTargetDependency section */
+		20E689282D4E60B00067B8DF /* PBXTargetDependency */ = {
+			isa = PBXTargetDependency;
+			productRef = 20E689272D4E60B00067B8DF /* SwiftLintBuildToolPlugin */;
+		};
+/* End PBXTargetDependency section */
 
 /* Begin PBXVariantGroup section */
 		7A610AC22B47FA8F00D3096F /* LaunchScreen.storyboard */ = {
@@ -1880,6 +1888,11 @@
 			isa = XCSwiftPackageProductDependency;
 			package = 20C040FD2BBD96E300D715F8 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
 			productName = KeychainAccess;
+		};
+		20E689272D4E60B00067B8DF /* SwiftLintBuildToolPlugin */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 20E6891F2D4E51F00067B8DF /* XCRemoteSwiftPackageReference "SwiftLintPlugins" */;
+			productName = "plugin:SwiftLintBuildToolPlugin";
 		};
 		38A55ECA2BE9C9170086C75B /* FirebaseAnalytics */ = {
 			isa = XCSwiftPackageProductDependency;

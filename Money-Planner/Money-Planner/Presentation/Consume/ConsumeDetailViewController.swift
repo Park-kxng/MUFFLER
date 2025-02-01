@@ -1,11 +1,4 @@
-//
-//  ConsumeDetailViewController.swift
-//  Money-Planner
-//
-//  Created by p_kxn_g on 2/13/24.
-//
-
-import Foundation
+// 소비 내역 조회 화면
 import UIKit
 import RxSwift
 import RxCocoa

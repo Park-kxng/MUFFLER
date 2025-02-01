@@ -584,6 +584,7 @@
 			isa = PBXGroup;
 			children = (
 				7A610AD82B49009300D3096F /* HomeViewController.swift */,
+				D20D70202B66FEA0006D6762 /* HomeViewModel.swift */,
 				D20D6FF92B5FB971006D6762 /* HomeConsumeView.swift */,
 			);
 			path = Main;
@@ -765,7 +766,6 @@
 			children = (
 				20ADFB6F2B99CA0D0054390F /* LoginAPI.swift */,
 				20ADFB712B99CAC80054390F /* LoginRepository.swift */,
-				20ADFB772B99CE150054390F /* LoginViewModel.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -923,7 +923,6 @@
 				7A4C67322B5A47BD008BCAC9 /* CustomView */,
 				D29536ED2B4C076F00EEA81F /* Common */,
 				7A610ACE2B480B5B00D3096F /* Model */,
-				7A610ACD2B480B1400D3096F /* ViewModel */,
 				7A610ACC2B480B0E00D3096F /* Presentation */,
 				7A610ACB2B480AFF00D3096F /* Network */,
 				7A610AC02B47FA8F00D3096F /* Assets.xcassets */,
@@ -962,15 +961,6 @@
 				7A610AD32B49004500D3096F /* MyPage */,
 			);
 			path = Presentation;
-			sourceTree = "<group>";
-		};
-		7A610ACD2B480B1400D3096F /* ViewModel */ = {
-			isa = PBXGroup;
-			children = (
-				7A8F3ECB2B84FF9A00480902 /* Goal */,
-				D20D701F2B66FE8F006D6762 /* Home */,
-			);
-			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		7A610ACE2B480B5B00D3096F /* Model */ = {
@@ -1048,6 +1038,7 @@
 			children = (
 				20E6891D2D4E4E480067B8DF /* KakaoLogin.swift */,
 				7A610ABB2B47FA8E00D3096F /* LoginViewController.swift */,
+				20ADFB772B99CE150054390F /* LoginViewModel.swift */,
 			);
 			path = Login;
 			sourceTree = "<group>";
@@ -1055,6 +1046,7 @@
 		7A610AE82B493E8000D3096F /* Goal */ = {
 			isa = PBXGroup;
 			children = (
+				7A8F3ECB2B84FF9A00480902 /* ViewModel */,
 				7A4FE03F2BA32D4300841D71 /* GoalEditViewController */,
 				7A3069952B8F19FA00CD331D /* GoalDetailsViewController */,
 				7A8F3EE72B85059D00480902 /* consumeDummy.json */,
@@ -1073,7 +1065,7 @@
 			path = Goal;
 			sourceTree = "<group>";
 		};
-		7A8F3ECB2B84FF9A00480902 /* Goal */ = {
+		7A8F3ECB2B84FF9A00480902 /* ViewModel */ = {
 			isa = PBXGroup;
 			children = (
 				7A8F3F052B8524B100480902 /* GoalCategoryViewModel.swift */,
@@ -1084,7 +1076,7 @@
 				7A8F3ECC2B84FF9A00480902 /* GoalCreationManager.swift */,
 				7A4FE0402BA36EA500841D71 /* GoalEditViewModel.swift */,
 			);
-			path = Goal;
+			path = ViewModel;
 			sourceTree = "<group>";
 		};
 		7A8F3ECE2B85055D00480902 /* GoalModal */ = {
@@ -1135,14 +1127,6 @@
 				D253EEAE2B7A0CA500A4FC1C /* MainNoGoal.swift */,
 			);
 			path = Statistics;
-			sourceTree = "<group>";
-		};
-		D20D701F2B66FE8F006D6762 /* Home */ = {
-			isa = PBXGroup;
-			children = (
-				D20D70202B66FEA0006D6762 /* HomeViewModel.swift */,
-			);
-			path = Home;
 			sourceTree = "<group>";
 		};
 		D20D702A2B68BB81006D6762 /* API */ = {

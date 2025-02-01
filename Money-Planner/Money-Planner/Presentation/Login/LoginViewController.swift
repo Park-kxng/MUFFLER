@@ -1,10 +1,3 @@
-//
-//  ViewController.swift
-//  Money-Planner
-//
-//  Created by 유철민 on 1/5/24.
-//
-
 import UIKit
 import RxSwift
 import RxCocoa
@@ -16,8 +9,6 @@ import Moya
 
 
 class LoginViewController: UIViewController {
-
-    
     private let viewModel = LoginViewModel()
     private let logoImageView = UIImageView()
     private let sloganLabel = MPLabel()
@@ -33,17 +24,12 @@ class LoginViewController: UIViewController {
         super.viewDidLoad()
         view.backgroundColor = .mpWhite
         
-        // 뷰 설정
         setupSloganLabel()
         setupSubLabel()
         setuplogoImageView()
         setupButtons()
         bindEvents()
     }
-    
-    //아래에서부터 setup 함수들이다. 위의 4가지 요소의 '구성 + 오토레이아웃' 이다.
-    
-
     
     private func setupSloganLabel() {
         // NSMutableParagraphStyle 객체 생성 및 행 간격 설정

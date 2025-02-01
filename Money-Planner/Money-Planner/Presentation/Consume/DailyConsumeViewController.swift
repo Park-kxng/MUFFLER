@@ -12,6 +12,7 @@ protocol ZeroViewDelegate : AnyObject {
     func changeZeroView()
 }
 
+/// 일일 소비 페이지
 class DailyConsumeViewController : UIViewController, UITableViewDelegate, UITableViewDataSource {
     
     var dailyInfo : DailyInfo = DailyInfo(date: "", isZeroDay: false, dailyTotalCost: 1234, rate: "MEDIUM", rateMemo: "soso", expenseDetailList: [], hasNext: false)

@@ -8,6 +8,7 @@
 import Foundation
 import UIKit
 
+/// 반복 소비내역 관리 페이지
 class RepeatConsumeViewController : UIViewController,  UITableViewDataSource, UITableViewDelegate  {
     
     var routineList: [Routine] = [] {

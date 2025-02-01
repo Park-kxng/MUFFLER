@@ -10,7 +10,7 @@ import UIKit
 import RxSwift
 import RxCocoa
 
-
+// 반복 소비 내역 조회 및 수정(삭제) 뷰
 // 소비 수정 및 삭제 컨트롤러
 class RoutineDetailViewController : UIViewController, UITextFieldDelegate {
 
@@ -40,7 +40,6 @@ class RoutineDetailViewController : UIViewController, UITextFieldDelegate {
         button.setTitleColor(.mpDarkGray, for: .normal)
         button.titleLabel?.font = UIFont.mpFont16M()
         button.tintColor = UIColor.mpMainColor
-        //button.backgroundColor = .mpGypsumGray // 수정 - 근영/ 텍스트 필드 배경 색상 F6F6F6
         button.setTitle("", for: .normal)
         button.isEnabled = false
 
